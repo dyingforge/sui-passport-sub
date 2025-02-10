@@ -2,6 +2,7 @@ import Image from "next/image";
 import { columns } from "~/components/ContributorsTable/columns";
 import { ContributorsTable } from "~/components/ContributorsTable/ContributorsTable";
 import { contributors } from "~/components/ContributorsTable/data";
+import { PassportCreationModal } from "~/components/PassportCreationModal/PassportCreationModal";
 import { Sticker } from "~/components/Sticker/Sticker";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -33,7 +34,7 @@ export default function HomePage() {
             alt="background"
             width={1424}
             height={893}
-            quality="100"
+            unoptimized
           />
           <div className="z-10 flex w-full max-w-[1424px] flex-col items-center justify-center">
             <h1 className="mt-16 max-w-[696px] text-center font-everett text-[68px] leading-[80px]">
@@ -66,9 +67,7 @@ export default function HomePage() {
               placeholder="Your Name"
             />
           </div>
-          <Button className="z-10 mt-12 h-[52px] w-[188px]">
-            Get Your Passport
-          </Button>
+          <PassportCreationModal />
         </div>
         <div className="relative flex w-full flex-col items-center bg-[#001731] pl-2 pr-2">
           <h1 className="mt-16 max-w-[696px] text-center font-everett text-[68px] leading-[80px]">
@@ -87,7 +86,7 @@ export default function HomePage() {
           <h2 className="mt-[185px] max-w-[263px] text-center font-everett text-[32px] leading-[38px]">
             Top Contributors
           </h2>
-          <div className="mt-12 mb-[184px]">
+          <div className="mb-[184px] mt-12">
             <ContributorsTable data={contributors} columns={columns} />
           </div>
         </div>

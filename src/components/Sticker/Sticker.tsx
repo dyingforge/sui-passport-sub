@@ -13,6 +13,7 @@ export const Sticker: FC<Props> = ({url}) => {
         width={360}
         height={360}
         className="cursor-pointer object-none"
+        quality={100}
       />
   );
 };
