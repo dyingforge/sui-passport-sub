@@ -1,5 +1,8 @@
 import Image from "next/image";
-import Link from "next/link";
+import { columns } from "~/components/ContributorsTable/columns";
+import { ContributorsTable } from "~/components/ContributorsTable/ContributorsTable";
+import { contributors } from "~/components/ContributorsTable/data";
+import { Sticker } from "~/components/Sticker/Sticker";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
@@ -23,7 +26,7 @@ export default function HomePage() {
             Connect Wallet
           </Button>
         </div>
-        <div className="relative mt-6 flex min-h-[1458px] w-full flex-col items-center rounded-xl bg-[#001731] pl-2 pr-2">
+        <div className="relative mt-6 flex min-h-[1458px] w-full flex-col items-center rounded-t-xl bg-[#001731] pl-2 pr-2">
           <Image
             className="absolute top-0 rounded-xl"
             src={"/images/card-background.png"}
@@ -33,10 +36,10 @@ export default function HomePage() {
             quality="100"
           />
           <div className="z-10 flex w-full max-w-[1424px] flex-col items-center justify-center">
-            <h1 className="font-everett mt-16 max-w-[696px] text-center text-[68px] leading-[80px]">
+            <h1 className="mt-16 max-w-[696px] text-center font-everett text-[68px] leading-[80px]">
               Make your mark on the Sui Community
             </h1>
-            <div className="font-everett_light mt-6 flex max-w-[696px] flex-col gap-3 text-center text-[16px] text-[#ABBDCC]">
+            <div className="mt-6 flex max-w-[696px] flex-col gap-3 text-center font-everett_light text-[16px] text-[#ABBDCC]">
               <p>
                 The Sui community flourishes because of passionate members like
                 you. Through content, conferences, events and hackathons, your
@@ -49,20 +52,44 @@ export default function HomePage() {
               </p>
             </div>
           </div>
-          <div className="z-10 mt-[80px] flex w-[720px] flex-col justify-center gap-1 rounded-3xl bg-gradient-to-r from-20% from-[#213244] via-[#13273d] to-[#17293c] px-6 py-5 text-[#ABBDCC]">
-            <Label htmlFor="id" className="font-inter text-[20px] font-light leading-[25px]">
+          <div className="z-10 mt-[80px] flex w-[720px] flex-col justify-center gap-1 rounded-3xl bg-gradient-to-r from-[#213244] from-20% via-[#13273d] to-[#17293c] px-6 py-5 text-[#ABBDCC]">
+            <Label
+              htmlFor="id"
+              className="font-inter text-[20px] font-light leading-[25px]"
+            >
               Claim your name for Sui Passport
             </Label>
             <Input
-              className="font-everett h-[58px] text-[48px] text-white"
+              className="h-[58px] font-everett text-[48px] text-white"
               type="text"
               id="id"
               placeholder="Your Name"
             />
           </div>
-          <Button className="h-[52px] w-[188px] z-10 mt-12">
+          <Button className="z-10 mt-12 h-[52px] w-[188px]">
             Get Your Passport
           </Button>
+        </div>
+        <div className="relative flex w-full flex-col items-center bg-[#001731] pl-2 pr-2">
+          <h1 className="mt-16 max-w-[696px] text-center font-everett text-[68px] leading-[80px]">
+            Get your stamps
+          </h1>
+          <div className="mt-6 flex max-w-[580px] flex-col text-center font-everett_light text-[16px] text-[#ABBDCC]">
+            <p>
+              Here are the latest stamps awarded to the Sui community,
+              celebrating achievements and contributions
+            </p>
+          </div>
+          <div className="mt-[37px] flex min-w-[900px] justify-between">
+            <Sticker url={"/images/sticker2.png"} />
+            <Sticker url={"/images/sticker1.png"} />
+          </div>
+          <h2 className="mt-[185px] max-w-[263px] text-center font-everett text-[32px] leading-[38px]">
+            Top Contributors
+          </h2>
+          <div className="mt-12 mb-[184px]">
+            <ContributorsTable data={contributors} columns={columns} />
+          </div>
         </div>
       </div>
     </main>

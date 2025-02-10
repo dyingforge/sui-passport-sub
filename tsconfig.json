@@ -37,6 +37,6 @@
     "**/*.cjs",
     "**/*.js",
     ".next/types/**/*.ts"
-  ],
+, "src/components/ContributorsTable/columns.tss"  ],
   "exclude": ["node_modules"]
 }
