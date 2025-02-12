@@ -6,7 +6,9 @@ import ImageUploading, {
 } from "react-images-uploading";
 import { Button } from "../ui/button";
 
-type AvatarUploadProps = { onImageUpload?: (imageData: ImageType | null) => void };
+type AvatarUploadProps = {
+  onImageUpload?: (imageData: ImageType | null) => void;
+};
 
 export const AvatarUpload: FC<AvatarUploadProps> = ({ onImageUpload }) => {
   const [images, setImages] = useState([]);
@@ -15,13 +17,19 @@ export const AvatarUpload: FC<AvatarUploadProps> = ({ onImageUpload }) => {
     imageList: ImageListType,
   ) => {
     setImages(imageList as never[]);
-    onImageUpload?.((imageList?.[0]) ? imageList[0] : null);
+    onImageUpload?.(imageList?.[0] ? imageList[0] : null);
   };
 
   return (
     <div className="">
       <ImageUploading multiple value={images} onChange={onChange} maxNumber={1}>
-        {({ imageList, onImageUpload, onImageRemoveAll, dragProps }) => (
+        {({
+          imageList,
+          onImageUpload,
+          onImageRemoveAll,
+          dragProps,
+          onImageUpdate,
+        }) => (
           <div className="flex items-center justify-between font-inter">
             <div className="relative flex items-center gap-6">
               {imageList?.length === 0 && (
@@ -34,12 +42,23 @@ export const AvatarUpload: FC<AvatarUploadProps> = ({ onImageUpload }) => {
                 />
               )}
               {imageList?.length > 0 && imageList?.[0] && (
-                <div className="h-[80px] w-[80px]">
+                <div className="relative h-[80px] w-[80px]">
                   <img
                     src={imageList?.[0].dataURL}
                     alt="avatar"
                     className="h-full w-full rounded-xl"
                   />
+                  <div
+                    onClick={() => onImageUpdate(0)}
+                    className="absolute top-0 flex h-full w-full cursor-pointer items-center justify-center rounded-xl bg-[#02101C]/[.50] opacity-0 hover:opacity-100"
+                  >
+                    <Image
+                      src={"/images/arrow-rotate.png"}
+                      alt="arrow-rotate"
+                      width={32}
+                      height={32}
+                    />
+                  </div>
                 </div>
               )}
               <div className="flex flex-col gap-[7px]">
