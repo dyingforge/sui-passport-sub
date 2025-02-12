@@ -33,10 +33,10 @@ export const AvatarUpload: FC<AvatarUploadProps> = ({ onImageUpload }) => {
                   {...dragProps}
                 />
               )}
-              {imageList?.length > 0 && (
+              {imageList?.length > 0 && imageList?.[0] && (
                 <div className="h-[80px] w-[80px]">
                   <img
-                    src={imageList[0].dataURL}
+                    src={imageList?.[0].dataURL}
                     alt="avatar"
                     className="h-full w-full rounded-xl"
                   />
