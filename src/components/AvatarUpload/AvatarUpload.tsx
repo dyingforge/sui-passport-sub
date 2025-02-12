@@ -1,0 +1,73 @@
+import Image from "next/image";
+import React, { type FC, useState } from "react";
+import ImageUploading, {
+  type ImageType,
+  type ImageListType,
+} from "react-images-uploading";
+import { Button } from "../ui/button";
+
+type AvatarUploadProps = { onImageUpload?: (imageData: ImageType | null) => void };
+
+export const AvatarUpload: FC<AvatarUploadProps> = ({ onImageUpload }) => {
+  const [images, setImages] = useState([]);
+
+  const onChange = (
+    imageList: ImageListType,
+  ) => {
+    setImages(imageList as never[]);
+    onImageUpload?.((imageList?.[0]) ? imageList[0] : null);
+  };
+
+  return (
+    <div className="">
+      <ImageUploading multiple value={images} onChange={onChange} maxNumber={1}>
+        {({ imageList, onImageUpload, onImageRemoveAll, dragProps }) => (
+          <div className="flex items-center justify-between font-inter">
+            <div className="relative flex items-center gap-6">
+              {imageList?.length === 0 && (
+                <Image
+                  src={"/images/avatar-upload.png"}
+                  alt="avatar-upload"
+                  width={80}
+                  height={80}
+                  {...dragProps}
+                />
+              )}
+              {imageList?.length > 0 && (
+                <div className="h-[80px] w-[80px]">
+                  <img
+                    src={imageList[0].dataURL}
+                    alt="avatar"
+                    className="h-full w-full rounded-xl"
+                  />
+                </div>
+              )}
+              <div className="flex flex-col gap-[7px]">
+                <h2 className="text-[20px] text-white">Profile Picture</h2>
+                <button
+                  onClick={onImageUpload}
+                  {...dragProps}
+                  className="flex text-[14px] text-[#ABBDCC]"
+                >
+                  <p>Drag and drop, or</p>
+                  &nbsp;
+                  <p className="underline">upload image</p>
+                </button>
+              </div>
+            </div>
+            {imageList?.length > 0 && (
+              <Button variant="secondary" onClick={onImageRemoveAll}>
+                <Image
+                  src={"/images/trash.png"}
+                  alt="trash"
+                  width={16}
+                  height={16}
+                />
+              </Button>
+            )}
+          </div>
+        )}
+      </ImageUploading>
+    </div>
+  );
+};

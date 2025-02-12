@@ -1,18 +1,21 @@
-
 import { TextInput } from "../TextInput/TextInput";
 import Image from "next/image";
 import { Button } from "../ui/button";
 import { DialogClose } from "../ui/dialog";
 import { type FC } from "react";
+import { AvatarUpload } from "../AvatarUpload/AvatarUpload";
+import { type ImageType } from "react-images-uploading";
 
 type PassportForm = {
   onNameChange: (name: string) => void;
   onIntroChange: (intro: string) => void;
+  onAvatarChange: (avatar: ImageType | null) => void;
 };
 
 export const PassportForm: FC<PassportForm> = ({
   onNameChange,
   onIntroChange,
+  onAvatarChange,
 }) => {
   return (
     <div className="flex h-full w-full items-center justify-start backdrop-blur-3xl">
@@ -20,7 +23,10 @@ export const PassportForm: FC<PassportForm> = ({
         <h1 className="font-everett text-[32px] leading-[38px] text-white">
           Let’s get you a passport
         </h1>
-        <div className="mt-[48px] flex w-[520px] flex-col gap-4">
+        <div className="mt-12">
+          <AvatarUpload onImageUpload={onAvatarChange} />
+        </div>
+        <div className="mt-4 flex w-[520px] flex-col gap-4">
           <TextInput
             labelText="Your Name*"
             placeholder="John Smith"

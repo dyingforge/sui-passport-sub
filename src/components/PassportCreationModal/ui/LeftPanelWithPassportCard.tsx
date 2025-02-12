@@ -1,13 +1,19 @@
 import Image from "next/image";
 import { type FC } from "react";
+import { type ImageType } from "react-images-uploading";
 import { cn } from "~/lib/utils";
 
 type Props = {
   name: string;
   intro: string;
+  avatar: ImageType | null;
 };
 
-export const LeftPanelWithPassportCard: FC<Props> = ({ name, intro }) => {
+export const LeftPanelWithPassportCard: FC<Props> = ({
+  name,
+  intro,
+  avatar,
+}) => {
   return (
     <div className="flex h-full w-full items-center justify-end backdrop-blur-[8px]">
       <div className="relative mr-[165px] flex h-[480px] w-[390px] flex-col items-center rounded-3xl bg-gradient-to-r from-[#1F2129] via-[#2e3036] to-[#1F2129] shadow-[0_73px_30px_0px_rgba(0,0,0,0.02)]">
@@ -19,7 +25,7 @@ export const LeftPanelWithPassportCard: FC<Props> = ({ name, intro }) => {
           className="absolute"
           unoptimized
         />
-        <div className="z-10 flex flex-col items-center">
+        <div className="relative z-10 flex flex-col items-center">
           <Image
             src={"/images/default-avatar.png"}
             width={192}
@@ -27,6 +33,13 @@ export const LeftPanelWithPassportCard: FC<Props> = ({ name, intro }) => {
             alt="avatar"
             className="mt-[70px]"
           />
+          {avatar && (
+            <img
+              src={avatar.dataURL}
+              alt="avatar"
+              className="absolute mt-[89px] h-[154px] w-[154px] rounded-full"
+            />
+          )}
           <p
             className={cn(
               "mt-[68px] text-center font-everett text-[36px] leading-[43px] text-[#1b1d22]",
