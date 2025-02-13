@@ -80,8 +80,20 @@ export default function HomePage() {
             </p>
           </div>
           <div className="mt-[37px] flex min-w-[900px] justify-between">
-            <Sticker url={"/images/sticker2.png"} name="CABO"/>
-            <Sticker url={"/images/sticker1.png"} name="Passport Pioneer"/>
+            <Sticker
+              url={"/images/sticker1.png"}
+              name="CABO"
+              rotation={-10}
+              amountLeft={95}
+              dropsAmount={500}
+            />
+            <Sticker
+              url={"/images/sticker2.png"}
+              name="Passport Pioneer"
+              rotation={10}
+              amountLeft={45}
+              dropsAmount={100}
+            />
           </div>
           <h2 className="mt-[185px] max-w-[263px] text-center font-everett text-[32px] leading-[38px]">
             Top Contributors

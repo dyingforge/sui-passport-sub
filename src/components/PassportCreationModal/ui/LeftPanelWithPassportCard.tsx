@@ -37,7 +37,7 @@ export const LeftPanelWithPassportCard: FC<Props> = ({
             <img
               src={avatar.dataURL}
               alt="avatar"
-              className="absolute mt-[89px] h-[154px] w-[154px] rounded-full"
+              className="absolute mt-[89px] h-[154px] w-[154px] rounded-full object-cover"
             />
           )}
           <p

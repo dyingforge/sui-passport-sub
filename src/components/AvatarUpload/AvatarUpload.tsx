@@ -46,7 +46,7 @@ export const AvatarUpload: FC<AvatarUploadProps> = ({ onImageUpload }) => {
                   <img
                     src={imageList?.[0].dataURL}
                     alt="avatar"
-                    className="h-full w-full rounded-xl"
+                    className="h-full w-full rounded-xl object-cover"
                   />
                   <div
                     onClick={() => onImageUpdate(0)}

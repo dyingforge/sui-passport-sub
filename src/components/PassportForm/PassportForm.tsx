@@ -34,7 +34,7 @@ export const PassportForm: FC<PassportForm> = ({
             onChange={(e) => onNameChange(e.currentTarget.value)}
           />
           <TextInput
-            labelText="Introduction*"
+            labelText="Introduction"
             placeholder="23 y.o. designer from San Francisco"
             className="h-[79px]"
             onChange={(e) => onIntroChange(e.currentTarget.value)}
