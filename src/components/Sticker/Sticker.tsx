@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "motion/react";
-import { useRef, type FC } from "react";
+import { type FC } from "react";
 import {
   Dialog,
   DialogClose,
@@ -49,6 +49,7 @@ export const Sticker: FC<StickerProps> = (props) => {
         <motion.div
           initial={{ y: 200, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 200, opacity: 0 }}
           transition={{ type: "spring" }}
           className="flex h-full w-full flex-col items-center justify-center backdrop-blur-[8px]"
         >
