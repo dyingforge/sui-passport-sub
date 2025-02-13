@@ -83,14 +83,14 @@ export default function HomePage() {
             <Sticker
               url={"/images/sticker1.png"}
               name="CABO"
-              rotation={-10}
+              rotation={-5}
               amountLeft={95}
               dropsAmount={500}
             />
             <Sticker
               url={"/images/sticker2.png"}
               name="Passport Pioneer"
-              rotation={10}
+              rotation={5}
               amountLeft={45}
               dropsAmount={100}
             />
