@@ -9,10 +9,10 @@ const calcX = (y: number, ly: number) =>
   -(y - ly - window.innerHeight / 2) / 20;
 const calcY = (x: number, lx: number) => (x - lx - window.innerWidth / 2) / 20;
 
-type Props = ComponentProps<typeof Image>;
+type Props = ComponentProps<typeof Image> & {disabled?: boolean};
 
 export const AnimatedImage: FC<Props> = (props) => {
-  const {} = props;
+  const {disabled} = props;
   const [{ x, y, rotateX, rotateY, rotateZ, zoom, scale }, api] = useSpring(
     () => ({
         rotateX: 0,
@@ -30,13 +30,13 @@ export const AnimatedImage: FC<Props> = (props) => {
   useGesture(
     {
       onMove: ({ xy: [px, py] }) =>
-        api({
+        !disabled && api({
           rotateX: calcX(py, y.get()),
           rotateY: calcY(px, x.get()),
           scale: 1.1,
         }),
       onHover: ({ hovering }) =>
-        !hovering && api({ rotateX: 0, rotateY: 0, scale: 1 }),
+        !disabled && !hovering && api({ rotateX: 0, rotateY: 0, scale: 1 }),
     },
     { domTarget, eventOptions: { passive: true} },
   );

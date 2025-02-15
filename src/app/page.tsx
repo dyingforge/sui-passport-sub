@@ -85,6 +85,7 @@ export default function HomePage() {
               rotation={5}
               amountLeft={45}
               dropsAmount={100}
+              isClaimed
             />
           </div>
           <h2 className="mt-[185px] max-w-[263px] text-center font-everett text-[32px] leading-[38px]">
