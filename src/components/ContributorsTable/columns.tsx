@@ -1,6 +1,7 @@
 "use client";
 import { type ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
+import { Button } from "../ui/button";
 
 export type Contributor = {
   name: string;
@@ -71,10 +72,29 @@ export const columns: ColumnDef<Contributor>[] = [
     header: "Points",
     size: 90,
     cell: ({ cell }) => (
-      <span className="flex gap-2">
-        <Image src={"/images/drop.png"} alt="drop-icon" width={14} height={14} />
-        <p className="text-[#ABBDCC]">{cell.getValue() as string}</p>
-      </span>
+      <div className="flex gap-6 items-center relative">
+        <span className="flex gap-2 absolute">
+          <Image
+            src={"/images/drop.png"}
+            alt="drop-icon"
+            width={14}
+            height={14}
+          />
+          <p className="text-[#ABBDCC]">{cell.getValue() as string}</p>
+        </span>
+        <Button
+          variant="secondary"
+          className="absolute h-[44px] w-[109px] items-center gap-2 hidden right-0"
+        >
+          Details
+          <Image
+            src={"/images/arrow-right.png"}
+            alt="drop-icon"
+            width={14}
+            height={14}
+          />
+        </Button>
+      </div>
     ),
   },
 ];

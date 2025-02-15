@@ -51,7 +51,7 @@ export const Sticker: FC<StickerProps> = (props) => {
             quality={100}
             disabled={Boolean(isClaimed)}
             style={{
-              filter: isClaimed ? 'gray' : 'none',
+              filter: isClaimed ? 'grayscale(100%)' : 'none',
               opacity: isClaimed ? '0.4' : 'none',
             }}
           />
