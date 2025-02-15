@@ -11,7 +11,7 @@ import {
 } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { TextInput } from "../TextInput/TextInput";
-import { AnimatedImage } from "./ui/AnimatedImage";
+import { AnimatedImage } from "../AnimatedImage.tsx/AnimatedImage";
 
 type StickerProps = {
   url: string;
@@ -32,7 +32,7 @@ export const Sticker: FC<StickerProps> = (props) => {
           className={`relative flex flex-col items-center`}
           style={{ transform: `rotate(${rotation}deg)` }}
         >
-          <Image
+          <AnimatedImage
             src={url}
             alt="sticker"
             width={360}
@@ -54,7 +54,7 @@ export const Sticker: FC<StickerProps> = (props) => {
           className="flex h-full w-full flex-col items-center justify-center backdrop-blur-[8px]"
         >
           <div className="relative flex flex-col items-center">
-            <AnimatedImage url={url} />
+            <AnimatedImage src={url} alt="sticker" width={480} height={480} />
             <div className="absolute bottom-0 flex flex-col items-center gap-4">
               <p className="flex cursor-pointer gap-2 font-inter text-[16px] leading-5 text-[#4DA2FF]">
                 Details on Sui Vision

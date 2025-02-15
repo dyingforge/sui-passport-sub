@@ -3,8 +3,8 @@ import { columns } from "~/components/ContributorsTable/columns";
 import { ContributorsTable } from "~/components/ContributorsTable/ContributorsTable";
 import { contributors } from "~/components/ContributorsTable/data";
 import { PassportCreationModal } from "~/components/PassportCreationModal/PassportCreationModal";
+import { ProfileModal } from "~/components/ProfileModal/ProfileModal";
 import { Sticker } from "~/components/Sticker/Sticker";
-import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 
@@ -17,15 +17,7 @@ export default function HomePage() {
             <Image src={"/images/drop.png"} alt="drop" width={24} height={32} />
             <p className="font-inter text-[24px]">Sui passport</p>
           </div>
-          <Button className="h-[52px] w-[189px]">
-            <Image
-              src={"/images/wallet.png"}
-              alt="wallet"
-              width={16}
-              height={16}
-            />
-            Connect Wallet
-          </Button>
+          <ProfileModal />
         </div>
         <div className="relative mt-6 flex min-h-[1458px] w-full flex-col items-center rounded-t-xl bg-[#001731] pl-2 pr-2">
           <Image
@@ -81,14 +73,14 @@ export default function HomePage() {
           </div>
           <div className="mt-[37px] flex min-w-[900px] justify-between">
             <Sticker
-              url={"/images/sticker1.png"}
+              url={"/images/cabo.png"}
               name="CABO"
               rotation={-5}
               amountLeft={95}
               dropsAmount={500}
             />
             <Sticker
-              url={"/images/sticker2.png"}
+              url={"/images/passport-pioneer.png"}
               name="Passport Pioneer"
               rotation={5}
               amountLeft={45}

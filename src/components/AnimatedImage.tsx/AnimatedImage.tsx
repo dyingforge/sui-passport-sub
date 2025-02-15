@@ -1,13 +1,18 @@
+'use client'
+
 import Image from "next/image";
 import { useSpring, to, animated } from "@react-spring/web";
 import { useGesture } from "react-use-gesture";
-import { useRef } from "react";
+import { type ComponentProps, type FC, useRef } from "react";
 
 const calcX = (y: number, ly: number) =>
   -(y - ly - window.innerHeight / 2) / 20;
 const calcY = (x: number, lx: number) => (x - lx - window.innerWidth / 2) / 20;
 
-export const AnimatedImage = ({ url }: { url: string }) => {
+type Props = ComponentProps<typeof Image>;
+
+export const AnimatedImage: FC<Props> = (props) => {
+  const {} = props;
   const [{ x, y, rotateX, rotateY, rotateZ, zoom, scale }, api] = useSpring(
     () => ({
         rotateX: 0,
@@ -48,14 +53,7 @@ export const AnimatedImage = ({ url }: { url: string }) => {
         rotateZ,
       }}
     >
-    <Image
-      src={url}
-      alt="sticker"
-      width={480}
-      height={480}
-      quality={100}
-      unoptimized
-    />
+    <Image {...props} />
     </animated.div>
   );
 };
