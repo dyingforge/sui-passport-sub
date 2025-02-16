@@ -11,7 +11,7 @@ export const TextInput: FC<TextInputProps> = (props) => {
   return (
     <div
       className={cn(
-        "z-10 flex flex-col justify-center gap-1 rounded-2xl bg-gradient-to-r from-[#213244] from-20% via-[#13273d] to-[#17293c] px-6 py-5 text-[#ABBDCC]",
+        "z-10 flex flex-col justify-center gap-1 rounded-2xl bg-gradient-to-r from-[#213244] from-20% via-[#13273d] to-[#17293c] px-4 py-3 sm:px-6 sm:py-5 text-[#ABBDCC]",
         className,
       )}
     >
@@ -25,7 +25,7 @@ export const TextInput: FC<TextInputProps> = (props) => {
       )}
       <Input
         {...props}
-        className="h-[58px] font-inter text-[20px] leading-[24px] text-white"
+        className="h-[58px] font-inter text-[16px] sm:text-[20px] leading-[20px] sm:leading-[24px] text-white"
         id={id}
       />
     </div>

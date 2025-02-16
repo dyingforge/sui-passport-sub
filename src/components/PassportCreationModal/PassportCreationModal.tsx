@@ -20,7 +20,7 @@ export const PassportCreationModal = () => {
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <div className="flex h-screen items-center">
+        <div className="flex flex-col sm:flex-row h-screen items-center overflow-y-scroll">
           <LeftPanelWithPassportCard
             avatar={avatar}
             name={name ?? ""}

@@ -106,7 +106,7 @@ export default function HomePage() {
           <h2 className="mt-[185px] max-w-[263px] text-center font-everett text-[24px] sm:text-[32px] leading-[28px] sm:leading-[38px]">
             Top Contributors
           </h2>
-          <div className="mb-[48px] sm:mb-[184px] mt-6">
+          <div className="mb-[48px] sm:mb-[80px] mt-6">
             <ContributorsTable data={contributors} />
           </div>
         </div>

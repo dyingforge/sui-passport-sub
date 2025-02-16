@@ -13,9 +13,7 @@ type AvatarUploadProps = {
 export const AvatarUpload: FC<AvatarUploadProps> = ({ onImageUpload }) => {
   const [images, setImages] = useState([]);
 
-  const onChange = (
-    imageList: ImageListType,
-  ) => {
+  const onChange = (imageList: ImageListType) => {
     setImages(imageList as never[]);
     onImageUpload?.(imageList?.[0] ? imageList[0] : null);
   };
@@ -31,18 +29,19 @@ export const AvatarUpload: FC<AvatarUploadProps> = ({ onImageUpload }) => {
           onImageUpdate,
         }) => (
           <div className="flex items-center justify-between font-inter">
-            <div className="relative flex items-center gap-6">
+            <div className="relative flex items-center gap-4 sm:gap-6">
               {imageList?.length === 0 && (
                 <Image
                   src={"/images/avatar-upload.png"}
                   alt="avatar-upload"
                   width={80}
                   height={80}
+                  className="h-[66px] w-[66px] sm:h-auto sm:w-auto"
                   {...dragProps}
                 />
               )}
               {imageList?.length > 0 && imageList?.[0] && (
-                <div className="relative h-[80px] w-[80px]">
+                <div className="relative h-[66px] w-[66px] sm:h-[80px] sm:w-[80px]">
                   <img
                     src={imageList?.[0].dataURL}
                     alt="avatar"
@@ -62,7 +61,9 @@ export const AvatarUpload: FC<AvatarUploadProps> = ({ onImageUpload }) => {
                 </div>
               )}
               <div className="flex flex-col gap-[7px]">
-                <h2 className="text-[20px] text-white">Profile Picture</h2>
+                <h2 className="text-[16px] text-white sm:text-[20px]">
+                  Profile Picture
+                </h2>
                 <button
                   onClick={onImageUpload}
                   {...dragProps}
