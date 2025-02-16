@@ -88,7 +88,7 @@ export const columns: ColumnDef<Contributor>[] = [
             if (!clicked) {
               setClicked(true);
               setTimeout(() => setClicked(false), 3000);
-              void navigator.clipboard.writeText(cell.getValue() as string)
+              void navigator.clipboard.writeText(cell.getValue() as string);
             }
           }}
           className="relative flex w-[151px] cursor-pointer items-center gap-2"

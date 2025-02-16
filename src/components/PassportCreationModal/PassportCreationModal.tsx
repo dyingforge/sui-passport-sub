@@ -15,7 +15,7 @@ export const PassportCreationModal = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="z-10 mt-12 h-[52px] w-[188px]">
+        <Button className="z-10 mt-12 h-[42px] sm:h-[52px] w-[162px] sm:w-[188px]">
           Get Your Passport
         </Button>
       </DialogTrigger>

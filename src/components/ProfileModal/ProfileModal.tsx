@@ -15,12 +15,13 @@ export const ProfileModal = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="h-[52px] w-[189px]">
+        <Button className="h-[34px] sm:h-[52px] w-[150px] sm:w-[189px]">
           <Image
             src={"/images/wallet.png"}
             alt="wallet"
             width={16}
             height={16}
+            className="h-[12px] w-[12px]"
           />
           Connect Wallet
         </Button>

@@ -52,11 +52,11 @@ export function ContributorsTable<TData, TValue>({
             alt="search"
             width={20}
             height={20}
-            className="absolute left-[52px]"
+            className="absolute left-[63px] sm:left-[52px]"
           />
         )}
         <Input
-          className="h-[52px] w-[360px] rounded-3xl bg-[#ABBDCC1A] text-center font-inter text-[16px] text-[#ABBDCC80]"
+          className="h-[44px] sm:h-[52px] w-[358px] sm:w-[360px] rounded-3xl bg-[#ABBDCC1A] text-center font-inter text-[14px] sm:text-[16px] text-[#ABBDCC80]"
           placeholder="Search by address or name"
           value={filterValue}
           onChange={(event) => {
@@ -66,9 +66,9 @@ export function ContributorsTable<TData, TValue>({
         />
       </div>
       <div className="relative mt-12 flex w-[1000px] flex-col items-center justify-center font-inter [&_tbody]:before:block [&_tbody]:before:h-[34px] [&_tbody]:before:content-['']">
-        <div className="absolute top-0 h-[60px] w-[1000px] rounded-lg bg-black bg-opacity-20" />
+        <div className="absolute top-0 h-[60px] w-[1000px] hidden sm:block rounded-lg bg-black bg-opacity-20" />
         <Table>
-          <TableHeader className="h-[60px]">
+          <TableHeader className="h-[60px] hidden sm:table-header-group">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -99,7 +99,7 @@ export function ContributorsTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="[&_button]:hover:flex [&_span]:hover:left-[-110px]"
+                  className="[&_button]:hover:flex [&_span]:hover:left-[-110px] bg-[#ABBDCC1A] sm:bg-transparent"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

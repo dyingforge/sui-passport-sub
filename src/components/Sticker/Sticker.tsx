@@ -47,7 +47,7 @@ export const Sticker: FC<StickerProps> = (props) => {
             alt="sticker"
             width={360}
             height={360}
-            className="cursor-pointer"
+            className="cursor-pointer w-[240px] h-[240px] sm:w-[360px] sm:h-[360px]"
             quality={100}
             disabled={Boolean(isClaimed)}
             style={{
