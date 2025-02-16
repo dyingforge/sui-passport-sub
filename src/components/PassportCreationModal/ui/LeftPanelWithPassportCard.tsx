@@ -15,7 +15,7 @@ export const LeftPanelWithPassportCard: FC<Props> = ({
   avatar,
 }) => {
   return (
-    <div className="flex h-full w-full items-center justify-end backdrop-blur-[8px]">
+    <div className="flex h-full w-full items-center justify-center backdrop-blur-[8px]">
       <div className="relative mx-[97px] my-8 flex h-[240px] w-[195px] flex-col items-center rounded-3xl bg-gradient-to-r from-[#1F2129] via-[#2e3036] to-[#1F2129] shadow-[0_73px_30px_0px_rgba(0,0,0,0.02)] sm:my-0 sm:mr-[165px] sm:h-[480px] sm:w-[390px]">
         <Image
           src={"/images/card-back.png"}
