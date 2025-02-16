@@ -8,6 +8,7 @@ import { type ImageType } from "react-images-uploading";
 
 type PassportForm = {
   onNameChange: (name: string) => void;
+  name: string | undefined
   onIntroChange: (intro: string) => void;
   onAvatarChange: (avatar: ImageType | null) => void;
 };
@@ -16,6 +17,7 @@ export const PassportForm: FC<PassportForm> = ({
   onNameChange,
   onIntroChange,
   onAvatarChange,
+  name,
 }) => {
   return (
     <div className="flex h-full w-full items-center justify-start backdrop-blur-3xl">
@@ -31,6 +33,7 @@ export const PassportForm: FC<PassportForm> = ({
             labelText="Your Name*"
             placeholder="John Smith"
             className="h-[66px] sm:h-[79px]"
+            value={name ?? ''}
             onChange={(e) => onNameChange(e.currentTarget.value)}
           />
           <TextInput

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "motion/react";
-import { type FC } from "react";
+import { useState, type FC } from "react";
 import {
   Dialog,
   DialogClose,
@@ -32,6 +32,11 @@ export const Sticker: FC<StickerProps> = (props) => {
     dropsAmount = 0,
     isClaimed,
   } = props;
+
+  const [status, setStatus] = useState<"pending" | "default" | "success">(
+    "default",
+  );
+  const [code, setCode] = useState("");
 
   return (
     <Dialog>
@@ -71,7 +76,7 @@ export const Sticker: FC<StickerProps> = (props) => {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 200, opacity: 0 }}
           transition={{ type: "spring" }}
-          className="flex h-full w-full flex-col items-center justify-between sm:justify-center backdrop-blur-[8px]"
+          className="flex h-full w-full flex-col items-center justify-between backdrop-blur-[8px] sm:justify-center"
         >
           <div className="relative flex flex-col items-center">
             <AnimatedImage
@@ -115,16 +120,53 @@ export const Sticker: FC<StickerProps> = (props) => {
             </div>
           </div>
           <div className="mb-4 flex flex-col items-center">
-            <TextInput
-              labelText="Claim Code"
-              placeholder="1234-5678"
-              className="mt-auto h-[66px] w-[358px] sm:mt-[103px] sm:h-[79px] sm:w-auto"
-            />
+            <div
+              className={cn("relative mt-auto flex items-center sm:mt-[103px]")}
+            >
+              <TextInput
+                labelText="Claim Code"
+                placeholder="1234-5678"
+                disabled={status !== "default"}
+                className={cn(
+                  "h-[66px] w-[358px] sm:h-[79px] sm:w-auto",
+                  status === "pending" && "border-2 border-[#ABBDCC80]",
+                  status === "success" && "border-2 border-[#4DA2FF]",
+                )}
+                onChange={(e) => setCode(e.target.value)}
+              />
+              {status === "pending" && (
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+                  className="absolute right-6 z-10 h-[31px] w-[31px]"
+                >
+                  <Image
+                    src={"/images/loader.png"}
+                    alt="loader"
+                    width={31}
+                    height={31}
+                  />
+                </motion.div>
+              )}
+              {status === "success" && (
+                <Image
+                  src={"/images/circle-check.png"}
+                  alt="loader"
+                  width={31}
+                  height={31}
+                  className="absolute right-6 z-10"
+                />
+              )}
+            </div>
             <div className="mt-[48px] flex gap-2">
               <DialogClose asChild>
                 <Button
                   variant="secondary"
                   className="h-[42px] w-[102px] sm:h-[52px] sm:w-[116px]"
+                  onClick={() => {
+                    setCode("");
+                    setStatus("default");
+                  }}
                 >
                   Close
                   <Image
@@ -135,7 +177,14 @@ export const Sticker: FC<StickerProps> = (props) => {
                   />
                 </Button>
               </DialogClose>
-              <Button className="h-[42px] w-[197px] sm:h-[52px] sm:w-[227px]">
+              <Button
+                className="h-[42px] w-[197px] sm:h-[52px] sm:w-[227px]"
+                disabled={status !== "default" || !code}
+                onClick={() => {
+                  setStatus("pending");
+                  setTimeout(() => setStatus("success"), 1000);
+                }}
+              >
                 Claim {name}
               </Button>
             </div>
