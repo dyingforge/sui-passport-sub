@@ -7,43 +7,35 @@ import { Button } from "../ui/button";
 import { useSpring, animated } from "@react-spring/web";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
+import { type Contributor } from "./columns";
 
-export type Contributor = {
-  name: string;
-  place: number;
-  address: string;
-  stampsCollected: number;
-  points: number;
-};
-
-export const columns: ColumnDef<Contributor>[] = [
+export const mobileColumns: ColumnDef<Contributor>[] = [
   {
     accessorKey: "place",
-    size: 98,
+    size: 48,
     header: "",
     cell: ({ cell }) => {
       const value = cell.getValue() as number;
-      const isMobile = useMediaQuery({ query: `(max-width: 760px)` });
 
       switch (value) {
         case 1: {
           return (
             <div className="flex h-[32px] w-[48px] items-center justify-center rounded-lg bg-[#FFCF4A] bg-opacity-20 text-[#FFCF4A] sm:h-[36px] sm:w-[80px]">
-              {isMobile ? "1" : "1st"}
+              1
             </div>
           );
         }
         case 2: {
           return (
             <div className="flex h-[32px] w-[48px] items-center justify-center rounded-lg bg-[#ABBDCC] bg-opacity-20 text-[#ABBDCC] sm:h-[36px] sm:w-[80px]">
-              {isMobile ? "2" : "2nd"}
+              2
             </div>
           );
         }
         case 3: {
           return (
             <div className="flex h-[32px] w-[48px] items-center justify-center rounded-lg bg-[#CA5633] bg-opacity-20 text-[#CA5633] sm:h-[36px] sm:w-[80px]">
-              {isMobile ? "3" : "3rd"}
+              3
             </div>
           );
         }
@@ -59,7 +51,7 @@ export const columns: ColumnDef<Contributor>[] = [
   {
     accessorKey: "name",
     header: "Name",
-    size: 190,
+    size: 50,
     cell: ({ cell }) => {
       return (
         <p className="max-w-[80px] truncate text-[14px]">
@@ -71,7 +63,7 @@ export const columns: ColumnDef<Contributor>[] = [
   {
     accessorKey: "address",
     header: "Address",
-    size: 353,
+    size: 70,
     cell: ({ cell }) => {
       const [clicked, setClicked] = useState(false);
       const [isHovering, setIsHovering] = useState(false);
@@ -141,24 +133,27 @@ export const columns: ColumnDef<Contributor>[] = [
     },
   },
   {
-    accessorKey: "stampsCollected",
-    header: "Stamps Collected",
-    size: 268,
-  },
-  {
     accessorKey: "points",
     header: "Points",
-    size: 90,
+    size: 56,
     cell: ({ cell }) => (
       <div className="relative flex items-center gap-6">
-        <span className="absolute flex gap-2">
+        <span className="absolute flex gap-2 items-center">
           <Image
             src={"/images/drop.png"}
             alt="drop-icon"
             width={14}
             height={14}
+            className="h-[15px] w-[12px]"
           />
           <p className="text-[#ABBDCC]">{cell.getValue() as string}</p>
+          <Image
+            src={"/images/chevron-right.png"}
+            alt="drop-icon"
+            width={16}
+            height={16}
+            className="h-[16px] w-[16px]"
+          />
         </span>
         <Button
           variant="secondary"

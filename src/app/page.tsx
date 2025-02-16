@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { columns } from "~/components/ContributorsTable/columns";
 import { ContributorsTable } from "~/components/ContributorsTable/ContributorsTable";
 import { contributors } from "~/components/ContributorsTable/data";
 import { PassportCreationModal } from "~/components/PassportCreationModal/PassportCreationModal";
@@ -87,7 +86,7 @@ export default function HomePage() {
               celebrating achievements and contributions
             </p>
           </div>
-          <div className="mt-[37px] flex flex-col-reverse sm:flex-row min-w-[900px] justify-between">
+          <div className="mt-[37px] flex flex-col-reverse sm:flex-row sm:min-w-[900px] justify-between">
             <Sticker
               url={"/images/cabo.png"}
               name="CABO"
@@ -108,7 +107,7 @@ export default function HomePage() {
             Top Contributors
           </h2>
           <div className="mb-[48px] sm:mb-[184px] mt-6">
-            <ContributorsTable data={contributors} columns={columns} />
+            <ContributorsTable data={contributors} />
           </div>
         </div>
       </div>

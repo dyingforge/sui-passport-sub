@@ -1,5 +1,6 @@
 "use client";
 
+import { useMediaQuery } from "react-responsive";
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -19,27 +20,34 @@ import {
 import Image from "next/image";
 import { useState } from "react";
 import { Input } from "../ui/input";
+import { mobileColumns } from "./mobileColumns";
+import { columns } from "./columns";
 
 interface ContributorsTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
 
 export function ContributorsTable<TData, TValue>({
-  columns,
   data,
 }: ContributorsTableProps<TData, TValue>) {
   const [globalFilter, setGlobalFilter] = useState<ColumnFiltersState>([]);
   const [filterValue, setFilterValue] = useState<string>("");
 
+  const isMobile = useMediaQuery({ query: `(max-width: 760px)` });
+  const tableColumns = (isMobile ? mobileColumns : columns) as ColumnDef<
+    TData,
+    TValue
+  >[];
+
   const table = useReactTable({
     data,
-    columns,
+    columns: tableColumns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onGlobalFilterChange: setGlobalFilter,
     state: {
       globalFilter,
+      columnVisibility: isMobile ? { stampsCollected: false } : {},
     },
   });
 
@@ -56,7 +64,7 @@ export function ContributorsTable<TData, TValue>({
           />
         )}
         <Input
-          className="h-[44px] sm:h-[52px] w-[358px] sm:w-[360px] rounded-3xl bg-[#ABBDCC1A] text-center font-inter text-[14px] sm:text-[16px] text-[#ABBDCC80]"
+          className="h-[44px] w-[358px] rounded-3xl bg-[#ABBDCC1A] text-center font-inter text-[14px] text-[#ABBDCC80] sm:h-[52px] sm:w-[360px] sm:text-[16px]"
           placeholder="Search by address or name"
           value={filterValue}
           onChange={(event) => {
@@ -65,10 +73,10 @@ export function ContributorsTable<TData, TValue>({
           }}
         />
       </div>
-      <div className="relative mt-12 flex w-[1000px] flex-col items-center justify-center font-inter [&_tbody]:before:block [&_tbody]:before:h-[34px] [&_tbody]:before:content-['']">
-        <div className="absolute top-0 h-[60px] w-[1000px] hidden sm:block rounded-lg bg-black bg-opacity-20" />
-        <Table>
-          <TableHeader className="h-[60px] hidden sm:table-header-group">
+      <div className="relative mt-12 flex w-[358px] flex-col items-center justify-center font-inter sm:w-[1000px] sm:[&_tbody]:before:block sm:[&_tbody]:before:h-[34px] sm:[&_tbody]:before:content-['']">
+        <div className="absolute top-0 hidden h-[60px] w-[1000px] rounded-lg bg-black bg-opacity-20 sm:block" />
+        <Table className="border-separate sm:border-collapse border-spacing-y-2">
+          <TableHeader className="hidden h-[60px] sm:table-header-group">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -99,10 +107,17 @@ export function ContributorsTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="[&_button]:hover:flex [&_span]:hover:left-[-110px] bg-[#ABBDCC1A] sm:bg-transparent"
+                  className="sm:[&_button]:hover:flex sm:[&_span]:hover:left-[-110px] rounded-2xl overflow-hidden"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      className="bg-[#ABBDCC1A] px-1 first:pl-2 last:pr-2 first:rounded-l-2xl last:rounded-r-2xl sm:bg-transparent"
+                      style={{
+                        width: `${cell.column.getSize()}px`,
+                        maxWidth: `${cell.column.getSize()}px`,
+                      }}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),
@@ -123,7 +138,7 @@ export function ContributorsTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
-        <span className="mt-[81px] flex gap-2 font-inter text-[16px] text-[#ABBDCC]">
+        <span className="mt-[44px] sm:mt-[81px] flex gap-2 font-inter text-[16px] text-[#ABBDCC]">
           <Image
             src={"/images/loader.png"}
             width={24}
