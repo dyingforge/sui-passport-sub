@@ -15,7 +15,7 @@ export const ProfileModal = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="h-[34px] sm:h-[52px] w-[150px] sm:w-[189px]">
+        <Button className="h-[34px] w-[150px] sm:h-[52px] sm:w-[189px]">
           <Image
             src={"/images/wallet.png"}
             alt="wallet"
@@ -26,13 +26,13 @@ export const ProfileModal = () => {
           Connect Wallet
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="overflow-y-scroll">
         <motion.div
           initial={{ y: 200, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 200, opacity: 0 }}
           transition={{ type: "spring" }}
-          className="flex h-screen w-full flex-col items-center backdrop-blur-[8px]"
+          className="flex w-full flex-col items-center backdrop-blur-[8px] sm:h-screen"
         >
           <StickersLayout />
           <Image
@@ -40,14 +40,15 @@ export const ProfileModal = () => {
             alt="avatar"
             width={150}
             height={150}
+            className="mt-[36px] h-[100px] w-[100px] sm:mt-0 sm:h-[150px] sm:w-[150px]"
             unoptimized
           />
-          <div className="mb-6 mt-[48px] flex flex-col items-center gap-4">
+          <div className="mb-6 mt-[32px] flex flex-col items-center gap-4 sm:mt-[48px]">
             <div className="flex flex-col items-center gap-2">
-              <p className="font-inter text-[20px] leading-6 text-white">
+              <p className="font-inter text-[16px] leading-[20px] text-white sm:text-[20px] sm:leading-6">
                 Artem G
               </p>
-              <p className="max-w-[405px] text-center font-inter text-[16px] leading-6 text-[#ABBDCC]">
+              <p className="max-w-[358px] text-center font-inter text-[14px] leading-[18px] text-[#ABBDCC] sm:max-w-[405px] sm:text-[16px] sm:leading-6">
                 23 y.o. designer from San Francisco, there’s a bit more to show
                 2 lines of description
               </p>
@@ -60,9 +61,9 @@ export const ProfileModal = () => {
                 height={14}
                 className="object-contain"
               />
-              <p className="font-inter text-white">{2450}</p>
+              <p className="font-inter text-[14px] text-white">{2450}</p>
             </span>
-            <p className="flex cursor-pointer gap-2 font-inter text-[16px] leading-5 text-[#4DA2FF]">
+            <p className="flex cursor-pointer gap-2 font-inter text-[14px] leading-5 text-[#4DA2FF] sm:text-[16px]">
               Details on Sui Vision
               <Image
                 src={"/images/arrow-up-right.png"}
@@ -73,7 +74,7 @@ export const ProfileModal = () => {
               />
             </p>
             <DialogClose asChild>
-              <Button variant="secondary" className="mt-12 h-[52px] w-[116px]">
+              <Button variant="secondary" className="mt-6 sm:mt-12 h-[42px] sm:h-[52px] w-[102px] sm:w-[116px]">
                 Close
                 <Image
                   src={"/images/cross.png"}

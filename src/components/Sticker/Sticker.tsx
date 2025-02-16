@@ -47,12 +47,12 @@ export const Sticker: FC<StickerProps> = (props) => {
             alt="sticker"
             width={360}
             height={360}
-            className="cursor-pointer w-[240px] h-[240px] sm:w-[360px] sm:h-[360px]"
+            className="h-[240px] w-[240px] cursor-pointer sm:h-[360px] sm:w-[360px]"
             quality={100}
             disabled={Boolean(isClaimed)}
             style={{
-              filter: isClaimed ? 'grayscale(100%)' : 'none',
-              opacity: isClaimed ? '0.4' : 'none',
+              filter: isClaimed ? "grayscale(100%)" : "none",
+              opacity: isClaimed ? "0.4" : "none",
             }}
           />
           <p className="absolute bottom-0 font-everett uppercase text-[#ABBDCC]">
@@ -71,12 +71,18 @@ export const Sticker: FC<StickerProps> = (props) => {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 200, opacity: 0 }}
           transition={{ type: "spring" }}
-          className="flex h-full w-full flex-col items-center justify-center backdrop-blur-[8px]"
+          className="flex h-full w-full flex-col items-center justify-between sm:justify-center backdrop-blur-[8px]"
         >
           <div className="relative flex flex-col items-center">
-            <AnimatedImage src={url} alt="sticker" width={480} height={480} />
+            <AnimatedImage
+              src={url}
+              alt="sticker"
+              width={480}
+              height={480}
+              className="h-[360px] w-[360px] sm:h-[480px] sm:w-[480px]"
+            />
             <div className="absolute bottom-0 flex flex-col items-center gap-4">
-              <p className="flex cursor-pointer gap-2 font-inter text-[16px] leading-5 text-[#4DA2FF]">
+              <p className="flex cursor-pointer gap-2 font-inter text-[14px] leading-5 text-[#4DA2FF] sm:text-[16px]">
                 Details on Sui Vision
                 <Image
                   src={"/images/arrow-up-right.png"}
@@ -87,10 +93,10 @@ export const Sticker: FC<StickerProps> = (props) => {
                 />
               </p>
               <span className="flex gap-2">
-                <p className="font-inter text-[20px] leading-6 text-white">
+                <p className="font-inter text-[16px] leading-6 text-white sm:text-[20px]">
                   {name}
                 </p>
-                <p className="font-inter text-[20px] leading-6 text-[#ABBDCC]">
+                <p className="font-inter text-[16px] leading-6 text-[#ABBDCC] sm:text-[20px]">
                   {amountLeft} left
                 </p>
               </span>
@@ -102,28 +108,37 @@ export const Sticker: FC<StickerProps> = (props) => {
                   height={14}
                   className="object-contain"
                 />
-                <p className="font-inter text-[#ABBDCC]">{dropsAmount}</p>
+                <p className="font-inter text-[14px] text-[#ABBDCC] sm:text-[16px]">
+                  {dropsAmount}
+                </p>
               </span>
             </div>
           </div>
-          <TextInput
-            labelText="Claim Code"
-            placeholder="1234-5678"
-            className="mt-[103px] h-[79px]"
-          />
-          <div className="mt-[48px] flex gap-2">
-            <DialogClose asChild>
-              <Button variant="secondary" className="h-[52px] w-[116px]">
-                Close
-                <Image
-                  src={"/images/cross.png"}
-                  alt="cross"
-                  width={16}
-                  height={16}
-                />
+          <div className="mb-4 flex flex-col items-center">
+            <TextInput
+              labelText="Claim Code"
+              placeholder="1234-5678"
+              className="mt-auto h-[66px] w-[358px] sm:mt-[103px] sm:h-[79px] sm:w-auto"
+            />
+            <div className="mt-[48px] flex gap-2">
+              <DialogClose asChild>
+                <Button
+                  variant="secondary"
+                  className="h-[42px] w-[102px] sm:h-[52px] sm:w-[116px]"
+                >
+                  Close
+                  <Image
+                    src={"/images/cross.png"}
+                    alt="cross"
+                    width={16}
+                    height={16}
+                  />
+                </Button>
+              </DialogClose>
+              <Button className="h-[42px] w-[197px] sm:h-[52px] sm:w-[227px]">
+                Claim {name}
               </Button>
-            </DialogClose>
-            <Button className="h-[52px] w-[227px]">Claim {name}</Button>
+            </div>
           </div>
         </motion.div>
       </DialogContent>
