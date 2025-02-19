@@ -10,19 +10,29 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { StickersLayout } from "./ui/StickersLayout";
+import { useState } from "react";
 
 export const ProfileModal = () => {
-  return (
+  const [isWalletConnected, setIsWalletConnected] = useState(false);
+  console.log({ isWalletConnected });
+
+  return !isWalletConnected ? (
+    <Button
+      onClick={() => setIsWalletConnected(true)}
+      className="h-[34px] w-[150px] leading-4 sm:h-[52px] sm:w-[189px]"
+    >
+      <Image src={"/images/wallet.png"} alt="wallet" width={16} height={16} />
+      Connect Wallet
+    </Button>
+  ) : (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="h-[34px] w-[150px] sm:h-[52px] sm:w-[189px] leading-4">
-          <Image
-            src={"/images/wallet.png"}
-            alt="wallet"
-            width={16}
-            height={16}
-          />
-          Connect Wallet
+        <Button
+          variant="secondary"
+          className="h-[34px] w-[140px] leading-4 sm:h-[52px] sm:w-[168px]"
+        >
+          <Image src={"/images/user.png"} alt="user" width={16} height={16} />
+          0x000...000
         </Button>
       </DialogTrigger>
       <DialogContent className="overflow-y-scroll">
@@ -73,7 +83,10 @@ export const ProfileModal = () => {
               />
             </p>
             <DialogClose asChild>
-              <Button variant="secondary" className="mt-6 sm:mt-12 h-[42px] sm:h-[52px] w-[102px] sm:w-[116px]">
+              <Button
+                variant="secondary"
+                className="mt-6 h-[42px] w-[102px] sm:mt-12 sm:h-[52px] sm:w-[116px]"
+              >
                 Close
                 <Image
                   src={"/images/cross.png"}
