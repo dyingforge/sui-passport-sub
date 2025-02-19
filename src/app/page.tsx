@@ -24,9 +24,9 @@ export default function HomePage() {
           </div>
           <ProfileModal />
         </div>
-        <div className="relative mt-6 flex min-h-[1045px] sm:min-h-[1458px] w-full flex-col items-center rounded-t-xl bg-[#001731] pl-2 pr-2">
+        <div className="relative mt-6 flex min-h-[745px] w-full flex-col items-center rounded-t-xl bg-[#02101C] pl-2 pr-2 sm:min-h-[902px]">
           <Image
-            className="absolute rounded-xl hidden sm:block top-0"
+            className="absolute top-0 hidden rounded-xl sm:block"
             src={"/images/card-background.png"}
             alt="background"
             width={1424}
@@ -34,7 +34,7 @@ export default function HomePage() {
             unoptimized
           />
           <Image
-            className="absolute top-[125px] sm:hidden block rounded-xl sm:top-0"
+            className="absolute top-0 block rounded-xl sm:top-[-234px] sm:hidden"
             src={"/images/mobile-card-background.png"}
             alt="background"
             width={374}
@@ -60,37 +60,65 @@ export default function HomePage() {
           </div>
           <PassportCreationModal />
         </div>
-        <div className="relative flex w-full flex-col items-center bg-[#001731] pl-2 pr-2">
-          <h1 className="mt-40 sm:mt-16 max-w-[358px] sm:max-w-[696px] text-center font-everett text-[40px] sm:text-[68px] leading-[48px] sm:leading-[80px]">
+        <div className="relative mt-[-32px] flex w-full flex-col items-center bg-gradient-to-t from-[#02101C] from-95% pl-2 pr-2">
+          <h1 className="mt-40 max-w-[358px] text-center font-everett text-[40px] leading-[48px] sm:mt-16 sm:max-w-[696px] sm:text-[68px] sm:leading-[80px]">
             Get your stamps
           </h1>
-          <div className="mt-6 flex max-w-[358px] sm:max-w-[580px] flex-col text-center font-everett_light text-[14px] sm:text-[16px] text-[#ABBDCC]">
+          <div className="mt-6 flex max-w-[358px] flex-col text-center font-everett_light text-[14px] text-[#ABBDCC] sm:max-w-[580px] sm:text-[16px]">
             <p>
               Here are the latest stamps awarded to the Sui community,
               celebrating achievements and contributions
             </p>
           </div>
-          <div className="mt-[37px] flex flex-col-reverse sm:flex-row sm:min-w-[900px] justify-between">
+          <div className="mt-[37px] flex flex-col-reverse justify-between sm:min-w-[900px] sm:flex-row">
+            <div className="flex flex-col">
+              <Sticker
+                url={"/images/walrus.png"}
+                name="Month of Walrus"
+                rotation={-5}
+                amountLeft={95}
+                dropsAmount={500}
+                className="hidden sm:block"
+              />
+              <Sticker
+                url={"/images/passport-pioneer.png"}
+                name="Passport Pioneer"
+                rotation={-5}
+                amountLeft={45}
+                dropsAmount={100}
+                isClaimed
+              />
+            </div>
             <Sticker
               url={"/images/cabo.png"}
               name="CABO"
               rotation={-5}
               amountLeft={95}
               dropsAmount={500}
+              className="hidden sm:block"
             />
-            <Sticker
-              url={"/images/passport-pioneer.png"}
-              name="Passport Pioneer"
-              rotation={5}
-              amountLeft={45}
-              dropsAmount={100}
-              isClaimed
-            />
+            <div className="flex flex-col">
+              <Sticker
+                url={"/images/passport-pioneer.png"}
+                name="Passport Pioneer"
+                rotation={5}
+                amountLeft={45}
+                dropsAmount={100}
+                className="hidden sm:block"
+              />
+              <Sticker
+                url={"/images/walrus.png"}
+                name="Month of Walrus"
+                rotation={5}
+                amountLeft={95}
+                dropsAmount={500}
+              />
+            </div>
           </div>
-          <h2 className="mt-[185px] max-w-[263px] text-center font-everett text-[24px] sm:text-[32px] leading-[28px] sm:leading-[38px]">
+          <h2 className="mt-[185px] max-w-[263px] text-center font-everett text-[24px] leading-[28px] sm:text-[32px] sm:leading-[38px]">
             Top Contributors
           </h2>
-          <div className="mb-[48px] sm:mb-[80px] mt-6">
+          <div className="mb-[48px] mt-6 sm:mb-[80px]">
             <ContributorsTable data={contributors} />
           </div>
         </div>

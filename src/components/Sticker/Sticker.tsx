@@ -21,6 +21,7 @@ type StickerProps = {
   amountLeft: number;
   dropsAmount: number;
   isClaimed?: boolean;
+  className?: string;
 };
 
 export const Sticker: FC<StickerProps> = (props) => {
@@ -31,6 +32,7 @@ export const Sticker: FC<StickerProps> = (props) => {
     rotation = 0,
     dropsAmount = 0,
     isClaimed,
+    className,
   } = props;
 
   const [status, setStatus] = useState<"pending" | "default" | "success">(
@@ -40,7 +42,7 @@ export const Sticker: FC<StickerProps> = (props) => {
 
   return (
     <Dialog>
-      <DialogTrigger disabled={isClaimed}>
+      <DialogTrigger className={className} disabled={isClaimed}>
         <div
           className={cn("relative flex flex-col items-center justify-center")}
           style={{
