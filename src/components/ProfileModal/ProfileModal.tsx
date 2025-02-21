@@ -8,23 +8,55 @@ import {
   DialogClose,
   DialogContent,
   DialogTrigger,
+  DialogTitle,
 } from "../ui/dialog";
 import { StickersLayout } from "./ui/StickersLayout";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useNetworkVariables } from "~/lib/contracts";
+import { useUserProfile } from "~/context/user-profile-context";
+import { removeToken } from "~/lib/jwtManager";
+import { ConnectModal, useAccounts, useCurrentAccount, useCurrentWallet } from '@mysten/dapp-kit'
 
 export const ProfileModal = () => {
-  const [isWalletConnected, setIsWalletConnected] = useState(false);
-  console.log({ isWalletConnected });
+  const { refreshProfile, userProfile } = useUserProfile()
+  const networkVariables = useNetworkVariables()
+  const accounts = useAccounts()
+  const currentAccount = useCurrentAccount()
+  const { connectionStatus } = useCurrentWallet()
+  const [open, setOpen] = useState(false)
 
-  return !isWalletConnected ? (
-    <Button
-      onClick={() => setIsWalletConnected(true)}
-      className="h-[34px] w-[150px] leading-4 sm:h-[52px] sm:w-[189px]"
-    >
-      <Image src={"/images/wallet.png"} alt="wallet" width={16} height={16} />
-      Connect Wallet
-    </Button>
-  ) : (
+  const onConnected = useCallback(async () => {
+    if (currentAccount?.address && connectionStatus === "connected") {
+      const address = currentAccount.address
+      await refreshProfile(address, networkVariables)
+    }
+    if (connectionStatus === "disconnected") {
+      await removeToken()
+    }
+  }, [currentAccount?.address, connectionStatus, networkVariables, refreshProfile])
+
+  useEffect(() => {
+    void onConnected()
+  }, [onConnected])
+
+  if (!accounts.length) {
+    return (
+      <ConnectModal
+        open={open}
+        onOpenChange={setOpen}
+        trigger={
+          <Button
+            className="h-[34px] w-[150px] leading-4 sm:h-[52px] sm:w-[189px]"
+          >
+            <Image src={"/images/wallet.png"} alt="wallet" width={16} height={16} />
+            Connect Wallet
+          </Button>
+        }
+      />
+    )
+  }
+
+  return connectionStatus === "connected" && (
     <Dialog>
       <DialogTrigger asChild>
         <Button
@@ -32,10 +64,13 @@ export const ProfileModal = () => {
           className="h-[34px] w-[140px] leading-4 sm:h-[52px] sm:w-[168px]"
         >
           <Image src={"/images/user.png"} alt="user" width={16} height={16} />
-          0x000...000
+          <p className="text-white truncate">{currentAccount?.address}</p>
         </Button>
       </DialogTrigger>
-      <DialogContent className="overflow-y-scroll">
+      <DialogContent className="overflow-y-scroll" >
+        <DialogTitle>
+          {userProfile?.name}
+        </DialogTitle>
         <motion.div
           initial={{ y: 200, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -43,9 +78,9 @@ export const ProfileModal = () => {
           transition={{ type: "spring" }}
           className="flex w-full flex-col items-center backdrop-blur-[8px] sm:h-screen"
         >
-          <StickersLayout />
+          <StickersLayout stamps={userProfile?.stamps ?? []} />
           <Image
-            src={"/images/profile-avatar-default.png"}
+            src={userProfile?.avatar ?? "/images/profile-avatar-default.png"}
             alt="avatar"
             width={150}
             height={150}
@@ -55,11 +90,10 @@ export const ProfileModal = () => {
           <div className="mb-6 mt-[32px] flex flex-col items-center gap-4 sm:mt-[48px]">
             <div className="flex flex-col items-center gap-2">
               <p className="font-inter text-[16px] leading-[20px] text-white sm:text-[20px] sm:leading-6">
-                Artem G
+                {userProfile?.name}
               </p>
               <p className="max-w-[358px] text-center font-inter text-[14px] leading-[18px] text-[#ABBDCC] sm:max-w-[405px] sm:text-[16px] sm:leading-6">
-                23 y.o. designer from San Francisco, there’s a bit more to show
-                2 lines of description
+                {userProfile?.introduction}
               </p>
             </div>
             <span className="flex gap-2">
@@ -70,7 +104,7 @@ export const ProfileModal = () => {
                 height={14}
                 className="object-contain"
               />
-              <p className="font-inter text-[14px] text-white">{2450}</p>
+              <p className="font-inter text-[14px] text-white">{userProfile?.points}</p>
             </span>
             <p className="flex cursor-pointer gap-2 font-inter text-[14px] leading-5 text-[#4DA2FF] sm:text-[16px]">
               Details on Sui Vision

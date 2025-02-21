@@ -1,4 +1,4 @@
-type StickerData = {
+export type StickerData = {
     url: string
     rotation: number,
     size: number,
