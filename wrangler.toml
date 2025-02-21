@@ -1,0 +1,8 @@
+name = "suipassport"
+main = "src/lib/worker.ts"
+compatibility_date = "2024-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "suipassport"
+database_id = "a1d62431-159e-4f66-bb7b-2cb66f1275dc"
