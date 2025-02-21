@@ -1,10 +1,23 @@
 import { AnimatedImage } from "~/components/AnimatedImage.tsx/AnimatedImage";
-import { stickers } from "../stickers";
+import { type StickerData } from "../stickers";
+import { type StampItem } from "~/types/stamp";
+import { useEffect, useState } from "react";
+import { stampsToStickerData } from "~/lib/utils";
 
-export const StickersLayout = () => {
+interface StickersLayoutProps {
+  stamps: StampItem[]
+}
+
+export const StickersLayout = ({ stamps }: StickersLayoutProps) => {
+  const [stickerData, setStickerData] = useState<StickerData[]>([])
+
+  useEffect(() => {
+    setStickerData(stampsToStickerData(stamps))
+  }, [stamps])
+
   return (
     <div className="relative flex w-auto flex-wrap justify-center gap-[16px] sm:h-screen sm:w-[1440px]">
-      {stickers.map(
+      {stickerData.map(
         ({ url, name, rotation, size, top, left = "auto", right = "auto" }) => (
           <div
             key={url}
