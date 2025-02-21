@@ -1,11 +1,37 @@
+"use client"
 import Image from "next/image";
 import { ContributorsTable } from "~/components/ContributorsTable/ContributorsTable";
-import { contributors } from "~/components/ContributorsTable/data";
 import { PassportCreationModal } from "~/components/PassportCreationModal/PassportCreationModal";
 import { ProfileModal } from "~/components/ProfileModal/ProfileModal";
 import { Sticker } from "~/components/Sticker/Sticker";
+import { usePassportsStamps } from "~/context/passports-stamps-context";
+import { useEffect, useState } from "react";
+import { useNetworkVariables } from "~/lib/contracts";
+import {  type Contributor } from "~/components/ContributorsTable/columns";
+import { useUserCrud } from "~/hooks/use-user-crud";
+import { usersToContributor } from "~/lib/utils";
 
 export default function HomePage() {
+  const { refreshPassportStamps } = usePassportsStamps()
+  const [contributors, setContributors] = useState<Contributor[]>([])
+  const networkVariables = useNetworkVariables()
+  const { fetchUsers } = useUserCrud()
+
+  useEffect(() => {
+    void refreshPassportStamps(networkVariables)
+  }, [networkVariables, refreshPassportStamps])
+
+  useEffect(() => {
+    const fetchContributors = async () => {
+      const users = await fetchUsers()
+      if (users) {
+        const contributors = usersToContributor(users)
+        setContributors(contributors)
+      }
+    }
+    void fetchContributors()
+  }, [])
+  
   return (
     <main className="flex min-h-screen flex-col items-center bg-[#02101C] text-white">
       <div className="flex w-full max-w-[375px] flex-col items-center sm:max-w-[1424px]">
