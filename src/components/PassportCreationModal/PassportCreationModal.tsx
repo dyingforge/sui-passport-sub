@@ -1,18 +1,28 @@
 "use client";
 
-import { Dialog, DialogContent, DialogTrigger } from "~/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
 import { Button } from "../ui/button";
 import { LeftPanelWithPassportCard } from "./ui/LeftPanelWithPassportCard";
 import { PassportForm } from "../PassportForm/PassportForm";
 import { useState } from "react";
-import { type ImageType } from "react-images-uploading";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
+import { type PassportFormSchema } from "~/types/passport";
 
-export const PassportCreationModal = () => {
-  const [name, setName] = useState<string | undefined>();
-  const [intro, setIntro] = useState<string | undefined>();
-  const [avatar, setAvatar] = useState<ImageType | null>(null);
+
+export interface PassportCreationModalProps {
+  onSubmit: (data: PassportFormSchema) => void;
+}
+
+export const PassportCreationModal = ({ onSubmit }: PassportCreationModalProps) => {
+  const [formData, setFormData] = useState<Partial<PassportFormSchema>>({
+    name: "",
+    introduction: "",
+    avatar: "",
+    avatarFile: undefined,
+    x: "",
+    github: "",
+  });
 
   return (
     <>
@@ -28,8 +38,8 @@ export const PassportCreationModal = () => {
           type="text"
           id="id"
           placeholder="Your Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={formData.name}
+          onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
         />
       </div>
       <Dialog>
@@ -39,17 +49,20 @@ export const PassportCreationModal = () => {
           </Button>
         </DialogTrigger>
         <DialogContent>
+          <DialogTitle className="font-everett text-[24px] leading-[24px] text-white sm:text-[32px] sm:leading-[38px]">
+          </DialogTitle>
           <div className="flex h-screen flex-col items-center overflow-y-scroll sm:flex-row">
             <LeftPanelWithPassportCard
-              avatar={avatar}
-              name={name ?? ""}
-              intro={intro ?? ""}
+              avatar={formData.avatar ?? ""}
+              name={formData.name ?? ""}
+              intro={formData.introduction ?? ""}
             />
             <PassportForm
-              onIntroChange={setIntro}
-              onNameChange={setName}
-              onAvatarChange={setAvatar}
-              name={name}
+              onSubmit={onSubmit}
+              defaultValues={formData}  
+              setAvatar={(avatar) => setFormData(prev => ({ ...prev, avatar: avatar?.dataURL }))}
+              setName={(name) => setFormData(prev => ({ ...prev, name }))}
+              setIntro={(intro) => setFormData(prev => ({ ...prev, introduction: intro }))}
             />
           </div>
         </DialogContent>
