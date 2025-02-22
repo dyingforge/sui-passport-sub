@@ -13,6 +13,27 @@ const config = {
             },
         ],
     },
+    async headers() {
+        return [
+            {
+              source: '/:path*',
+              headers: [
+                {
+                  key: 'referrer-policy',
+                  value: 'strict-origin-when-cross-origin',
+                },
+                {
+                  key: 'Cross-Origin-Opener-Policy',
+                  value: 'same-origin-allow-popups',
+                },
+                {
+                  key: 'Cross-Origin-Embedder-Policy',
+                  value: 'unsafe-none',
+                }
+              ],
+            },
+          ];
+    },
 };
 
 export default config;

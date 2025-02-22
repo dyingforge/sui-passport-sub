@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { apiFetch } from '~/lib/apiClient';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { type DbUserResponse } from '~/types/userProfile';   
 
 
@@ -27,7 +27,7 @@ export function useUserCrud(): UseUserCrudReturn {
     const [error, setError] = useState<string | null>(null);
     const [users, setUsers] = useState<DbUserResponse[]>([]);
 
-    const fetchUsers = async () => {
+    const fetchUsers = useCallback(async () => {
         try {
             setIsLoading(true);
             setError(null);
@@ -45,9 +45,9 @@ export function useUserCrud(): UseUserCrudReturn {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, []);
 
-    const fetchUserByAddress = async (address: string): Promise<DbResponse<DbUserResponse> | null> => {
+    const fetchUserByAddress = useCallback(async (address: string): Promise<DbResponse<DbUserResponse> | null> => {
         try {
             setIsLoading(true);
             setError(null);
@@ -66,7 +66,7 @@ export function useUserCrud(): UseUserCrudReturn {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, []);
 
     // const createNewUser = async (user: CreateUser): Promise<DbResponse | null> => {
     //     try {
