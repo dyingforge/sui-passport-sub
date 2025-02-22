@@ -51,7 +51,7 @@ export async function verifyClaimStamp(params: VerifyStampParams) {
         THEN 1
         ELSE 0
       END as valid
-    FROM claim_stamps 
+    FROM stamps 
     WHERE stamp_id = ?`;
 
   const result = await queryD1(sql, [
@@ -62,7 +62,6 @@ export async function verifyClaimStamp(params: VerifyStampParams) {
     current_timestamp,
     validatedParams.stamp_id
   ]);
-
   const validData = result.data as unknown as { results: [{ valid: number }] };
   const isValid = validData.results[0]?.valid === 1;
 

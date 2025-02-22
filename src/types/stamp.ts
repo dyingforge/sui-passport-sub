@@ -24,14 +24,18 @@ export interface StampGridProps {
     onPageChange?: (page: number) => void
 }
 
-
-
 export type DisplayStamp = StampItem & {
     isActive?: boolean
     eventId?: string
     isClaimable?: boolean
     claimedCount?: number
     isClaimed?: boolean
+}
+
+export interface DistributedStamps {
+    left: DisplayStamp[];
+    center: DisplayStamp[];
+    right: DisplayStamp[];
 }
 
 export type VerifyClaimStampRequest = {
@@ -73,7 +77,7 @@ export interface VerifyStampParams {
     passport_id: string;
     last_time: number;
     claim_code: string;
-  }
+}
 
 export type ClaimStampRequest = z.infer<typeof ClaimStampRequest>
 

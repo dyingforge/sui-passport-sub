@@ -7,6 +7,7 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
 import { Button } from "../ui/button";
@@ -22,6 +23,10 @@ type StickerProps = {
   dropsAmount: number;
   isClaimed?: boolean;
   className?: string;
+  isPublicClaim?: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onClaim?: (code: string) => void;
 };
 
 export const Sticker: FC<StickerProps> = (props) => {
@@ -33,15 +38,17 @@ export const Sticker: FC<StickerProps> = (props) => {
     dropsAmount = 0,
     isClaimed,
     className,
+    isPublicClaim = false,
+    onClaim,
+    open = false,
+    onOpenChange,
   } = props;
 
-  const [status, setStatus] = useState<"pending" | "default" | "success">(
-    "default",
-  );
-  const [code, setCode] = useState("");
-
+  const [status, setStatus] = useState<"pending" | "default" | "success">("default");
+  const [code, setCode] = useState(isPublicClaim ? "00000" : "");
+  
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger className={className} disabled={isClaimed}>
         <div
           className={cn("relative flex flex-col items-center justify-center")}
@@ -72,7 +79,8 @@ export const Sticker: FC<StickerProps> = (props) => {
           )}
         </div>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent aria-describedby={undefined}>
+        <DialogTitle/>         
         <motion.div
           initial={{ y: 200, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -122,51 +130,51 @@ export const Sticker: FC<StickerProps> = (props) => {
             </div>
           </div>
           <div className="mb-4 flex flex-col items-center">
-            <div
-              className={cn("relative mt-auto flex items-center sm:mt-[103px]")}
-            >
-              <TextInput
-                labelText="Claim Code"
-                placeholder="1234-5678"
-                disabled={status !== "default"}
-                className={cn(
-                  "h-[66px] w-[358px] sm:h-[79px] sm:w-auto",
-                  status === "pending" && "border-2 border-[#ABBDCC80]",
-                  status === "success" && "border-2 border-[#4DA2FF]",
+            {!isPublicClaim && (
+              <div className={cn("relative mt-auto flex items-center sm:mt-[103px]")}>
+                <TextInput
+                  label="Claim Code"
+                  placeholder="1234-5678"
+                  disabled={status !== "default"}
+                  className={cn(
+                    "h-[66px] w-[358px] sm:h-[79px] sm:w-auto",
+                    status === "pending" && "border-2 border-[#ABBDCC80]",
+                    status === "success" && "border-2 border-[#4DA2FF]",
+                  )}
+                  onChange={(e) => setCode(e.target.value)}
+                />
+                {status === "pending" && (
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+                    className="absolute right-6 z-10 h-[31px] w-[31px]"
+                  >
+                    <Image
+                      src={"/images/loader.png"}
+                      alt="loader"
+                      width={31}
+                      height={31}
+                    />
+                  </motion.div>
                 )}
-                onChange={(e) => setCode(e.target.value)}
-              />
-              {status === "pending" && (
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
-                  className="absolute right-6 z-10 h-[31px] w-[31px]"
-                >
+                {status === "success" && (
                   <Image
-                    src={"/images/loader.png"}
+                    src={"/images/circle-check.png"}
                     alt="loader"
                     width={31}
                     height={31}
+                    className="absolute right-6 z-10"
                   />
-                </motion.div>
-              )}
-              {status === "success" && (
-                <Image
-                  src={"/images/circle-check.png"}
-                  alt="loader"
-                  width={31}
-                  height={31}
-                  className="absolute right-6 z-10"
-                />
-              )}
-            </div>
+                )}
+              </div>
+            )}
             <div className="mt-[48px] flex gap-2">
               <DialogClose asChild>
                 <Button
                   variant="secondary"
                   className="h-[42px] w-[102px] sm:h-[52px] sm:w-[116px]"
                   onClick={() => {
-                    setCode("");
+                    setCode(isPublicClaim ? "00000" : "");
                     setStatus("default");
                   }}
                 >
@@ -181,13 +189,13 @@ export const Sticker: FC<StickerProps> = (props) => {
               </DialogClose>
               <Button
                 className="h-[42px] w-[197px] sm:h-[52px] sm:w-[227px]"
-                disabled={status !== "default" || !code}
+                disabled={!isPublicClaim && (status !== "default" || !code)}
                 onClick={() => {
                   setStatus("pending");
-                  setTimeout(() => setStatus("success"), 1000);
+                  onClaim?.(code);
                 }}
               >
-                Claim {name}
+                {isPublicClaim ? "Claim" : "Claim " + name}
               </Button>
             </div>
           </div>

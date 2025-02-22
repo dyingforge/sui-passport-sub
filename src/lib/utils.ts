@@ -1,9 +1,10 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { type StampItem } from "~/types/stamp"
+import type { DisplayStamp, DistributedStamps, StampItem } from "~/types/stamp"
 import { type Contributor } from "~/components/ContributorsTable/columns"
-import { type DbUserResponse } from "~/types/userProfile"
+import type { UserProfile, DbUserResponse } from "~/types/userProfile"
 import { type StickerData } from "~/components/ProfileModal/stickers"
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -42,4 +43,65 @@ export function stampsToStickerData(stamps: StampItem[]): StickerData[] {
       ...stickerConfig
     };
   });
+}
+
+export function stampsToDisplayStamps(stamps: StampItem[], userProfile: UserProfile): DisplayStamp[] {
+  const eventClaimCounts = new Map<string, number>();
+    
+    // Count existing claimed stamps per event
+    userProfile?.stamps?.forEach(userStamp => {
+        const event = userStamp.event;
+        if (event) {
+            eventClaimCounts.set(event, (eventClaimCounts.get(event) ?? 0) + 1);
+        }
+    });
+
+    return stamps.map(stamp => {
+        const isClaimed = userProfile?.stamps?.some(
+            userStamp => userStamp.name.split("#")[0] === stamp.name
+        ) ?? false;
+
+        const claimedCount = stamp.event ? (eventClaimCounts.get(stamp.event) ?? 0) : 0;
+        
+        const isClaimable = stamp.event && stamp.userCountLimit 
+            ? claimedCount < stamp.userCountLimit
+            : true;
+
+        return {
+            ...stamp,
+            isClaimed,
+            isClaimable,
+            claimedCount
+        };
+    });
+}
+
+export const STICKER_LAYOUT_CONFIG = {
+  left: [
+    { rotation: -5, amountLeft: 95, dropsAmount: 500 },
+    { rotation: -5, amountLeft: 45, dropsAmount: 100 }
+  ],
+  center: [
+    { rotation: -5, amountLeft: 95, dropsAmount: 500 }
+  ],
+  right: [
+    { rotation: 5, amountLeft: 45, dropsAmount: 100 },
+    { rotation: 5, amountLeft: 95, dropsAmount: 500 }
+  ]
+} as const;
+
+export function distributeStamps(stamps: DisplayStamp[]): DistributedStamps {
+  const columns: DistributedStamps = {
+    left: [],
+    center: [],
+    right: []
+  };
+  
+  stamps.forEach((stamp, index) => {
+    if (index % 3 === 0) columns.left.push(stamp);
+    else if (index % 3 === 1) columns.center.push(stamp);
+    else columns.right.push(stamp);
+  });
+  
+  return columns;
 }
