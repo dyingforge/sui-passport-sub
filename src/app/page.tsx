@@ -13,9 +13,11 @@ import { usersToContributor, stampsToDisplayStamps, distributeStamps, STICKER_LA
 import type { VerifyClaimStampRequest, DisplayStamp } from "~/types/stamp";
 import { useUserProfile } from "~/context/user-profile-context";
 import { useCurrentAccount } from "@mysten/dapp-kit"
-import { useBetterSignAndExecuteTransaction } from "~/hooks/use-better-tx";
+import { useBetterSignAndExecuteTransaction, useBetterSignAndExecuteTransactionWithSponsor } from "~/hooks/use-better-tx";
 import { claim_stamp } from "~/lib/contracts/claim";
 import { useStampCRUD } from "~/hooks/use-stamp-crud";
+import { type PassportFormSchema } from "~/types/passport";
+import { mint_passport } from "~/lib/contracts/passport";
 
 export default function HomePage() {
   const { stamps, refreshPassportStamps } = usePassportsStamps()
@@ -30,7 +32,11 @@ export default function HomePage() {
 
   const { handleSignAndExecuteTransaction: handleClaimStampTx } = useBetterSignAndExecuteTransaction({
     tx: claim_stamp
-})
+  })
+
+  const { handleSignAndExecuteTransactionWithSponsor, isLoading: isMintingPassportWithSponsor } = useBetterSignAndExecuteTransactionWithSponsor({
+    tx: mint_passport
+  })
 
   useEffect(() => {
     async function initializeData() {
@@ -95,6 +101,45 @@ export default function HomePage() {
     }).execute()
   }
 
+  const handlePassportCreation = async (values: PassportFormSchema) => {
+    const formData = new FormData()
+    if (!(values.avatarFile instanceof Blob)) {
+      throw new Error('Avatar file must be a valid image file')
+    }
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      formData.append('file', values.avatarFile)
+      const response = await fetch('/api/upload',{
+        method: 'POST',
+        body: formData
+      })
+      const data = await response.json()
+      values.avatar = data.url
+    } catch (error) {
+      console.error('Error uploading avatar:', error)
+      throw error // Re-throw to interrupt the method
+    }
+    await handleSignAndExecuteTransactionWithSponsor(
+      process.env.NEXT_PUBLIC_NETWORK as 'testnet' | 'mainnet', 
+      currentAccount?.address ?? '',
+      [currentAccount?.address ?? ''],
+      {
+        name: values.name,
+        avatar: values.avatar ?? '',
+        introduction: values.introduction ?? '',
+        x: values.x ?? '',
+        github: values.github ?? '',
+        email: ''
+      }
+    ).onSuccess(async () => {
+      console.log("Passport minted successfully")
+      await refreshProfile(currentAccount?.address ?? '', networkVariables)
+      await refreshPassportStamps(networkVariables)
+    }).onError((error) => {
+      console.error(`Error minting passport: ${error.message}`)
+    }).execute()
+  }
+
   const handleOpenChange = (stampId: string, isOpen: boolean) => {
     setOpenStickers(prev => ({
       ...prev,
@@ -154,7 +199,7 @@ export default function HomePage() {
               </p>
             </div>
           </div>
-          <PassportCreationModal />
+          <PassportCreationModal onSubmit={handlePassportCreation} />
         </div>
         <div className="relative mt-[-32px] flex w-full flex-col items-center bg-gradient-to-t from-[#02101C] from-95% pl-2 pr-2">
           <h1 className="mt-40 max-w-[358px] text-center font-everett text-[40px] leading-[48px] sm:mt-16 sm:max-w-[696px] sm:text-[68px] sm:leading-[80px]">

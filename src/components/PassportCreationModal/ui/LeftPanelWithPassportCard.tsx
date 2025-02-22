@@ -1,12 +1,11 @@
 import Image from "next/image";
 import { type FC } from "react";
-import { type ImageType } from "react-images-uploading";
 import { cn } from "~/lib/utils";
 
 type Props = {
   name: string;
   intro: string;
-  avatar: ImageType | null;
+  avatar: string;
 };
 
 export const LeftPanelWithPassportCard: FC<Props> = ({
@@ -35,7 +34,7 @@ export const LeftPanelWithPassportCard: FC<Props> = ({
           />
           {avatar && (
             <img
-              src={avatar.dataURL}
+              src={avatar}
               alt="avatar"
               className="absolute mt-[46px] h-[76px] w-[76px] rounded-full object-cover sm:mt-[89px] sm:h-[154px] sm:w-[154px]"
             />

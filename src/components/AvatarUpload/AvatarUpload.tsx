@@ -1,28 +1,44 @@
+/* eslint-disable @next/next/no-img-element */
 import Image from "next/image";
-import React, { type FC, useState } from "react";
+import React, { type FC } from "react";
 import ImageUploading, {
-  type ImageType,
   type ImageListType,
+  type ImageType,
 } from "react-images-uploading";
 import { Button } from "../ui/button";
+import { useFormContext } from "react-hook-form";
+import type { PassportFormSchema } from "~/types/passport";
 
-type AvatarUploadProps = {
-  onImageUpload?: (imageData: ImageType | null) => void;
-};
+interface AvatarUploadProps {
+  onAvatarChange: (avatar: ImageType | null) => void;
+}
 
-export const AvatarUpload: FC<AvatarUploadProps> = ({ onImageUpload }) => {
-  const [images, setImages] = useState([]);
+export const AvatarUpload: FC<AvatarUploadProps> = ({ onAvatarChange }) => {
+  const { setValue, watch } = useFormContext<PassportFormSchema>();
+  const avatarImage = watch("avatar");
 
   const onChange = (imageList: ImageListType) => {
-    setImages(imageList as never[]);
-    onImageUpload?.(imageList?.[0] ? imageList[0] : null);
+    if (imageList?.[0]) {
+      setValue("avatar", imageList[0].dataURL);
+      setValue("avatarFile", imageList[0].file);
+      onAvatarChange(imageList[0]);
+    } else {
+      setValue("avatar", "");
+      setValue("avatarFile", undefined);
+      onAvatarChange(null);
+    }
   };
 
   return (
-    <div className="">
-      <ImageUploading multiple value={images} onChange={onChange} maxNumber={1}>
+    <div>
+      <ImageUploading 
+        multiple={false} 
+        value={avatarImage ? [{ dataURL: avatarImage }] : []} 
+        onChange={onChange} 
+        maxNumber={1}
+        acceptType={["jpg", "jpeg", "png", "gif","webp"]}
+      >
         {({
-          imageList,
           onImageUpload,
           onImageRemoveAll,
           dragProps,
@@ -30,7 +46,7 @@ export const AvatarUpload: FC<AvatarUploadProps> = ({ onImageUpload }) => {
         }) => (
           <div className="flex items-center justify-between font-inter">
             <div className="relative flex items-center gap-4 sm:gap-6">
-              {imageList?.length === 0 && (
+              {!avatarImage && (
                 <Image
                   src={"/images/avatar-upload.png"}
                   alt="avatar-upload"
@@ -40,10 +56,10 @@ export const AvatarUpload: FC<AvatarUploadProps> = ({ onImageUpload }) => {
                   {...dragProps}
                 />
               )}
-              {imageList?.length > 0 && imageList?.[0] && (
+              {avatarImage && (
                 <div className="relative h-[66px] w-[66px] sm:h-[80px] sm:w-[80px]">
                   <img
-                    src={imageList?.[0].dataURL}
+                    src={avatarImage}
                     alt="avatar"
                     className="h-full w-full rounded-xl object-cover"
                   />
@@ -65,6 +81,7 @@ export const AvatarUpload: FC<AvatarUploadProps> = ({ onImageUpload }) => {
                   Profile Picture
                 </h2>
                 <button
+                  type="button"
                   onClick={onImageUpload}
                   {...dragProps}
                   className="flex text-[14px] text-[#ABBDCC]"
@@ -75,8 +92,16 @@ export const AvatarUpload: FC<AvatarUploadProps> = ({ onImageUpload }) => {
                 </button>
               </div>
             </div>
-            {imageList?.length > 0 && (
-              <Button variant="secondary" onClick={onImageRemoveAll}>
+            {avatarImage && (
+              <Button 
+                type="button"
+                variant="secondary" 
+                onClick={() => {
+                  onImageRemoveAll();
+                  setValue("avatar", "");
+                  setValue("avatarFile", undefined);
+                }}
+              >
                 <Image
                   src={"/images/trash.png"}
                   alt="trash"
