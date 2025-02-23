@@ -30,7 +30,7 @@ export const LeftPanelWithPassportCard: FC<Props> = ({
             width={192}
             height={192}
             alt="avatar"
-            className="mt-[35px] h-[96px] w-[96px] sm:mt-[70px] sm:h-auto sm:w-auto"
+            className="not-sm:h-[96px] not-sm:w-[96px] mt-[35px] sm:mt-[70px]"
           />
           {avatar && (
             <img

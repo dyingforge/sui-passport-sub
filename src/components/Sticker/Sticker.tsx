@@ -80,7 +80,7 @@ export const Sticker: FC<StickerProps> = (props) => {
         </div>
       </DialogTrigger>
       <DialogContent aria-describedby={undefined}>
-        <DialogTitle/>         
+        <DialogTitle />
         <motion.div
           initial={{ y: 200, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -131,9 +131,13 @@ export const Sticker: FC<StickerProps> = (props) => {
           </div>
           <div className="mb-4 flex flex-col items-center">
             {!isPublicClaim && (
-              <div className={cn("relative mt-auto flex items-center sm:mt-[103px]")}>
+              <div
+                className={cn(
+                  "relative mt-auto flex items-center sm:mt-[103px]",
+                )}
+              >
                 <TextInput
-                  label="Claim Code"
+                  labelText="Claim Code"
                   placeholder="1234-5678"
                   disabled={status !== "default"}
                   className={cn(
@@ -150,7 +154,7 @@ export const Sticker: FC<StickerProps> = (props) => {
                     className="absolute right-6 z-10 h-[31px] w-[31px]"
                   >
                     <Image
-                      src={"/images/loader.png"}
+                      src={"/images/loader.svg"}
                       alt="loader"
                       width={31}
                       height={31}

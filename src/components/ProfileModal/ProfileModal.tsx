@@ -63,12 +63,12 @@ export const ProfileModal = () => {
           variant="secondary"
           className="h-[34px] w-[140px] leading-4 sm:h-[52px] sm:w-[168px]"
         >
-          <Image src={"/images/user.png"} alt="user" width={16} height={16} />
+          <Image src={"/images/user.png"} alt="user" className="w-4 h-4" width={16} height={16} />
           <p className="text-white truncate">{currentAccount?.address}</p>
         </Button>
       </DialogTrigger>
       <DialogContent className="overflow-y-scroll" >
-        <DialogTitle>
+        <DialogTitle className="sr-only">
           {userProfile?.name}
         </DialogTitle>
         <motion.div
