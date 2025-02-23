@@ -52,7 +52,7 @@ export const AvatarUpload: FC<AvatarUploadProps> = ({ onAvatarChange }) => {
                   alt="avatar-upload"
                   width={80}
                   height={80}
-                  className="h-[66px] w-[66px] sm:h-auto sm:w-auto"
+                  className="not-sm:h-[66px] not-sm:w-[66px]"
                   {...dragProps}
                 />
               )}

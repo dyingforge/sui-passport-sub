@@ -5,7 +5,7 @@ import { PassportCreationModal } from "~/components/PassportCreationModal/Passpo
 import { ProfileModal } from "~/components/ProfileModal/ProfileModal";
 import { Sticker } from "~/components/Sticker/Sticker";
 import { usePassportsStamps } from "~/context/passports-stamps-context";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNetworkVariables } from "~/lib/contracts";
 import { type Contributor } from "~/components/ContributorsTable/columns";
 import { useUserCrud } from "~/hooks/use-user-crud";
@@ -24,7 +24,7 @@ export default function HomePage() {
   const [contributors, setContributors] = useState<Contributor[]>([])
   const [displayStamps, setDisplayStamps] = useState<DisplayStamp[]>([])
   const networkVariables = useNetworkVariables()
-  const { fetchUsers } = useUserCrud()
+  const { fetchUsers, isLoading } = useUserCrud()
   const { userProfile, refreshProfile } = useUserProfile()
   const { verifyClaimStamp } = useStampCRUD()
   const currentAccount = useCurrentAccount()
@@ -38,15 +38,16 @@ export default function HomePage() {
     tx: mint_passport
   })
 
-  useEffect(() => {
-    async function initializeData() {
-      const users = await fetchUsers();
-      if (users) {
-        setContributors(usersToContributor(users));
-      }
+  const initializeData = useCallback(async () => {
+    const users = await fetchUsers();
+    if (users) {
+      setContributors(usersToContributor(users));
     }
-    void initializeData();
   }, [fetchUsers]);
+
+  useEffect(() => {
+    void initializeData();
+  }, [initializeData]);
 
   useEffect(() => {
     if (stamps && userProfile) {
@@ -120,7 +121,7 @@ export default function HomePage() {
       throw error // Re-throw to interrupt the method
     }
     await handleSignAndExecuteTransactionWithSponsor(
-      process.env.NEXT_PUBLIC_NETWORK as 'testnet' | 'mainnet', 
+      process.env.NEXT_PUBLIC_NETWORK as 'testnet' | 'mainnet',
       currentAccount?.address ?? '',
       [currentAccount?.address ?? ''],
       {
@@ -146,6 +147,8 @@ export default function HomePage() {
       [stampId]: isOpen
     }));
   };
+
+  const handleTableRefresh = useCallback(initializeData, [initializeData]);
 
   return (
     <main className="flex min-h-screen flex-col items-center bg-[#02101C] text-white">
@@ -270,8 +273,12 @@ export default function HomePage() {
           <h2 className="mt-[185px] max-w-[263px] text-center font-everett text-[24px] leading-[28px] sm:text-[32px] sm:leading-[38px]">
             Top Contributors
           </h2>
-          <div className="mb-[48px] mt-6 sm:mb-[80px]">
-            <ContributorsTable data={contributors} />
+          <div className="mb-[48px] mt-6 w-full sm:mb-[80px]">
+            <ContributorsTable
+              data={contributors}
+              onRefresh={handleTableRefresh}
+              isLoading={isLoading}
+            />
           </div>
         </div>
       </div>

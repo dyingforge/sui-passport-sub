@@ -11,10 +11,11 @@ import { type PassportFormSchema } from "~/types/passport";
 
 
 export interface PassportCreationModalProps {
-  onSubmit: (data: PassportFormSchema) => void;
+  onSubmit: (data: PassportFormSchema) => Promise<void>;
 }
 
 export const PassportCreationModal = ({ onSubmit }: PassportCreationModalProps) => {
+  const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState<Partial<PassportFormSchema>>({
     name: "",
     introduction: "",
@@ -23,6 +24,12 @@ export const PassportCreationModal = ({ onSubmit }: PassportCreationModalProps) 
     x: "",
     github: "",
   });
+
+
+  const handleSubmit = async (data: PassportFormSchema) => {
+    await onSubmit(data);
+    setOpen(false);
+  }
 
   return (
     <>
@@ -42,13 +49,13 @@ export const PassportCreationModal = ({ onSubmit }: PassportCreationModalProps) 
           onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
         />
       </div>
-      <Dialog>
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button className="z-10 mt-12 h-[42px] w-[162px] sm:h-[52px] sm:w-[188px]">
             Get Your Passport
           </Button>
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent overlayClassName="bg-[#02101C]/50">
           <DialogTitle className="font-everett text-[24px] leading-[24px] text-white sm:text-[32px] sm:leading-[38px]">
           </DialogTitle>
           <div className="flex h-screen flex-col items-center overflow-y-scroll sm:flex-row">
@@ -58,7 +65,7 @@ export const PassportCreationModal = ({ onSubmit }: PassportCreationModalProps) 
               intro={formData.introduction ?? ""}
             />
             <PassportForm
-              onSubmit={onSubmit}
+              onSubmit={handleSubmit}
               defaultValues={formData}  
               setAvatar={(avatar) => setFormData(prev => ({ ...prev, avatar: avatar?.dataURL }))}
               setName={(name) => setFormData(prev => ({ ...prev, name }))}
