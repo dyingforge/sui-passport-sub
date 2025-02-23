@@ -1,6 +1,11 @@
-import { type DbUserResponse } from "~/types/userProfile";
 import { queryD1 } from "../dbHelper";
-import { createUserParams, type CreateUserParams } from "~/types/userProfile";
+import { createUserParams, type CreateUserParams, type DbUserResponse } from "~/types/userProfile";
+
+interface DbResponse<T> {
+    success: boolean;
+    meta: unknown;
+    results: T[];
+}
 
 export const getUsersFromDb = async () => {
     const query = `SELECT * FROM users ORDER BY created_at DESC`;
@@ -10,7 +15,7 @@ export const getUsersFromDb = async () => {
 
 export const getUserByAddress = async (address: string) => {
     const query = `SELECT * FROM users WHERE address = ?`;
-    const users = await queryD1<DbUserResponse>(query, [address]);
+    const users = await queryD1<DbResponse<DbUserResponse>>(query, [address]);
     return users;
 }
 
@@ -29,7 +34,7 @@ const createUser = async (user: CreateUserParams) => {
 export const createOrUpdateUser = async (user: CreateUserParams) => {
     const validatedUser = createUserParams.parse(user);
     const db_user = await getUserByAddress(validatedUser.address);
-    if (!db_user?.data) {
+    if (!db_user?.data?.results[0]?.address) {
         await createUser(validatedUser);
     }
     const query = `UPDATE users 
