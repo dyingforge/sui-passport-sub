@@ -27,6 +27,7 @@ export const PassportForm: FC<PassportFormProps> = ({
   setIntro
 }) => {
   const methods = useForm<PassportFormSchema>({
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     resolver: zodResolver(passportFormSchema),
     defaultValues: {
       name: "",

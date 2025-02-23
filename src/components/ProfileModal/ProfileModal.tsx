@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 "use client";
 
 import { motion } from "motion/react";
@@ -15,11 +16,12 @@ import { useCallback, useEffect, useState } from "react";
 import { useNetworkVariables } from "~/lib/contracts";
 import { useUserProfile } from "~/context/user-profile-context";
 import { removeToken } from "~/lib/jwtManager";
-import { ConnectModal, useAccounts, useCurrentAccount, useCurrentWallet } from '@mysten/dapp-kit'
+import { ConnectModal, useAccounts, useCurrentAccount, useCurrentWallet, useDisconnectWallet } from '@mysten/dapp-kit'
 
 export const ProfileModal = () => {
   const { refreshProfile, userProfile } = useUserProfile()
   const networkVariables = useNetworkVariables()
+  const { mutate: disconnect } = useDisconnectWallet()
   const accounts = useAccounts()
   const currentAccount = useCurrentAccount()
   const { connectionStatus } = useCurrentWallet()
@@ -80,7 +82,7 @@ export const ProfileModal = () => {
         >
           <StickersLayout stamps={userProfile?.stamps ?? []} />
           <Image
-            src={userProfile?.avatar ?? "/images/profile-avatar-default.png"}
+            src={userProfile?.avatar || "/images/profile-avatar-default.png"}
             alt="avatar"
             width={150}
             height={150}
@@ -116,20 +118,33 @@ export const ProfileModal = () => {
                 className="object-contain"
               />
             </p>
-            <DialogClose asChild>
+            <div className="flex gap-2">
+              <DialogClose asChild>
+                <Button
+                  variant="secondary"
+                  className="mt-6 h-[42px] w-[102px] sm:mt-12 sm:h-[52px] sm:w-[116px]"
+                >
+                  Close
+                  <Image
+                    src={"/images/cross.png"}
+                    alt="cross"
+                    width={16}
+                    height={16}
+                  />
+                </Button>
+              </DialogClose>
               <Button
                 variant="secondary"
                 className="mt-6 h-[42px] w-[102px] sm:mt-12 sm:h-[52px] sm:w-[116px]"
+                onClick={() => {
+                  void disconnect()
+                  setOpen(false)
+                }}
               >
-                Close
-                <Image
-                  src={"/images/cross.png"}
-                  alt="cross"
-                  width={16}
-                  height={16}
-                />
+                Disconnect
               </Button>
-            </DialogClose>
+            </div>
+
           </div>
         </motion.div>
       </DialogContent>
