@@ -9,10 +9,10 @@ import { useCallback, useEffect, useState } from "react";
 import { useNetworkVariables } from "~/lib/contracts";
 import { type Contributor } from "~/components/ContributorsTable/columns";
 import { useUserCrud } from "~/hooks/use-user-crud";
-import { usersToContributor, stampsToDisplayStamps, distributeStamps, STICKER_LAYOUT_CONFIG } from "~/lib/utils";
+import { usersToContributor, stampsToDisplayStamps, distributeStamps, STICKER_LAYOUT_CONFIG, stampsToDisplayStampsWithOutPassport } from "~/lib/utils";
 import type { VerifyClaimStampRequest, DisplayStamp } from "~/types/stamp";
 import { useUserProfile } from "~/context/user-profile-context";
-import { useCurrentAccount } from "@mysten/dapp-kit"
+import { useCurrentAccount, useCurrentWallet } from "@mysten/dapp-kit"
 import { useBetterSignAndExecuteTransaction, useBetterSignAndExecuteTransactionWithSponsor } from "~/hooks/use-better-tx";
 import { claim_stamp } from "~/lib/contracts/claim";
 import { useStampCRUD } from "~/hooks/use-stamp-crud";
@@ -28,6 +28,7 @@ export default function HomePage() {
   const { userProfile, refreshProfile } = useUserProfile()
   const { verifyClaimStamp } = useStampCRUD()
   const currentAccount = useCurrentAccount()
+  const { connectionStatus } = useCurrentWallet()
   const [openStickers, setOpenStickers] = useState<Record<string, boolean>>({});
 
   const { handleSignAndExecuteTransaction: handleClaimStampTx } = useBetterSignAndExecuteTransaction({
@@ -50,8 +51,11 @@ export default function HomePage() {
   }, [initializeData]);
 
   useEffect(() => {
+    setDisplayStamps([]);
     if (stamps && userProfile) {
       setDisplayStamps(stampsToDisplayStamps(stamps, userProfile));
+    }else if(stamps) {
+      setDisplayStamps(stampsToDisplayStampsWithOutPassport(stamps))
     }
   }, [stamps, userProfile]);
 
@@ -59,7 +63,7 @@ export default function HomePage() {
     if (networkVariables) {
       void refreshPassportStamps(networkVariables);
     }
-  }, [networkVariables, refreshPassportStamps]);
+  }, [networkVariables, refreshPassportStamps,connectionStatus]);
 
   const handleClaimStampClick = async (code: string, stamp: DisplayStamp) => {
     if (!userProfile?.passport_id) {
@@ -224,7 +228,7 @@ export default function HomePage() {
                   rotation={STICKER_LAYOUT_CONFIG.left[index]?.rotation ?? 0}
                   amountLeft={STICKER_LAYOUT_CONFIG.left[index]?.amountLeft ?? 0}
                   dropsAmount={STICKER_LAYOUT_CONFIG.left[index]?.dropsAmount ?? 0}
-                  isClaimed={stamp.isClaimed}
+                  isClaimed={stamp.isClaimed ?? false}
                   isPublicClaim={stamp.publicClaim}
                   className="hidden sm:block"
                   open={openStickers[stamp.id] ?? false}
@@ -242,7 +246,7 @@ export default function HomePage() {
                   rotation={STICKER_LAYOUT_CONFIG.center[index]?.rotation ?? 0}
                   amountLeft={STICKER_LAYOUT_CONFIG.center[index]?.amountLeft ?? 0}
                   dropsAmount={STICKER_LAYOUT_CONFIG.center[index]?.dropsAmount ?? 0}
-                  isClaimed={stamp.isClaimed}
+                  isClaimed={stamp.isClaimed ?? false}
                   isPublicClaim={stamp.publicClaim}
                   className="hidden sm:block"
                   open={openStickers[stamp.id] ?? false}
@@ -260,7 +264,7 @@ export default function HomePage() {
                   rotation={STICKER_LAYOUT_CONFIG.right[index]?.rotation ?? 0}
                   amountLeft={STICKER_LAYOUT_CONFIG.right[index]?.amountLeft ?? 0}
                   dropsAmount={STICKER_LAYOUT_CONFIG.right[index]?.dropsAmount ?? 0}
-                  isClaimed={stamp.isClaimed}
+                  isClaimed={stamp.isClaimed ?? false}
                   isPublicClaim={stamp.publicClaim}
                   className="hidden sm:block"
                   open={openStickers[stamp.id] ?? false}

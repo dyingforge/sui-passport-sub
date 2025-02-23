@@ -26,6 +26,7 @@ export const ProfileModal = () => {
   const currentAccount = useCurrentAccount()
   const { connectionStatus } = useCurrentWallet()
   const [open, setOpen] = useState(false)
+  const { clearProfile } = useUserProfile()
 
   const onConnected = useCallback(async () => {
     if (currentAccount?.address && connectionStatus === "connected") {
@@ -36,6 +37,12 @@ export const ProfileModal = () => {
       await removeToken()
     }
   }, [currentAccount?.address, connectionStatus, networkVariables, refreshProfile])
+
+  const handleDisconnect = useCallback(() => {
+    void disconnect()
+    setOpen(false)
+    clearProfile()
+  }, [disconnect, setOpen, clearProfile])
 
   useEffect(() => {
     void onConnected()
@@ -136,10 +143,7 @@ export const ProfileModal = () => {
               <Button
                 variant="secondary"
                 className="mt-6 h-[42px] w-[102px] sm:mt-12 sm:h-[52px] sm:w-[116px]"
-                onClick={() => {
-                  void disconnect()
-                  setOpen(false)
-                }}
+                onClick={handleDisconnect}
               >
                 Disconnect
               </Button>
