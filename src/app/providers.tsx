@@ -6,9 +6,7 @@ import { networkConfig, network } from "~/lib/contracts"
 import "@mysten/dapp-kit/dist/index.css";
 import { UserProfileProvider } from "~/context/user-profile-context";
 import { PassportsStampsProvider } from "~/context/passports-stamps-context";
-import { registerStashedWallet } from '@mysten/zksend';
- 
-registerStashedWallet('Sui Passport');
+
 
 const queryClient = new QueryClient();
 
