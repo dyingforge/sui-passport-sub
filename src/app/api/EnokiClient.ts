@@ -6,7 +6,7 @@ const serverConfigSchema = z.object({
 });
 
 const serverConfig = serverConfigSchema.parse({
-    ENOKI_SECRET_KEY: process.env.ENOKI_SECRET_KEY,
+    ENOKI_SECRET_KEY: process.env.ENOKI_SECRET_KEY ?? '',
 });
 
 export const enokiClient = new EnokiClient({
