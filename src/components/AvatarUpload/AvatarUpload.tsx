@@ -31,12 +31,12 @@ export const AvatarUpload: FC<AvatarUploadProps> = ({ onAvatarChange }) => {
 
   return (
     <div>
-      <ImageUploading 
-        multiple={false} 
-        value={avatarImage ? [{ dataURL: avatarImage }] : []} 
-        onChange={onChange} 
+      <ImageUploading
+        multiple={false}
+        value={avatarImage ? [{ dataURL: avatarImage }] : []}
+        onChange={onChange}
         maxNumber={1}
-        acceptType={["jpg", "jpeg", "png", "gif","webp"]}
+        acceptType={["jpg", "jpeg", "png", "gif", "webp"]}
       >
         {({
           onImageUpload,
@@ -52,7 +52,7 @@ export const AvatarUpload: FC<AvatarUploadProps> = ({ onAvatarChange }) => {
                   alt="avatar-upload"
                   width={80}
                   height={80}
-                  className="not-sm:h-[66px] not-sm:w-[66px]"
+                  className="max-sm:h-[66px] max-sm:w-[66px]"
                   {...dragProps}
                 />
               )}
@@ -93,9 +93,9 @@ export const AvatarUpload: FC<AvatarUploadProps> = ({ onAvatarChange }) => {
               </div>
             </div>
             {avatarImage && (
-              <Button 
+              <Button
                 type="button"
-                variant="secondary" 
+                variant="secondary"
                 onClick={() => {
                   onImageRemoveAll();
                   setValue("avatar", "");

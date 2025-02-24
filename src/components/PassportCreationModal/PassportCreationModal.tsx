@@ -59,7 +59,7 @@ export const PassportCreationModal = ({ onSubmit, isLoading }: PassportCreationM
         <DialogContent overlayClassName="bg-[#02101C]/50">
           <DialogTitle className="font-everett text-[24px] leading-[24px] text-white sm:text-[32px] sm:leading-[38px]">
           </DialogTitle>
-          <div className="flex h-screen flex-col items-center overflow-y-scroll sm:flex-row">
+          <div className="flex h-svh flex-col items-center overflow-y-scroll sm:flex-row">
             <LeftPanelWithPassportCard
               avatar={formData.avatar ?? ""}
               name={formData.name ?? ""}

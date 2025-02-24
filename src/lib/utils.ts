@@ -27,12 +27,12 @@ export function stampsToStickerData(stamps: StampItem[]): StickerData[] {
   return stamps.map((stamp, index) => {
     const position = index % 6;
     const stickerConfigs = {
-      0: { rotation: -5, size: 240, top: 0, left: 134 },
-      1: { rotation: 5, size: 240, top: 252, left: 24 },
-      2: { rotation: -5, size: 240, top: 181, left: 357 },
-      3: { rotation: -5, size: 240, top: 13, right: 495 },
-      4: { rotation: 5, size: 240, top: 20, right: 64 },
-      5: { rotation: 5, size: 240, top: 236, right: 230 }
+      0: { rotation: -5, size: 240, top: 0, left: 0 },
+      1: { rotation: 5, size: 240, top: 13, left: 400 },
+      2: { rotation: 5, size: 240, top: 20, right: 20 },
+      3: { rotation: -5, size: 240, top: 240, left: 200 },
+      4: { rotation: -5, size: 240, top: 252, left: 600 },
+      5: { rotation: 5, size: 240, top: 200, left: -50 },
     } as const;
 
     const stickerConfig = stickerConfigs[position as keyof typeof stickerConfigs];
