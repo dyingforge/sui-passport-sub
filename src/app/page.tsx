@@ -55,7 +55,7 @@ export default function HomePage() {
     setDisplayStamps([]);
     if (stamps && userProfile) {
       setDisplayStamps(stampsToDisplayStamps(stamps, userProfile));
-    }else if(stamps) {
+    } else if (stamps) {
       setDisplayStamps(stampsToDisplayStampsWithOutPassport(stamps))
     }
   }, [stamps, userProfile]);
@@ -64,7 +64,7 @@ export default function HomePage() {
     if (networkVariables) {
       void refreshPassportStamps(networkVariables);
     }
-  }, [networkVariables, refreshPassportStamps,connectionStatus]);
+  }, [networkVariables, refreshPassportStamps, connectionStatus]);
 
   const handleClaimStampClick = async (code: string, stamp: DisplayStamp) => {
     if (!userProfile?.passport_id) {
@@ -116,7 +116,7 @@ export default function HomePage() {
       try {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         formData.append('file', values.avatarFile)
-        const response = await fetch('/api/upload',{
+        const response = await fetch('/api/upload', {
           method: 'POST',
           body: formData
         })
@@ -175,7 +175,7 @@ export default function HomePage() {
           </div>
           <ProfileModal />
         </div>
-        <div className="relative mt-6 flex min-h-[745px] w-full flex-col items-center rounded-t-xl bg-[#02101C] pl-2 pr-2 sm:min-h-[902px]">
+        {!userProfile?.passport_id && <div className="relative mt-6 flex min-h-[745px] w-full flex-col items-center rounded-t-xl bg-[#02101C] pl-2 pr-2 sm:min-h-[902px]">
           <Image
             className="absolute top-0 hidden rounded-xl sm:block"
             src={"/images/card-background.png"}
@@ -209,20 +209,16 @@ export default function HomePage() {
               </p>
             </div>
           </div>
-          {!userProfile?.passport_id ? <PassportCreationModal onSubmit={handlePassportCreation} isLoading={isMintingPassportWithSponsor} /> : <LeftPanelWithPassportCard
-              avatar={userProfile?.avatar ?? ""}
-              name={userProfile?.name ?? ""}
-              intro={userProfile?.introduction ?? ""}
-            />  }
+          <PassportCreationModal onSubmit={handlePassportCreation} isLoading={isMintingPassportWithSponsor} />
         </div>
+        }
         <div className="relative mt-[-32px] flex w-full flex-col items-center bg-gradient-to-t from-[#02101C] from-95% pl-2 pr-2">
           <h1 className="mt-40 max-w-[358px] text-center font-everett text-[40px] leading-[48px] sm:mt-16 sm:max-w-[696px] sm:text-[68px] sm:leading-[80px]">
             Get your stamps
           </h1>
           <div className="mt-6 flex max-w-[358px] flex-col text-center font-everett_light text-[14px] text-[#ABBDCC] sm:max-w-[580px] sm:text-[16px]">
             <p>
-              Here are the latest stamps awarded to the Sui community,
-              celebrating achievements and contributions
+            « The Sui community flourishes because of passionate members like you. Through content and events, your contributions help elevate our Sui Community. Connect your wallet today and claim your first stamp! »
             </p>
           </div>
           <div className="mt-[37px] flex flex-col-reverse justify-between sm:min-w-[900px] sm:flex-row">
