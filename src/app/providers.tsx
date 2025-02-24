@@ -19,7 +19,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
                         <WalletProvider autoConnect stashedWallet={
                             {
                                 name: "Sui Passport",
-                                network: "mainnet",
+                                network: network,
                             }
                         }>
                             {children}
