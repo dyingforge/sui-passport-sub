@@ -7,6 +7,7 @@ import { networkConfig, network } from "~/lib/contracts"
 import "@mysten/dapp-kit/dist/index.css";
 import { UserProfileProvider } from "~/context/user-profile-context";
 import { PassportsStampsProvider } from "~/context/passports-stamps-context";
+import { Toaster } from "~/components/ui/sonner";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
                                 network: network,
                             }
                         }>
+                            <Toaster position="top-right" />
                             {children}
                         </WalletProvider>
                     </UserProfileProvider>

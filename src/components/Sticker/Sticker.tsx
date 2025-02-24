@@ -16,6 +16,7 @@ import { AnimatedImage } from "../AnimatedImage.tsx/AnimatedImage";
 import { cn } from "~/lib/utils";
 
 type StickerProps = {
+  stampId: string;
   url: string;
   name: string;
   rotation: number;
@@ -31,11 +32,11 @@ type StickerProps = {
 
 export const Sticker: FC<StickerProps> = (props) => {
   const {
+    stampId,
     amountLeft = 0,
     url,
     name,
     rotation = 0,
-    dropsAmount = 0,
     isClaimed,
     className,
     isPublicClaim = false,
@@ -44,9 +45,11 @@ export const Sticker: FC<StickerProps> = (props) => {
     onOpenChange,
   } = props;
 
-  const [status, setStatus] = useState<"pending" | "default" | "success">("default");
+  const [status, setStatus] = useState<"pending" | "default" | "success">(
+    "default",
+  );
   const [code, setCode] = useState(isPublicClaim ? "00000" : "");
-  
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger className={className} disabled={isClaimed}>
@@ -61,7 +64,10 @@ export const Sticker: FC<StickerProps> = (props) => {
             alt="sticker"
             width={360}
             height={360}
-            className={cn(`h-[240px] w-[240px] cursor-pointer sm:h-[360px] sm:w-[360px]`, isClaimed && "grayscale(100%) opacity-40")}
+            className={cn(
+              `h-[240px] w-[240px] cursor-pointer sm:h-[360px] sm:w-[360px]`,
+              { "grayscale(100%) cursor-default opacity-40": isClaimed },
+            )}
             quality={100}
             disabled={Boolean(isClaimed)}
           />
@@ -93,7 +99,11 @@ export const Sticker: FC<StickerProps> = (props) => {
               className="h-[360px] w-[360px] sm:h-[480px] sm:w-[480px]"
             />
             <div className="absolute bottom-0 flex flex-col items-center gap-4">
-              <p className="flex cursor-pointer gap-2 font-inter text-[14px] leading-5 text-[#4DA2FF] sm:text-[16px]">
+              <a
+                className="flex cursor-pointer gap-2 font-inter text-[14px] leading-5 text-[#4DA2FF] sm:text-[16px]"
+                href={`https://testnet.suivision.xyz/object/${stampId}`}
+                target="_blank"
+              >
                 Details on Sui Vision
                 <Image
                   src={"/images/arrow-up-right.png"}
@@ -102,25 +112,13 @@ export const Sticker: FC<StickerProps> = (props) => {
                   alt="arrow"
                   className="object-contain"
                 />
-              </p>
+              </a>
               <span className="flex gap-2">
                 <p className="font-inter text-[16px] leading-6 text-white sm:text-[20px]">
                   {name}
                 </p>
                 <p className="font-inter text-[16px] leading-6 text-[#ABBDCC] sm:text-[20px]">
                   {amountLeft} left
-                </p>
-              </span>
-              <span className="flex gap-2">
-                <Image
-                  src={"/images/drop.png"}
-                  alt="drop-icon"
-                  width={14}
-                  height={14}
-                  className="object-contain"
-                />
-                <p className="font-inter text-[14px] text-[#ABBDCC] sm:text-[16px]">
-                  {dropsAmount}
                 </p>
               </span>
             </div>
@@ -146,7 +144,11 @@ export const Sticker: FC<StickerProps> = (props) => {
                 {status === "pending" && (
                   <motion.div
                     animate={{ rotate: 360 }}
-                    transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 2,
+                      ease: "linear",
+                    }}
                     className="absolute right-6 z-10 h-[31px] w-[31px]"
                   >
                     <Image

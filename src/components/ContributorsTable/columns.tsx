@@ -16,7 +16,9 @@ export type Contributor = {
   points: number;
 };
 
-export const columns: ColumnDef<Contributor>[] = [
+export const getColumns = (
+  onUserClick: (address: string) => () => void,
+): ColumnDef<Contributor>[] => [
   {
     accessorKey: "place",
     size: 98,
@@ -152,17 +154,12 @@ export const columns: ColumnDef<Contributor>[] = [
     cell: ({ cell }) => (
       <div className="relative flex items-center gap-6">
         <span className="absolute flex gap-2">
-          <Image
-            src={"/images/drop.png"}
-            alt="drop-icon"
-            width={14}
-            height={14}
-          />
           <p className="text-[#ABBDCC]">{cell.getValue() as string}</p>
         </span>
         <Button
           variant="secondary"
           className="absolute right-0 hidden h-[44px] w-[109px] items-center gap-2"
+          onClick={onUserClick(cell.row.original.address)}
         >
           Details
           <Image

@@ -9,7 +9,9 @@ import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { type Contributor } from "./columns";
 
-export const mobileColumns: ColumnDef<Contributor>[] = [
+export const getMobileColumns = (
+  onUserClick: (address: string) => () => void,
+): ColumnDef<Contributor>[] => [
   {
     accessorKey: "place",
     size: 48,
@@ -138,14 +140,7 @@ export const mobileColumns: ColumnDef<Contributor>[] = [
     size: 56,
     cell: ({ cell }) => (
       <div className="relative flex items-center gap-6">
-        <span className="absolute flex gap-2 items-center">
-          <Image
-            src={"/images/drop.png"}
-            alt="drop-icon"
-            width={14}
-            height={14}
-            className="h-[15px] w-[12px]"
-          />
+        <span className="absolute flex items-center gap-2">
           <p className="text-[#ABBDCC]">{cell.getValue() as string}</p>
           <Image
             src={"/images/chevron-right.png"}
@@ -153,20 +148,9 @@ export const mobileColumns: ColumnDef<Contributor>[] = [
             width={16}
             height={16}
             className="h-[16px] w-[16px]"
+            onClick={onUserClick(cell.row.original.address)}
           />
         </span>
-        <Button
-          variant="secondary"
-          className="absolute right-0 hidden h-[44px] w-[109px] items-center gap-2"
-        >
-          Details
-          <Image
-            src={"/images/arrow-right.png"}
-            alt="drop-icon"
-            width={14}
-            height={14}
-          />
-        </Button>
       </div>
     ),
   },
