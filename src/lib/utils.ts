@@ -76,6 +76,17 @@ export function stampsToDisplayStamps(stamps: StampItem[], userProfile: UserProf
     });
 }
 
+export function stampsToDisplayStampsWithOutPassport(stamps: StampItem[]): DisplayStamp[] {
+  return stamps.map(stamp => {
+    return {
+      ...stamp,
+      isClaimed: false,
+      isClaimable: false,
+      claimedCount: 0
+    };
+  });
+}
+
 export const STICKER_LAYOUT_CONFIG = {
   left: [
     { rotation: -5, amountLeft: 95, dropsAmount: 500 },

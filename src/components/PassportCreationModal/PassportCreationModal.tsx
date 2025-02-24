@@ -12,9 +12,10 @@ import { type PassportFormSchema } from "~/types/passport";
 
 export interface PassportCreationModalProps {
   onSubmit: (data: PassportFormSchema) => Promise<void>;
+  isLoading: boolean;
 }
 
-export const PassportCreationModal = ({ onSubmit }: PassportCreationModalProps) => {
+export const PassportCreationModal = ({ onSubmit, isLoading }: PassportCreationModalProps) => {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState<Partial<PassportFormSchema>>({
     name: "",
@@ -65,6 +66,7 @@ export const PassportCreationModal = ({ onSubmit }: PassportCreationModalProps) 
               intro={formData.introduction ?? ""}
             />
             <PassportForm
+              isLoading={isLoading}
               onSubmit={handleSubmit}
               defaultValues={formData}  
               setAvatar={(avatar) => setFormData(prev => ({ ...prev, avatar: avatar?.dataURL }))}

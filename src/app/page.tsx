@@ -9,15 +9,16 @@ import { useCallback, useEffect, useState } from "react";
 import { useNetworkVariables } from "~/lib/contracts";
 import { type Contributor } from "~/components/ContributorsTable/columns";
 import { useUserCrud } from "~/hooks/use-user-crud";
-import { usersToContributor, stampsToDisplayStamps, distributeStamps, STICKER_LAYOUT_CONFIG } from "~/lib/utils";
+import { usersToContributor, stampsToDisplayStamps, distributeStamps, STICKER_LAYOUT_CONFIG, stampsToDisplayStampsWithOutPassport } from "~/lib/utils";
 import type { VerifyClaimStampRequest, DisplayStamp } from "~/types/stamp";
 import { useUserProfile } from "~/context/user-profile-context";
-import { useCurrentAccount } from "@mysten/dapp-kit"
+import { useCurrentAccount, useCurrentWallet } from "@mysten/dapp-kit"
 import { useBetterSignAndExecuteTransaction, useBetterSignAndExecuteTransactionWithSponsor } from "~/hooks/use-better-tx";
 import { claim_stamp } from "~/lib/contracts/claim";
 import { useStampCRUD } from "~/hooks/use-stamp-crud";
 import { type PassportFormSchema } from "~/types/passport";
 import { mint_passport } from "~/lib/contracts/passport";
+import { LeftPanelWithPassportCard } from "~/components/PassportCreationModal/ui/LeftPanelWithPassportCard";
 
 export default function HomePage() {
   const { stamps, refreshPassportStamps } = usePassportsStamps()
@@ -28,6 +29,7 @@ export default function HomePage() {
   const { userProfile, refreshProfile } = useUserProfile()
   const { verifyClaimStamp } = useStampCRUD()
   const currentAccount = useCurrentAccount()
+  const { connectionStatus } = useCurrentWallet()
   const [openStickers, setOpenStickers] = useState<Record<string, boolean>>({});
 
   const { handleSignAndExecuteTransaction: handleClaimStampTx } = useBetterSignAndExecuteTransaction({
@@ -50,8 +52,11 @@ export default function HomePage() {
   }, [initializeData]);
 
   useEffect(() => {
+    setDisplayStamps([]);
     if (stamps && userProfile) {
       setDisplayStamps(stampsToDisplayStamps(stamps, userProfile));
+    }else if(stamps) {
+      setDisplayStamps(stampsToDisplayStampsWithOutPassport(stamps))
     }
   }, [stamps, userProfile]);
 
@@ -59,7 +64,7 @@ export default function HomePage() {
     if (networkVariables) {
       void refreshPassportStamps(networkVariables);
     }
-  }, [networkVariables, refreshPassportStamps]);
+  }, [networkVariables, refreshPassportStamps,connectionStatus]);
 
   const handleClaimStampClick = async (code: string, stamp: DisplayStamp) => {
     if (!userProfile?.passport_id) {
@@ -104,21 +109,23 @@ export default function HomePage() {
 
   const handlePassportCreation = async (values: PassportFormSchema) => {
     const formData = new FormData()
-    if (!(values.avatarFile instanceof Blob)) {
-      throw new Error('Avatar file must be a valid image file')
-    }
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      formData.append('file', values.avatarFile)
-      const response = await fetch('/api/upload',{
-        method: 'POST',
-        body: formData
-      })
-      const data = await response.json()
-      values.avatar = data.url
-    } catch (error) {
-      console.error('Error uploading avatar:', error)
-      throw error // Re-throw to interrupt the method
+    if (values.avatarFile) {
+      if (!(values.avatarFile instanceof Blob)) {
+        throw new Error('Avatar file must be a valid image file')
+      }
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        formData.append('file', values.avatarFile)
+        const response = await fetch('/api/upload',{
+          method: 'POST',
+          body: formData
+        })
+        const data = await response.json()
+        values.avatar = data.url
+      } catch (error) {
+        console.error('Error uploading avatar:', error)
+        throw error // Re-throw to interrupt the method
+      }
     }
     await handleSignAndExecuteTransactionWithSponsor(
       process.env.NEXT_PUBLIC_NETWORK as 'testnet' | 'mainnet',
@@ -202,7 +209,11 @@ export default function HomePage() {
               </p>
             </div>
           </div>
-          <PassportCreationModal onSubmit={handlePassportCreation} />
+          {!userProfile?.passport_id ? <PassportCreationModal onSubmit={handlePassportCreation} isLoading={isMintingPassportWithSponsor} /> : <LeftPanelWithPassportCard
+              avatar={userProfile?.avatar ?? ""}
+              name={userProfile?.name ?? ""}
+              intro={userProfile?.introduction ?? ""}
+            />  }
         </div>
         <div className="relative mt-[-32px] flex w-full flex-col items-center bg-gradient-to-t from-[#02101C] from-95% pl-2 pr-2">
           <h1 className="mt-40 max-w-[358px] text-center font-everett text-[40px] leading-[48px] sm:mt-16 sm:max-w-[696px] sm:text-[68px] sm:leading-[80px]">
@@ -224,7 +235,7 @@ export default function HomePage() {
                   rotation={STICKER_LAYOUT_CONFIG.left[index]?.rotation ?? 0}
                   amountLeft={STICKER_LAYOUT_CONFIG.left[index]?.amountLeft ?? 0}
                   dropsAmount={STICKER_LAYOUT_CONFIG.left[index]?.dropsAmount ?? 0}
-                  isClaimed={stamp.isClaimed}
+                  isClaimed={stamp.isClaimed ?? false}
                   isPublicClaim={stamp.publicClaim}
                   className="hidden sm:block"
                   open={openStickers[stamp.id] ?? false}
@@ -242,7 +253,7 @@ export default function HomePage() {
                   rotation={STICKER_LAYOUT_CONFIG.center[index]?.rotation ?? 0}
                   amountLeft={STICKER_LAYOUT_CONFIG.center[index]?.amountLeft ?? 0}
                   dropsAmount={STICKER_LAYOUT_CONFIG.center[index]?.dropsAmount ?? 0}
-                  isClaimed={stamp.isClaimed}
+                  isClaimed={stamp.isClaimed ?? false}
                   isPublicClaim={stamp.publicClaim}
                   className="hidden sm:block"
                   open={openStickers[stamp.id] ?? false}
@@ -260,7 +271,7 @@ export default function HomePage() {
                   rotation={STICKER_LAYOUT_CONFIG.right[index]?.rotation ?? 0}
                   amountLeft={STICKER_LAYOUT_CONFIG.right[index]?.amountLeft ?? 0}
                   dropsAmount={STICKER_LAYOUT_CONFIG.right[index]?.dropsAmount ?? 0}
-                  isClaimed={stamp.isClaimed}
+                  isClaimed={stamp.isClaimed ?? false}
                   isPublicClaim={stamp.publicClaim}
                   className="hidden sm:block"
                   open={openStickers[stamp.id] ?? false}

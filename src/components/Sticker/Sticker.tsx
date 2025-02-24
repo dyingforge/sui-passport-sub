@@ -61,13 +61,9 @@ export const Sticker: FC<StickerProps> = (props) => {
             alt="sticker"
             width={360}
             height={360}
-            className="h-[240px] w-[240px] cursor-pointer sm:h-[360px] sm:w-[360px]"
+            className={cn(`h-[240px] w-[240px] cursor-pointer sm:h-[360px] sm:w-[360px]`, isClaimed && "grayscale(100%) opacity-40")}
             quality={100}
             disabled={Boolean(isClaimed)}
-            style={{
-              filter: isClaimed ? "grayscale(100%)" : "none",
-              opacity: isClaimed ? "0.4" : "none",
-            }}
           />
           <p className="absolute bottom-0 font-everett uppercase text-[#ABBDCC]">
             {name}
