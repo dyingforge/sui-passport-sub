@@ -20,11 +20,11 @@ const config = {
               headers: [
                 {
                   key: 'referrer-policy',
-                  value: 'no-referrer',
+                  value: 'strict-origin-when-cross-origin',
                 },
                 {
                   key: 'Cross-Origin-Opener-Policy',
-                  value: 'same-origin',
+                  value: 'unsafe-none',
                 },
                 {
                   key: 'Cross-Origin-Embedder-Policy',
