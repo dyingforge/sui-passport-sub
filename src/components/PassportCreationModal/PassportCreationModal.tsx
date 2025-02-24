@@ -1,6 +1,11 @@
 "use client";
 
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog";
 import { Button } from "../ui/button";
 import { LeftPanelWithPassportCard } from "./ui/LeftPanelWithPassportCard";
 import { PassportForm } from "../PassportForm/PassportForm";
@@ -8,14 +13,19 @@ import { useState } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { type PassportFormSchema } from "~/types/passport";
-
+import { toast } from "sonner";
+import { useAccounts } from "@mysten/dapp-kit";
 
 export interface PassportCreationModalProps {
   onSubmit: (data: PassportFormSchema) => Promise<void>;
   isLoading: boolean;
 }
 
-export const PassportCreationModal = ({ onSubmit, isLoading }: PassportCreationModalProps) => {
+export const PassportCreationModal = ({
+  onSubmit,
+  isLoading,
+}: PassportCreationModalProps) => {
+  const accounts = useAccounts();
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState<Partial<PassportFormSchema>>({
     name: "",
@@ -26,11 +36,14 @@ export const PassportCreationModal = ({ onSubmit, isLoading }: PassportCreationM
     github: "",
   });
 
-
   const handleSubmit = async (data: PassportFormSchema) => {
+    if (!accounts.length) {
+      toast.warning("Wallet is not connected", { duration: 5000 });
+      return;
+    }
     await onSubmit(data);
     setOpen(false);
-  }
+  };
 
   return (
     <>
