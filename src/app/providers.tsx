@@ -7,18 +7,14 @@ import { networkConfig, network } from "~/lib/contracts"
 import "@mysten/dapp-kit/dist/index.css";
 import { UserProfileProvider } from "~/context/user-profile-context";
 import { PassportsStampsProvider } from "~/context/passports-stamps-context";
+import { registerStashedWallet } from '@mysten/zksend';
+ 
+registerStashedWallet('Sui Passport', {
+    network: network,
+});
 
 
 const queryClient = new QueryClient();
-
-if (typeof window !== 'undefined') {
-    const originalOpen = window.open;
-    window.open = function(...args) {
-      const features = args[2] || '';
-      const updatedFeatures = features ? `${features},noopener` : 'noopener';
-      return originalOpen.call(this, args[0], args[1], updatedFeatures);
-    };
-  }
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -26,12 +22,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <SuiClientProvider networks={networkConfig} defaultNetwork={network}>
           <PassportsStampsProvider>
             <UserProfileProvider>
-              <WalletProvider autoConnect stashedWallet={
-                {
-                  name: "Sui Passport",
-                  network: network,
-                }
-              }>
+              <WalletProvider autoConnect>
               {children}
             </WalletProvider>
             </UserProfileProvider>
