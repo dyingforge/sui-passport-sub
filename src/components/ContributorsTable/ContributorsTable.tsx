@@ -134,10 +134,10 @@ export function ContributorsTable<TData, TValue>({
         </div>
         {showLoader ? (
           <div
-            className="mt-12 flex items-center justify-center font-inter text-[16px] text-[#ABBDCC]"
+            className="mt-12 flex justify-center font-inter text-[16px] text-[#ABBDCC]"
             style={{ height: tableHeight || "auto" }}
           >
-            <div className="flex gap-2">
+            <div className="mt-40 flex items-start gap-2">
               <Image
                 src={"/images/loader.svg"}
                 className="animate-spin"
