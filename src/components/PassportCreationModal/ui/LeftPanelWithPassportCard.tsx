@@ -30,7 +30,7 @@ export const LeftPanelWithPassportCard: FC<Props> = ({
             width={192}
             height={192}
             alt="avatar"
-            className="max-sm:h-[96px] max-sm:w-[96px] mt-[35px] sm:mt-[70px]"
+            className="mt-[35px] max-sm:h-[96px] max-sm:w-[96px] sm:mt-[70px]"
           />
           {avatar && (
             <img
@@ -53,7 +53,10 @@ export const LeftPanelWithPassportCard: FC<Props> = ({
               intro ? "text-[#fcf0d6]" : "",
             )}
           >
-            {intro || "Short description, try to fit it in 1 short sentence"}
+            {intro ||
+              (name
+                ? ""
+                : "Short description, try to fit it in 1 short sentence")}
           </p>
         </div>
       </div>
