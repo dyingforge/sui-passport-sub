@@ -248,10 +248,10 @@ export default function HomePage() {
           </h1>
           <div className="mt-6 flex max-w-[358px] flex-col text-center font-everett_light text-[14px] text-[#ABBDCC] sm:max-w-[580px] sm:text-[16px]">
             <p>
-              « The Sui community flourishes because of passionate members like
+              The Sui community flourishes because of passionate members like
               you. Through content and events, your contributions help elevate
               our Sui Community. Connect your wallet today and claim your first
-              stamp! »
+              stamp!
             </p>
           </div>
           <div className="mt-[37px] flex flex-col-reverse justify-between sm:min-w-[900px] sm:flex-row">
