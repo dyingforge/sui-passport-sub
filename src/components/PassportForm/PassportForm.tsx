@@ -16,6 +16,7 @@ interface PassportFormProps {
   setAvatar: (avatar: ImageType | null) => void;
   setName: (name: string) => void;
   setIntro: (intro: string) => void;
+  isLoading: boolean;
   defaultValues?: Partial<PassportFormSchema>;
 }
 
@@ -24,7 +25,8 @@ export const PassportForm: FC<PassportFormProps> = ({
   defaultValues,
   setAvatar,
   setName,
-  setIntro
+  setIntro,
+  isLoading
 }) => {
   const methods = useForm<PassportFormSchema>({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
@@ -123,6 +125,7 @@ export const PassportForm: FC<PassportFormProps> = ({
             <Button
               type="submit"
               className="h-[42px] w-[202px] sm:h-[52px] sm:w-[212px]"
+              disabled={isLoading}
             >
               <Image
                 src={"/images/passport.png"}
@@ -130,7 +133,7 @@ export const PassportForm: FC<PassportFormProps> = ({
                 width={16}
                 height={16}
               />
-              Get Your Passport
+              {isLoading ? "Submitting..." : "Get Your Passport"}
             </Button>
           </div>
         </div>

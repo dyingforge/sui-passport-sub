@@ -18,6 +18,7 @@ import { claim_stamp } from "~/lib/contracts/claim";
 import { useStampCRUD } from "~/hooks/use-stamp-crud";
 import { type PassportFormSchema } from "~/types/passport";
 import { mint_passport } from "~/lib/contracts/passport";
+import { LeftPanelWithPassportCard } from "~/components/PassportCreationModal/ui/LeftPanelWithPassportCard";
 
 export default function HomePage() {
   const { stamps, refreshPassportStamps } = usePassportsStamps()
@@ -108,21 +109,23 @@ export default function HomePage() {
 
   const handlePassportCreation = async (values: PassportFormSchema) => {
     const formData = new FormData()
-    if (!(values.avatarFile instanceof Blob)) {
-      throw new Error('Avatar file must be a valid image file')
-    }
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      formData.append('file', values.avatarFile)
-      const response = await fetch('/api/upload',{
-        method: 'POST',
-        body: formData
-      })
-      const data = await response.json()
-      values.avatar = data.url
-    } catch (error) {
-      console.error('Error uploading avatar:', error)
-      throw error // Re-throw to interrupt the method
+    if (values.avatarFile) {
+      if (!(values.avatarFile instanceof Blob)) {
+        throw new Error('Avatar file must be a valid image file')
+      }
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        formData.append('file', values.avatarFile)
+        const response = await fetch('/api/upload',{
+          method: 'POST',
+          body: formData
+        })
+        const data = await response.json()
+        values.avatar = data.url
+      } catch (error) {
+        console.error('Error uploading avatar:', error)
+        throw error // Re-throw to interrupt the method
+      }
     }
     await handleSignAndExecuteTransactionWithSponsor(
       process.env.NEXT_PUBLIC_NETWORK as 'testnet' | 'mainnet',
@@ -206,7 +209,11 @@ export default function HomePage() {
               </p>
             </div>
           </div>
-          <PassportCreationModal onSubmit={handlePassportCreation} />
+          {!userProfile?.passport_id ? <PassportCreationModal onSubmit={handlePassportCreation} isLoading={isMintingPassportWithSponsor} /> : <LeftPanelWithPassportCard
+              avatar={userProfile?.avatar ?? ""}
+              name={userProfile?.name ?? ""}
+              intro={userProfile?.introduction ?? ""}
+            />  }
         </div>
         <div className="relative mt-[-32px] flex w-full flex-col items-center bg-gradient-to-t from-[#02101C] from-95% pl-2 pr-2">
           <h1 className="mt-40 max-w-[358px] text-center font-everett text-[40px] leading-[48px] sm:mt-16 sm:max-w-[696px] sm:text-[68px] sm:leading-[80px]">
