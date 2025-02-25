@@ -21,7 +21,7 @@ import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Input } from "../ui/input";
 import { getMobileColumns } from "./mobileColumns";
-import { getColumns } from "./columns";
+import { type Contributor, getColumns } from "./columns";
 import { Button } from "../ui/button";
 import { cn } from "~/lib/utils";
 import { UserProfileModal } from "../ProfileModal/UserProfileModal";
@@ -74,9 +74,7 @@ export function ContributorsTable<TData, TValue>({
 
   const isMobile = useMediaQuery({ query: `(max-width: 760px)` });
   const tableColumns = (
-    isMobile
-      ? getMobileColumns(handleOpenUserProfile)
-      : getColumns(handleOpenUserProfile)
+    isMobile ? getMobileColumns() : getColumns(handleOpenUserProfile)
   ) as ColumnDef<TData, TValue>[];
 
   const table = useReactTable({
@@ -186,6 +184,13 @@ export function ContributorsTable<TData, TValue>({
                     <TableRow
                       key={row.id}
                       data-state={row.getIsSelected() && "selected"}
+                      onClick={
+                        isMobile
+                          ? handleOpenUserProfile(
+                              (row.original as Contributor).address,
+                            )
+                          : undefined
+                      }
                       className="overflow-hidden rounded-2xl sm:[&_button]:hover:flex sm:[&_span]:hover:left-[-110px]"
                     >
                       {row.getVisibleCells().map((cell) => (

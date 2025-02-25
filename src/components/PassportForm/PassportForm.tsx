@@ -45,7 +45,7 @@ export const PassportForm: FC<PassportFormProps> = ({
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)}
-        className="flex h-full w-full items-center justify-start bg-black/30 backdrop-blur-3xl"
+        className="pt-8 sm:pt-0 flex h-full w-full items-center justify-center sm:justify-start bg-black/30 backdrop-blur-3xl"
       >
         <div className="mx-4 flex flex-col sm:ml-[100px] sm:h-[600px]">
           <h1 className="font-everett text-[24px] leading-[24px] text-white sm:text-[32px] sm:leading-[38px]">

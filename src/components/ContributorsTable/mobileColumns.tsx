@@ -3,15 +3,12 @@
 import MiddleEllipsis from "react-middle-ellipsis";
 import { type ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
-import { Button } from "../ui/button";
 import { useSpring, animated } from "@react-spring/web";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { type Contributor } from "./columns";
 
-export const getMobileColumns = (
-  onUserClick: (address: string) => () => void,
-): ColumnDef<Contributor>[] => [
+export const getMobileColumns = (): ColumnDef<Contributor>[] => [
   {
     accessorKey: "place",
     size: 48,
@@ -97,7 +94,8 @@ export const getMobileColumns = (
           style={{ width: isMobile ? "82px" : "151px" }}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             if (!clicked) {
               setClicked(true);
               setTimeout(() => setClicked(false), 3000);
@@ -148,7 +146,6 @@ export const getMobileColumns = (
             width={16}
             height={16}
             className="h-[16px] w-[16px]"
-            onClick={onUserClick(cell.row.original.address)}
           />
         </span>
       </div>
