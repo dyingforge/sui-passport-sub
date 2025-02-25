@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { apiFetch } from '~/lib/apiClient';
 import { useCallback, useState } from 'react';
-import { type DbUserResponse } from '~/types/userProfile';   
+import { type CreateUserParams, type DbUserResponse } from '~/types/userProfile';   
 
 
 interface DbResponse<T> {
@@ -20,6 +20,7 @@ interface UseUserCrudReturn {
     users: DbUserResponse[];
     fetchUsers: () => Promise<DbUserResponse[] | undefined>;
     fetchUserByAddress: (address: string) => Promise<DbResponse<DbUserResponse> | null>;
+    createOrUpdateUser: (user: CreateUserParams) => Promise<DbResponse<DbUserResponse> | null>;
 }
 
 export function useUserCrud(): UseUserCrudReturn {
@@ -113,11 +114,33 @@ export function useUserCrud(): UseUserCrudReturn {
     //     }
     // }
 
+    const createOrUpdateUser = async (user: CreateUserParams): Promise<DbResponse<DbUserResponse> | null> => {
+        try {
+            setIsLoading(true);
+            setError(null);
+            const response = await apiFetch<DbResponse<DbUserResponse>>('/api/user', {
+                method: 'POST',
+                body: JSON.stringify(user)
+            })
+            if (!response.success) {
+                setError(response.error ?? 'Failed to create user');
+                return response;
+            }
+            return response;
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Failed to create user');
+            return null;
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return {
         isLoading,
         error,
         users,
         fetchUsers,
         fetchUserByAddress,
+        createOrUpdateUser,
     };
 }

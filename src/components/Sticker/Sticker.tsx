@@ -26,6 +26,7 @@ type StickerProps = {
   className?: string;
   isPublicClaim?: boolean;
   open?: boolean;
+  isLoading?: boolean;
   onOpenChange?: (open: boolean) => void;
   onClaim?: (code: string) => void;
 };
@@ -42,6 +43,7 @@ export const Sticker: FC<StickerProps> = (props) => {
     isPublicClaim = false,
     onClaim,
     open = false,
+    isLoading = false,
     onOpenChange,
   } = props;
 
@@ -101,7 +103,7 @@ export const Sticker: FC<StickerProps> = (props) => {
             <div className="absolute bottom-0 flex flex-col items-center gap-4">
               <a
                 className="flex cursor-pointer gap-2 font-inter text-[14px] leading-5 text-[#4DA2FF] sm:text-[16px]"
-                href={`https://testnet.suivision.xyz/object/${stampId}`}
+                href={`https://mainnet.suivision.xyz/object/${stampId}`}
                 target="_blank"
               >
                 Details on Sui Vision
@@ -118,7 +120,7 @@ export const Sticker: FC<StickerProps> = (props) => {
                   {name}
                 </p>
                 <p className="font-inter text-[16px] leading-6 text-[#ABBDCC] sm:text-[20px]">
-                  {amountLeft} left
+                  {amountLeft === Infinity ? "Unlimited" : amountLeft + " left"}
                 </p>
               </span>
             </div>
@@ -191,13 +193,19 @@ export const Sticker: FC<StickerProps> = (props) => {
               </DialogClose>
               <Button
                 className="h-[42px] w-[197px] sm:h-[52px] sm:w-[227px]"
-                disabled={!isPublicClaim && (status !== "default" || !code)}
+                disabled={isLoading || !isPublicClaim && (status !== "default" || !code)}
                 onClick={() => {
                   setStatus("pending");
                   onClaim?.(code);
                 }}
               >
                 {isPublicClaim ? "Claim" : "Claim " + name}
+                {isLoading && <Image
+                  src={"/images/loader.svg"}
+                  alt="loader"
+                  width={16}
+                  height={16}
+                />}
               </Button>
             </div>
           </div>
