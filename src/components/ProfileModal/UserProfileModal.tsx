@@ -74,15 +74,8 @@ export const UserProfileModal: FC<UserProfileModalProps> = ({
               </p>
             </div>
             <span className="flex gap-2">
-              <Image
-                src={"/images/drop.png"}
-                alt="drop-icon"
-                width={14}
-                height={14}
-                className="object-contain"
-              />
               <p className="font-inter text-[14px] text-white">
-                {userProfile?.points}
+                {userProfile?.points} points
               </p>
             </span>
             <a

@@ -223,7 +223,7 @@ export default function HomePage() {
         </div>
         <div className="relative mt-6 flex w-full flex-col items-center rounded-t-xl bg-[#02101C] pl-2 pr-2 ">
           <Image
-            className="absolute top-0 hidden rounded-xl sm:block"
+            className="absolute top-0 hidden rounded-xl sm:block brightness-[60%]"
             src={"/images/card-background.png"}
             alt="background"
             width={1424}
@@ -246,14 +246,10 @@ export default function HomePage() {
               <>
                 <div className="mt-6 flex max-w-[342px] flex-col gap-3 text-center font-everett_light text-[14px] text-[#ABBDCC] sm:max-w-[696px] sm:text-[16px]">
                   <p>
-                    The Sui community flourishes because of passionate members
-                    like you. Through content, conferences, events and hackathons,
-                    your contributions help elevate our Sui Community
+                    The Sui community flourishes because of passionate members like you. Through content and events, your contributions help elevate our Sui Community.
                   </p>
                   <p>
-                    Now it&apos;s time to showcase your impact, gain recognition,
-                    and unlock rewards for your active participation. Connect your
-                    wallet today and claim your first stamp!
+                    Connect your wallet today and claim your first stamp!
                   </p>
                 </div>
                 <PassportCreationModal

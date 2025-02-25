@@ -106,16 +106,13 @@ export const ProfileModal = () => {
               </p>
             </div>
             <span className="flex gap-2">
-              <Image
-                src={"/images/drop.png"}
-                alt="drop-icon"
-                width={14}
-                height={14}
-                className="object-contain"
-              />
-              <p className="font-inter text-[14px] text-white">{userProfile?.points}</p>
+              <p className="font-inter text-[14px] text-white">{userProfile?.points} points</p>
             </span>
-            <p className="flex cursor-pointer gap-2 font-inter text-[14px] leading-5 text-[#4DA2FF] sm:text-[16px]">
+            <a
+              className="flex cursor-pointer gap-2 font-inter text-[14px] leading-5 text-[#4DA2FF] sm:text-[16px]"
+              href={`https://testnet.suivision.xyz/object/${userProfile?.id?.id}`}
+              target="_blank"
+            >
               Details on Sui Vision
               <Image
                 src={"/images/arrow-up-right.png"}
@@ -124,7 +121,7 @@ export const ProfileModal = () => {
                 alt="arrow"
                 className="object-contain"
               />
-            </p>
+            </a>
             <div className="flex gap-2">
               <DialogClose asChild>
                 <Button
