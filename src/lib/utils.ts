@@ -89,15 +89,15 @@ export function stampsToDisplayStampsWithOutPassport(stamps: StampItem[]): Displ
 
 export const STICKER_LAYOUT_CONFIG = {
   left: [
-    { rotation: -5, amountLeft: 95, dropsAmount: 500 },
-    { rotation: -5, amountLeft: 45, dropsAmount: 100 }
+    { rotation: -5},
+    { rotation: -5}
   ],
   center: [
-    { rotation: -5, amountLeft: 95, dropsAmount: 500 }
+    { rotation: -5}
   ],
   right: [
-    { rotation: 5, amountLeft: 45, dropsAmount: 100 },
-    { rotation: 5, amountLeft: 95, dropsAmount: 500 }
+    { rotation: 5},
+    { rotation: 5 }
   ]
 } as const;
 

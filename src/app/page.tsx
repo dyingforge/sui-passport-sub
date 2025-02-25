@@ -20,13 +20,13 @@ import type { VerifyClaimStampRequest, DisplayStamp } from "~/types/stamp";
 import { useUserProfile } from "~/context/user-profile-context";
 import { useCurrentAccount, useCurrentWallet } from "@mysten/dapp-kit";
 import {
-  useBetterSignAndExecuteTransaction,
   useBetterSignAndExecuteTransactionWithSponsor,
 } from "~/hooks/use-better-tx";
 import { claim_stamp } from "~/lib/contracts/claim";
 import { useStampCRUD } from "~/hooks/use-stamp-crud";
 import { type PassportFormSchema } from "~/types/passport";
 import { mint_passport } from "~/lib/contracts/passport";
+import { toast } from "sonner";
 
 export default function HomePage() {
   const { stamps, refreshPassportStamps } = usePassportsStamps();
@@ -39,9 +39,10 @@ export default function HomePage() {
   const currentAccount = useCurrentAccount();
   const { connectionStatus } = useCurrentWallet();
   const [openStickers, setOpenStickers] = useState<Record<string, boolean>>({});
+  const { createOrUpdateUser } = useUserCrud();
 
-  const { handleSignAndExecuteTransaction: handleClaimStampTx } =
-    useBetterSignAndExecuteTransaction({
+  const { handleSignAndExecuteTransactionWithSponsor: handleClaimStampTx, isLoading: isClaimingStamp } =
+    useBetterSignAndExecuteTransactionWithSponsor({
       tx: claim_stamp,
     });
 
@@ -80,12 +81,12 @@ export default function HomePage() {
 
   const handleClaimStampClick = async (code: string, stamp: DisplayStamp) => {
     if (!userProfile?.passport_id) {
-      console.log("You should have a passport to claim a stamp");
+      toast.error("You should have a passport to claim a stamp");
       return;
     }
     const stamps = userProfile?.stamps;
     if (stamps?.some((stamp) => stamp.name.split("#")[0] === stamp?.name)) {
-      console.log(`You have already have this stamp`);
+      toast.error(`You have already have this stamp`);
       return;
     }
     if (
@@ -93,7 +94,7 @@ export default function HomePage() {
       stamp.totalCountLimit !== 0 &&
       stamp?.claimCount >= stamp.totalCountLimit!
     ) {
-      console.log("Stamp is claimed out");
+      toast.error("Stamp is claimed out");
       return;
     }
     const requestBody: VerifyClaimStampRequest = {
@@ -102,23 +103,28 @@ export default function HomePage() {
       passport_id: userProfile?.id.id,
       last_time: Number(userProfile?.last_time),
     };
-    console.log(requestBody);
     const data = await verifyClaimStamp(requestBody);
 
     if (!data.signature || !data.valid) {
-      console.log("Invalid claim code");
+      toast.error("Invalid claim code");
       return;
     }
     // Convert signature object to array
     const signatureArray = Object.values(data.signature);
-    await handleClaimStampTx({
-      event: stamp?.id ?? "",
-      passport: userProfile?.id.id ?? "",
-      name: stamp?.name ?? "",
-      sig: signatureArray,
-    })
+    await handleClaimStampTx(
+      process.env.NEXT_PUBLIC_NETWORK as "testnet" | "mainnet",
+      currentAccount?.address ?? "",
+      [currentAccount?.address ?? ""],
+      {
+        event: stamp?.id ?? "",
+        passport: userProfile?.id.id ?? "",
+        name: stamp?.name ?? "",
+        sig: signatureArray,
+      },
+    )
       .onSuccess(async () => {
-        console.log("Stamp claimed successfully");
+        toast.success("Stamp claimed successfully");
+        handleOpenChange(stamp.id, false);
         await refreshProfile(currentAccount?.address ?? "", networkVariables);
         await refreshPassportStamps(networkVariables);
       })
@@ -159,12 +165,12 @@ export default function HomePage() {
       },
     )
       .onSuccess(async () => {
-        console.log("Passport minted successfully");
+        toast.success("Passport minted successfully");
         await refreshProfile(currentAccount?.address ?? "", networkVariables);
         await refreshPassportStamps(networkVariables);
       })
       .onError((error) => {
-        console.error(`Error minting passport: ${error.message}`);
+        toast.error(`Error minting passport: ${error.message}`);
       })
       .execute();
   };
@@ -176,7 +182,21 @@ export default function HomePage() {
     }));
   };
 
-  const handleTableRefresh = useCallback(initializeData, [initializeData]);
+  const handleTableRefresh = useCallback(
+    async () => {
+      if (currentAccount?.address && userProfile?.passport_id) {
+        void createOrUpdateUser({
+          address: currentAccount.address,
+          stamp_count: userProfile.stamps?.length ?? 0,
+          name: userProfile.name,
+          points: Number(userProfile.points),
+        })
+      }
+
+      void initializeData();
+    },
+    [initializeData, userProfile, currentAccount, createOrUpdateUser],
+  );
 
   const stampsLayout = useMemo(
     () => distributeStamps(displayStamps),
@@ -201,59 +221,65 @@ export default function HomePage() {
           </div>
           <ProfileModal />
         </div>
-        {!userProfile?.passport_id && (
-          <div className="relative mt-6 flex min-h-[745px] w-full flex-col items-center rounded-t-xl bg-[#02101C] pl-2 pr-2 sm:min-h-[902px]">
-            <Image
-              className="absolute top-0 hidden rounded-xl sm:block"
-              src={"/images/card-background.png"}
-              alt="background"
-              width={1424}
-              height={893}
-              unoptimized
-            />
-            <Image
-              className="absolute top-0 block rounded-xl sm:top-[-234px] sm:hidden"
-              src={"/images/mobile-card-background.png"}
-              alt="background"
-              width={374}
-              height={491}
-              unoptimized
-            />
-            <div className="z-10 flex w-full max-w-[1424px] flex-col items-center justify-center">
-              <h1 className="mt-8 max-w-[304px] text-center font-everett text-[40px] leading-[48px] sm:mt-16 sm:max-w-[696px] sm:text-[68px] sm:leading-[80px]">
-                Make your mark on the Sui Community
-              </h1>
-              <div className="mt-6 flex max-w-[342px] flex-col gap-3 text-center font-everett_light text-[14px] text-[#ABBDCC] sm:max-w-[696px] sm:text-[16px]">
-                <p>
-                  The Sui community flourishes because of passionate members
-                  like you. Through content, conferences, events and hackathons,
-                  your contributions help elevate our Sui Community
-                </p>
-                <p>
-                  Now it&apos;s time to showcase your impact, gain recognition,
-                  and unlock rewards for your active participation. Connect your
-                  wallet today and claim your first stamp!
-                </p>
-              </div>
-            </div>
-            <PassportCreationModal
-              onSubmit={handlePassportCreation}
-              isLoading={isMintingPassportWithSponsor}
-            />
+        <div className="relative mt-6 flex w-full flex-col items-center rounded-t-xl bg-[#02101C] pl-2 pr-2 ">
+          <Image
+            className="absolute top-0 hidden rounded-xl sm:block"
+            src={"/images/card-background.png"}
+            alt="background"
+            width={1424}
+            height={893}
+            unoptimized
+          />
+          <Image
+            className="absolute top-0 block rounded-xl sm:top-[-234px] sm:hidden"
+            src={"/images/mobile-card-background.png"}
+            alt="background"
+            width={374}
+            height={491}
+            unoptimized
+          />
+          <div className="z-10 flex w-full max-w-[1424px] flex-col items-center justify-center">
+            <h1 className="mt-8 max-w-[304px] text-center font-everett text-[40px] leading-[48px] sm:mt-16 sm:max-w-[696px] sm:text-[68px] sm:leading-[80px]">
+              Make your mark on the Sui Community
+            </h1>
+            {!userProfile?.passport_id ? (
+              <>
+                <div className="mt-6 flex max-w-[342px] flex-col gap-3 text-center font-everett_light text-[14px] text-[#ABBDCC] sm:max-w-[696px] sm:text-[16px]">
+                  <p>
+                    The Sui community flourishes because of passionate members
+                    like you. Through content, conferences, events and hackathons,
+                    your contributions help elevate our Sui Community
+                  </p>
+                  <p>
+                    Now it&apos;s time to showcase your impact, gain recognition,
+                    and unlock rewards for your active participation. Connect your
+                    wallet today and claim your first stamp!
+                  </p>
+                </div>
+                <PassportCreationModal
+                  onSubmit={handlePassportCreation}
+                  isLoading={isMintingPassportWithSponsor}
+                />
+              </>
+            ) : <div className="mt-6 flex max-w-[342px] flex-col gap-3 text-center font-everett_light text-[14px] text-[#ABBDCC] sm:max-w-[696px] sm:text-[16px]">
+              <p>
+                The Sui community flourishes because of passionate members like you. Through content and events, your contributions help elevate our Sui Community. Connect your wallet today and claim your first stamp!
+              </p>
+            </div>}
           </div>
-        )}
-        <div className="relative mt-[-32px] flex w-full flex-col items-center bg-gradient-to-t from-[#02101C] from-95% pl-2 pr-2">
+        </div>
+        <div className="relative mt-16 flex w-full flex-col items-center bg-gradient-to-t from-[#02101C] from-95% pl-2 pr-2">
           <h1 className="mt-40 max-w-[358px] text-center font-everett text-[40px] leading-[48px] sm:mt-16 sm:max-w-[696px] sm:text-[68px] sm:leading-[80px]">
             Get your stamps
           </h1>
-          <div className="mt-6 flex max-w-[358px] flex-col text-center font-everett_light text-[14px] text-[#ABBDCC] sm:max-w-[580px] sm:text-[16px]">
+          {/* <div className="mt-6 flex max-w-[358px] flex-col text-center font-everett_light text-[14px] text-[#ABBDCC] sm:max-w-[580px] sm:text-[16px]">
             <p>
               The Sui community flourishes because of passionate members like
               you. Through content and events, your contributions help elevate
               our Sui Community. Connect your wallet today and claim your first
               stamp!
             </p>
-          </div>
+          </div> */}
           <div className="mt-[37px] flex flex-col-reverse justify-between sm:min-w-[900px] sm:flex-row">
             <div className="flex flex-col">
               {stampsLayout.left.map((stamp, index) => (
@@ -264,16 +290,17 @@ export default function HomePage() {
                   name={stamp.name}
                   rotation={STICKER_LAYOUT_CONFIG.left[index]?.rotation ?? 0}
                   amountLeft={
-                    STICKER_LAYOUT_CONFIG.left[index]?.amountLeft ?? 0
+                    stamp.totalCountLimit && stamp.claimCount ? stamp.totalCountLimit - (stamp.claimCount ?? 0) : Infinity
                   }
                   dropsAmount={
-                    STICKER_LAYOUT_CONFIG.left[index]?.dropsAmount ?? 0
+                    stamp.claimedCount ?? 0
                   }
                   isClaimed={stamp.isClaimed ?? false}
                   isPublicClaim={stamp.publicClaim}
                   open={openStickers[stamp.id] ?? false}
                   onOpenChange={(open) => handleOpenChange(stamp.id, open)}
                   onClaim={(code) => handleClaimStampClick(code, stamp)}
+                  isLoading={isClaimingStamp}
                 />
               ))}
             </div>
@@ -286,16 +313,17 @@ export default function HomePage() {
                   name={stamp.name}
                   rotation={STICKER_LAYOUT_CONFIG.center[index]?.rotation ?? 0}
                   amountLeft={
-                    STICKER_LAYOUT_CONFIG.center[index]?.amountLeft ?? 0
+                    stamp.totalCountLimit && stamp.claimCount ? stamp.totalCountLimit - (stamp.claimCount ?? 0) : Infinity
                   }
                   dropsAmount={
-                    STICKER_LAYOUT_CONFIG.center[index]?.dropsAmount ?? 0
+                    stamp.claimedCount ?? 0
                   }
                   isClaimed={stamp.isClaimed ?? false}
                   isPublicClaim={stamp.publicClaim}
                   open={openStickers[stamp.id] ?? false}
                   onOpenChange={(open) => handleOpenChange(stamp.id, open)}
                   onClaim={(code) => handleClaimStampClick(code, stamp)}
+                  isLoading={isClaimingStamp}
                 />
               ))}
             </div>
@@ -308,16 +336,17 @@ export default function HomePage() {
                   name={stamp.name}
                   rotation={STICKER_LAYOUT_CONFIG.right[index]?.rotation ?? 0}
                   amountLeft={
-                    STICKER_LAYOUT_CONFIG.right[index]?.amountLeft ?? 0
+                    stamp.totalCountLimit && stamp.claimCount ? stamp.totalCountLimit - (stamp.claimCount ?? 0) : Infinity
                   }
                   dropsAmount={
-                    STICKER_LAYOUT_CONFIG.right[index]?.dropsAmount ?? 0
+                    stamp.claimedCount ?? 0
                   }
                   isClaimed={stamp.isClaimed ?? false}
                   isPublicClaim={stamp.publicClaim}
                   open={openStickers[stamp.id] ?? false}
                   onOpenChange={(open) => handleOpenChange(stamp.id, open)}
                   onClaim={(code) => handleClaimStampClick(code, stamp)}
+                  isLoading={isClaimingStamp}
                 />
               ))}
             </div>
