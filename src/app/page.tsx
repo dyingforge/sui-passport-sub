@@ -34,7 +34,7 @@ export default function HomePage() {
   const [displayStamps, setDisplayStamps] = useState<DisplayStamp[]>([]);
   const networkVariables = useNetworkVariables();
   const { fetchUsers, isLoading } = useUserCrud();
-  const { userProfile, refreshProfile } = useUserProfile();
+  const { userProfile, refreshProfile,isLoading: isRefreshingProfile } = useUserProfile();
   const { verifyClaimStamp } = useStampCRUD();
   const currentAccount = useCurrentAccount();
   const { connectionStatus } = useCurrentWallet();
@@ -147,7 +147,7 @@ export default function HomePage() {
         const data = await response.json();
         values.avatar = data.url;
       } catch (error) {
-        console.error("Error uploading avatar:", error);
+        toast.error("Error uploading avatar");
         throw error; // Re-throw to interrupt the method
       }
     }
@@ -165,9 +165,8 @@ export default function HomePage() {
       },
     )
       .onSuccess(async () => {
+        await refreshProfile(currentAccount?.address ?? "", networkVariables);        
         toast.success("Passport minted successfully");
-        await refreshProfile(currentAccount?.address ?? "", networkVariables);
-        await refreshPassportStamps(networkVariables);
       })
       .onError((error) => {
         toast.error(`Error minting passport: ${error.message}`);
@@ -242,26 +241,18 @@ export default function HomePage() {
             <h1 className="mt-8 max-w-[304px] text-center font-everett text-[40px] leading-[48px] sm:mt-16 sm:max-w-[696px] sm:text-[68px] sm:leading-[80px]">
               Make your mark on the Sui Community
             </h1>
-            {!userProfile?.passport_id ? (
-              <>
-                <div className="mt-6 flex max-w-[342px] flex-col gap-3 text-center font-everett_light text-[14px] text-[#ABBDCC] sm:max-w-[696px] sm:text-[16px]">
-                  <p>
-                    The Sui community flourishes because of passionate members like you. Through content and events, your contributions help elevate our Sui Community.
-                  </p>
-                  <p>
-                    Connect your wallet today and claim your first stamp!
-                  </p>
-                </div>
-                <PassportCreationModal
-                  onSubmit={handlePassportCreation}
-                  isLoading={isMintingPassportWithSponsor}
-                />
-              </>
-            ) : <div className="mt-6 flex max-w-[342px] flex-col gap-3 text-center font-everett_light text-[14px] text-[#ABBDCC] sm:max-w-[696px] sm:text-[16px]">
+            <div className="mt-6 flex max-w-[342px] flex-col gap-3 text-center font-everett_light text-[14px] text-[#ABBDCC] sm:max-w-[696px] sm:text-[16px]">
               <p>
-                The Sui community flourishes because of passionate members like you. Through content and events, your contributions help elevate our Sui Community. Connect your wallet today and claim your first stamp!
+                The Sui community flourishes because of passionate members like you. Through content and events, your contributions help elevate our Sui Community.
               </p>
-            </div>}
+              <p>
+                Connect your wallet today and claim your first stamp!
+              </p>
+            </div>
+            {!userProfile?.passport_id && <PassportCreationModal
+              onSubmit={handlePassportCreation}
+              isLoading={isMintingPassportWithSponsor || isRefreshingProfile}
+            />}
           </div>
         </div>
         <div className="relative mt-16 flex w-full flex-col items-center bg-gradient-to-t from-[#02101C] from-95% pl-2 pr-2">

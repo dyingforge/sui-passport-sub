@@ -110,7 +110,7 @@ export const ProfileModal = () => {
             </span>
             <a
               className="flex cursor-pointer gap-2 font-inter text-[14px] leading-5 text-[#4DA2FF] sm:text-[16px]"
-              href={`https://testnet.suivision.xyz/object/${userProfile?.id?.id}`}
+              href={`https://mainnet.suivision.xyz/object/${userProfile?.id?.id}`}
               target="_blank"
             >
               Details on Sui Vision
