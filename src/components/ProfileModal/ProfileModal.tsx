@@ -17,6 +17,7 @@ import { useNetworkVariables } from "~/lib/contracts";
 import { useUserProfile } from "~/context/user-profile-context";
 import { removeToken } from "~/lib/jwtManager";
 import { ConnectModal, useAccounts, useCurrentAccount, useCurrentWallet, useDisconnectWallet } from '@mysten/dapp-kit'
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 export const ProfileModal = () => {
   const { refreshProfile, userProfile } = useUserProfile()
@@ -60,18 +61,87 @@ export const ProfileModal = () => {
   if (!accounts.length) {
     if (isMobileApp && !isInSuiWallet) {
       return (
-        <Button
-          className="h-[34px] w-[150px] leading-4 sm:h-[52px] sm:w-[189px]"
-          onClick={() => {
-            window.location.href = 'suiwallet://';
-            setTimeout(() => {
-              window.location.href = 'https://apps.apple.com/us/app/sui-wallet-mobile/id6476572140';
-            }, 2000);
-          }}
-        >
-          <Image src={"/images/wallet.png"} alt="wallet" width={16} height={16} />
-          Open with Sui Wallet
-        </Button>
+        <Popover open={true}>
+          <PopoverTrigger>
+            <Button
+              className="h-[34px] leading-4 sm:h-[52px]"
+              onClick={() => {
+                window.location.href = "suiwallet://";
+                setTimeout(() => {
+                  window.location.href =
+                    "https://apps.apple.com/us/app/sui-wallet-mobile/id6476572140";
+                }, 2000);
+              }}
+            >
+              Open with
+              <Image
+                src={"/images/drop.png"}
+                alt="wallet"
+                width={12}
+                height={16}
+              />
+              Sui Wallet
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-[208px] border-none bg-transparent bg-[url(/images/popup-bg.svg)] bg-contain bg-no-repeat px-[14px] pt-5">
+            <div className="flex flex-col items-start gap-2">
+              <div className="flex items-start gap-2">
+                <div className="flex flex-col items-center gap-1.5 font-inter">
+                  <Image
+                    src={"/images/sui-wallet.svg"}
+                    alt="wallet-icon"
+                    width={28}
+                    height={28}
+                  />
+                  <span className="text-[10px] text-white/80">Sui Wallet</span>
+                </div>
+                <Image
+                  src={"/images/arrow-right.png"}
+                  alt="drop-icon"
+                  width={14}
+                  height={14}
+                  className="mt-2"
+                />
+                <div className="flex flex-col items-center gap-1.5 font-inter">
+                  <Image
+                    src={"/images/sui-apps.svg"}
+                    alt="apps-icon"
+                    width={28}
+                    height={28}
+                  />
+                  <span className="text-[10px] text-white/80">Apps</span>
+                </div>
+                <Image
+                  src={"/images/arrow-right.png"}
+                  alt="drop-icon"
+                  width={14}
+                  height={14}
+                  className="mt-2"
+                />
+                <div className="flex flex-col items-center gap-1.5 font-inter">
+                  <Image
+                    src={"/images/sui-passport.svg"}
+                    alt="passport-icon"
+                    width={28}
+                    height={28}
+                  />
+                  <span className="text-[10px] text-white/80">Passport</span>
+                </div>
+              </div>
+              <div className="font-inter text-[10px] text-white">
+                Install the Sui Wallet app on your phone, then{" "}
+                <a
+                  target="blank"
+                  className="underline"
+                  href="https://drive.google.com/file/d/1EN95PHf9BzNyPQKjbVskuZA65wYYIUpt/view?usp=sharing"
+                >
+                  watch video
+                </a>{" "}
+                on using Passport
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
       );
     }
 

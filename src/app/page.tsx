@@ -205,7 +205,7 @@ export default function HomePage() {
   return (
     <main className="flex min-h-screen flex-col items-center bg-[#02101C] text-white">
       <div className="flex w-full max-w-[375px] flex-col items-center sm:max-w-[1424px]">
-        <div className="mt-6 flex w-full justify-between px-3 sm:pl-[35px] sm:pr-6">
+        <div className="bg-[#02101C] py-6 flex w-full justify-between px-3 sm:pl-[35px] sm:pr-6 sticky top-0 z-20 sm:static">
           <div className="flex items-center gap-3">
             <Image
               src={"/images/drop.png"}
@@ -220,7 +220,7 @@ export default function HomePage() {
           </div>
           <ProfileModal />
         </div>
-        <div className="relative mt-6 flex w-full flex-col items-center rounded-t-xl bg-[#02101C] pl-2 pr-2 ">
+        <div className="relative flex w-full flex-col items-center rounded-t-xl bg-[#02101C] pl-2 pr-2 ">
           <Image
             className="absolute top-0 hidden rounded-xl sm:block brightness-[60%]"
             src={"/images/card-background.png"}
