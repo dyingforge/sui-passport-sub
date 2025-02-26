@@ -49,6 +49,22 @@ export const ProfileModal = () => {
   }, [onConnected])
 
   if (!accounts.length) {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const isStandalone = 'standalone' in window.navigator && window.navigator.standalone;
+    const isInApp = !isStandalone && window.location.href.includes('in-app');
+
+    if (isMobile && !isInApp) {
+      return (
+        <Button
+          className="h-[34px] w-[150px] leading-4 sm:h-[52px] sm:w-[189px]"
+          onClick={() => window.location.href = 'https://apps.apple.com/us/app/sui-wallet-mobile/id6476572140'}
+        >
+          <Image src={"/images/wallet.png"} alt="wallet" width={16} height={16} />
+          Open with Sui Wallet
+        </Button>
+      );
+    }
+
     return (
       <ConnectModal
         open={open}
@@ -62,7 +78,7 @@ export const ProfileModal = () => {
           </Button>
         }
       />
-    )
+    );
   }
 
   return connectionStatus === "connected" && (
