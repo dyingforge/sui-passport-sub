@@ -29,6 +29,7 @@ export const ProfileModal = () => {
   const { clearProfile } = useUserProfile()
   const [isMobileApp, setIsMobileApp] = useState(false);
   const [isInSuiWallet, setIsInSuiWallet] = useState(false);
+  const [userAgent, setUserAgent] = useState('');
 
   const onConnected = useCallback(async () => {
     if (currentAccount?.address && connectionStatus === "connected") {
@@ -51,33 +52,24 @@ export const ProfileModal = () => {
   }, [onConnected])
 
   useEffect(() => {
-    if (!accounts.length) {
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      const isSuiWallet = window.location.href.startsWith('suiwallet://');
-      
-      // 调试信息
-      console.log({
-        userAgent: navigator.userAgent,
-        href: window.location.href,
-        isMobile,
-        isSuiWallet
-      });
-      
-      setIsInSuiWallet(isSuiWallet);
-      setIsMobileApp(isMobile && !isSuiWallet);
-    }
-  }, [accounts.length]);
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const isSuiWallet = /Sui Wallet Mobile|SuiWalletMobile|SuiWallet/i.test(navigator.userAgent);
+    
+    setUserAgent(navigator.userAgent);
+    setIsInSuiWallet(isSuiWallet);
+    setIsMobileApp(isMobile && !isSuiWallet);
+  }, []);
 
   if (!accounts.length) {
     return (
       <div className="flex flex-col gap-2">
-        {/* 调试面板 */}
-        <div className="fixed bottom-4 left-4 right-4 bg-black/80 p-4 rounded-lg text-xs text-white break-all z-50">
-          <p>URL: {window.location.href}</p>
-          <p>User Agent: {navigator.userAgent}</p>
-          <p>Is Mobile: {String(isMobileApp)}</p>
-          <p>Is In Sui Wallet: {String(isInSuiWallet)}</p>
-        </div>
+       
+          <div className="fixed bottom-4 left-4 right-4 bg-black/80 p-4 rounded-lg text-xs text-white break-all z-50">
+            <p>User Agent: {userAgent}</p>
+            <p className="mt-2">Is Mobile: {String(isMobileApp)}</p>
+            <p>Is In Sui Wallet: {String(isInSuiWallet)}</p>
+          </div>
+       
 
         {isMobileApp && !isInSuiWallet ? (
           <Button
