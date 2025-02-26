@@ -28,6 +28,8 @@ export const ProfileModal = () => {
   const [open, setOpen] = useState(false)
   const { clearProfile } = useUserProfile()
   const [isMobileApp, setIsMobileApp] = useState(false);
+  const [isInSuiWallet, setIsInSuiWallet] = useState(false);
+  const [userAgent, setUserAgent] = useState('');
 
   const onConnected = useCallback(async () => {
     if (currentAccount?.address && connectionStatus === "connected") {
@@ -50,49 +52,53 @@ export const ProfileModal = () => {
   }, [onConnected])
 
   useEffect(() => {
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);    
-    // 检查是否在 Sui Wallet Mobile 应用内
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     const isSuiWallet = /Sui Wallet Mobile|SuiWalletMobile|SuiWallet/i.test(navigator.userAgent);
     
-    // 开发时用于调试
-    if (process.env.NODE_ENV === 'development') {
-      console.log('User Agent:', navigator.userAgent);
-    }
-    
+    setUserAgent(navigator.userAgent);
+    setIsInSuiWallet(isSuiWallet);
     setIsMobileApp(isMobile && !isSuiWallet);
   }, []);
 
   if (!accounts.length) {
-    if (isMobileApp) {
-      return (
-        <Button
-          className="h-[34px] w-[150px] leading-4 sm:h-[52px] sm:w-[189px]"
-          onClick={() => {
-            window.location.href = 'suiwallet://'; // 尝试打开应用
-            setTimeout(() => {
-              window.location.href = 'https://apps.apple.com/us/app/sui-wallet-mobile/id6476572140';
-            }, 2000);
-          }}
-        >
-          <Image src={"/images/wallet.png"} alt="wallet" width={16} height={16} />
-          Open with Sui Wallet
-        </Button>
-      );
-    }
-
     return (
-      <ConnectModal
-        open={open}
-        onOpenChange={setOpen}
-        trigger={
+      <div className="flex flex-col gap-2">
+       
+          <div className="fixed bottom-4 left-4 right-4 bg-black/80 p-4 rounded-lg text-xs text-white break-all z-50">
+            <p>User Agent: {userAgent}</p>
+            <p className="mt-2">Is Mobile: {String(isMobileApp)}</p>
+            <p>Is In Sui Wallet: {String(isInSuiWallet)}</p>
+          </div>
+       
+
+        {isMobileApp && !isInSuiWallet ? (
           <Button
             className="h-[34px] w-[150px] leading-4 sm:h-[52px] sm:w-[189px]"
+            onClick={() => {
+              window.location.href = 'suiwallet://';
+              setTimeout(() => {
+                window.location.href = 'https://apps.apple.com/us/app/sui-wallet-mobile/id6476572140';
+              }, 2000);
+            }}
           >
             <Image src={"/images/wallet.png"} alt="wallet" width={16} height={16} />
-            Connect Wallet
+            Open with Sui Wallet
           </Button>
-        }
-      />
+        ) : (
+          <ConnectModal
+            open={open}
+            onOpenChange={setOpen}
+            trigger={
+              <Button
+                className="h-[34px] w-[150px] leading-4 sm:h-[52px] sm:w-[189px]"
+              >
+                <Image src={"/images/wallet.png"} alt="wallet" width={16} height={16} />
+                Connect Wallet
+              </Button>
+            }
+          />
+        )}
+      </div>
     );
   }
 
