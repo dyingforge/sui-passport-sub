@@ -11,7 +11,6 @@ import { useNetworkVariables } from "~/lib/contracts";
 import { useUserProfile } from "~/context/user-profile-context";
 import { isValidSuiAddress } from "@mysten/sui/utils";
 import { type UserProfile } from "~/types/userProfile";
-import { useRouter } from "next/navigation";
 
 interface UserProfileModalProps {
   address: string;
@@ -22,7 +21,6 @@ export const UserProfileModal: FC<UserProfileModalProps> = ({
   address,
   onClose,
 }) => {
-  const [isLoading, setIsLoading] = useState(true);
   const { getPageUserProfile } = useUserProfile();
   const networkVariables = useNetworkVariables();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -32,7 +30,6 @@ export const UserProfileModal: FC<UserProfileModalProps> = ({
       onClose();
       return;
     }
-    setIsLoading(false);
     if (!userProfile) {
       getPageUserProfile(address, networkVariables)
         .then((profile) => {
@@ -80,7 +77,7 @@ export const UserProfileModal: FC<UserProfileModalProps> = ({
             </span>
             <a
               className="flex cursor-pointer gap-2 font-inter text-[14px] leading-5 text-[#4DA2FF] sm:text-[16px]"
-              href={`https://testnet.suivision.xyz/object/${userProfile?.id?.id}`}
+              href={`https://mainnet.suivision.xyz/object/${userProfile?.id?.id}`}
               target="_blank"
             >
               Details on Sui Vision

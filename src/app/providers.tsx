@@ -17,12 +17,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             <SuiClientProvider networks={networkConfig} defaultNetwork={network}>
                 <PassportsStampsProvider>
                     <UserProfileProvider>
-                        <WalletProvider autoConnect stashedWallet={
-                            {
-                                name: "Sui Passport",
-                                network: network,
-                            }
-                        }>
+                        <WalletProvider autoConnect>
                             <Toaster position="top-right" />
                             {children}
                         </WalletProvider>

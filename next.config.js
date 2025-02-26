@@ -12,28 +12,7 @@ const config = {
                 hostname: "images.suipassport.app",
             },
         ],
-    },
-    async headers() {
-        return [
-            {
-              source: '/:path*',
-              headers: [
-                {
-                  key: 'referrer-policy',
-                  value: 'strict-origin-when-cross-origin',
-                },
-                {
-                  key: 'Cross-Origin-Opener-Policy',
-                  value: 'unsafe-none',
-                },
-                {
-                  key: 'Cross-Origin-Embedder-Policy',
-                  value: 'unsafe-none',
-                }
-              ],
-            },
-          ];
-    },
+    }
 };
 
 export default config;

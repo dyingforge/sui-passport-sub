@@ -27,6 +27,8 @@ export const ProfileModal = () => {
   const { connectionStatus } = useCurrentWallet()
   const [open, setOpen] = useState(false)
   const { clearProfile } = useUserProfile()
+  const [isMobileApp, setIsMobileApp] = useState(false);
+  const [isInSuiWallet, setIsInSuiWallet] = useState(false);
 
   const onConnected = useCallback(async () => {
     if (currentAccount?.address && connectionStatus === "connected") {
@@ -48,7 +50,31 @@ export const ProfileModal = () => {
     void onConnected()
   }, [onConnected])
 
+  useEffect(() => {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const isSuiWallet = /Sui-Wallet/i.test(navigator.userAgent);    
+    setIsInSuiWallet(isSuiWallet);
+    setIsMobileApp(isMobile && !isSuiWallet);
+  }, []);
+
   if (!accounts.length) {
+    if (isMobileApp && !isInSuiWallet) {
+      return (
+        <Button
+          className="h-[34px] w-[150px] leading-4 sm:h-[52px] sm:w-[189px]"
+          onClick={() => {
+            window.location.href = 'suiwallet://';
+            setTimeout(() => {
+              window.location.href = 'https://apps.apple.com/us/app/sui-wallet-mobile/id6476572140';
+            }, 2000);
+          }}
+        >
+          <Image src={"/images/wallet.png"} alt="wallet" width={16} height={16} />
+          Open with Sui Wallet
+        </Button>
+      );
+    }
+
     return (
       <ConnectModal
         open={open}
@@ -62,7 +88,7 @@ export const ProfileModal = () => {
           </Button>
         }
       />
-    )
+    );
   }
 
   return connectionStatus === "connected" && (
@@ -110,7 +136,7 @@ export const ProfileModal = () => {
             </span>
             <a
               className="flex cursor-pointer gap-2 font-inter text-[14px] leading-5 text-[#4DA2FF] sm:text-[16px]"
-              href={`https://testnet.suivision.xyz/object/${userProfile?.id?.id}`}
+              href={`https://mainnet.suivision.xyz/object/${userProfile?.id?.id}`}
               target="_blank"
             >
               Details on Sui Vision
