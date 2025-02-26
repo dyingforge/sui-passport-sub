@@ -53,7 +53,7 @@ export const ProfileModal = () => {
 
   useEffect(() => {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    const isSuiWallet = /Sui Wallet Mobile|SuiWalletMobile|SuiWallet/i.test(navigator.userAgent);
+    const isSuiWallet = /Sui-Wallet/i.test(navigator.userAgent);
     
     setUserAgent(navigator.userAgent);
     setIsInSuiWallet(isSuiWallet);
