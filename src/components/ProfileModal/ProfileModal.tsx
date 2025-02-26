@@ -27,6 +27,7 @@ export const ProfileModal = () => {
   const { connectionStatus } = useCurrentWallet()
   const [open, setOpen] = useState(false)
   const { clearProfile } = useUserProfile()
+  const [isMobileApp, setIsMobileApp] = useState(false);
 
   const onConnected = useCallback(async () => {
     if (currentAccount?.address && connectionStatus === "connected") {
@@ -48,12 +49,15 @@ export const ProfileModal = () => {
     void onConnected()
   }, [onConnected])
 
-  if (!accounts.length) {
+  useEffect(() => {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     const isStandalone = 'standalone' in window.navigator && window.navigator.standalone;
     const isInApp = !isStandalone && window.location.href.includes('in-app');
+    setIsMobileApp(isMobile && !isInApp);
+  }, []);
 
-    if (isMobile && !isInApp) {
+  if (!accounts.length) {
+    if (isMobileApp) {
       return (
         <Button
           className="h-[34px] w-[150px] leading-4 sm:h-[52px] sm:w-[189px]"
