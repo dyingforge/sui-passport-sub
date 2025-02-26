@@ -50,10 +50,16 @@ export const ProfileModal = () => {
   }, [onConnected])
 
   useEffect(() => {
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    const isStandalone = 'standalone' in window.navigator && window.navigator.standalone;
-    const isInApp = !isStandalone && window.location.href.includes('in-app');
-    setIsMobileApp(isMobile && !isInApp);
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);    
+    // 检查是否在 Sui Wallet Mobile 应用内
+    const isSuiWallet = /Sui Wallet Mobile|SuiWalletMobile|SuiWallet/i.test(navigator.userAgent);
+    
+    // 开发时用于调试
+    if (process.env.NODE_ENV === 'development') {
+      console.log('User Agent:', navigator.userAgent);
+    }
+    
+    setIsMobileApp(isMobile && !isSuiWallet);
   }, []);
 
   if (!accounts.length) {
@@ -61,7 +67,12 @@ export const ProfileModal = () => {
       return (
         <Button
           className="h-[34px] w-[150px] leading-4 sm:h-[52px] sm:w-[189px]"
-          onClick={() => window.location.href = 'https://apps.apple.com/us/app/sui-wallet-mobile/id6476572140'}
+          onClick={() => {
+            window.location.href = 'suiwallet://'; // 尝试打开应用
+            setTimeout(() => {
+              window.location.href = 'https://apps.apple.com/us/app/sui-wallet-mobile/id6476572140';
+            }, 2000);
+          }}
         >
           <Image src={"/images/wallet.png"} alt="wallet" width={16} height={16} />
           Open with Sui Wallet
