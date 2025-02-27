@@ -70,7 +70,7 @@ export const ProfileModal = () => {
                 setTimeout(() => {
                   window.location.href =
                     "https://apps.apple.com/us/app/sui-wallet-mobile/id6476572140";
-                }, 2000);
+                }, 5000);
               }}
             >
               Open with
