@@ -12,6 +12,9 @@ const config = {
                 hostname: "images.suipassport.app",
             },
         ],
+    },
+    compiler:{
+        removeConsole: true,
     }
 };
 

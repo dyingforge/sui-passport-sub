@@ -114,7 +114,7 @@ export function useUserCrud(): UseUserCrudReturn {
     //     }
     // }
 
-    const createOrUpdateUser = async (user: CreateUserParams): Promise<DbResponse<DbUserResponse> | null> => {
+    const createOrUpdateUser = useCallback(async (user: CreateUserParams): Promise<DbResponse<DbUserResponse> | null> => {
         try {
             setIsLoading(true);
             setError(null);
@@ -133,7 +133,7 @@ export function useUserCrud(): UseUserCrudReturn {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, []);
 
     return {
         isLoading,

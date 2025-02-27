@@ -18,6 +18,7 @@ import { useUserProfile } from "~/context/user-profile-context";
 import { removeToken } from "~/lib/jwtManager";
 import { ConnectModal, useAccounts, useCurrentAccount, useCurrentWallet, useDisconnectWallet } from '@mysten/dapp-kit'
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { useUserCrud } from "~/hooks/use-user-crud";
 
 export const ProfileModal = () => {
   const { refreshProfile, userProfile } = useUserProfile()
@@ -30,6 +31,7 @@ export const ProfileModal = () => {
   const { clearProfile } = useUserProfile()
   const [isMobileApp, setIsMobileApp] = useState(false);
   const [isInSuiWallet, setIsInSuiWallet] = useState(false);
+  const { createOrUpdateUser } = useUserCrud()
 
   const onConnected = useCallback(async () => {
     if (currentAccount?.address && connectionStatus === "connected") {
@@ -40,6 +42,38 @@ export const ProfileModal = () => {
       await removeToken()
     }
   }, [currentAccount?.address, connectionStatus, networkVariables, refreshProfile])
+
+  // Separate effect for user data synchronization
+  useEffect(() => {
+    // Only sync if we have all required data
+    if (!currentAccount?.address || 
+        !userProfile?.passport_id || 
+        connectionStatus !== "connected") {
+      return;
+    }
+
+    // Create a stable reference to the data we want to sync
+    const userData = {
+      address: currentAccount.address,
+      stamp_count: userProfile.stamps?.length ?? 0,
+      name: userProfile.name,
+      points: Number(userProfile.points),
+    };
+
+    const syncTimeout = setTimeout(() => {
+      void createOrUpdateUser(userData);
+    }, 1000);
+
+    return () => clearTimeout(syncTimeout);
+  }, [
+    currentAccount?.address,
+    connectionStatus,
+    userProfile?.passport_id,
+    userProfile?.stamps?.length,
+    userProfile?.name,
+    userProfile?.points,
+    createOrUpdateUser // 现在可以安全地加入依赖数组
+  ]);
 
   const handleDisconnect = useCallback(() => {
     void disconnect()
