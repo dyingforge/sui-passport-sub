@@ -58,7 +58,7 @@ export const UserProfileModal: FC<UserProfileModalProps> = ({
             alt="avatar"
             width={150}
             height={150}
-            className="mt-[36px] h-[100px] w-[100px] sm:mt-0 sm:h-[150px] sm:w-[150px]"
+            className="mt-[36px] h-[100px] w-[100px] rounded-full object-cover sm:mt-0 sm:h-[150px] sm:w-[150px]"
             unoptimized
           />
           <div className="mb-6 mt-[32px] flex flex-col items-center gap-4 sm:mt-[48px]">
