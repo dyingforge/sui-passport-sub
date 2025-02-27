@@ -38,10 +38,25 @@ export function useStampCRUD() {
     }
   }
 
+  const increaseStampCountToDb = async (id: string) => {
+    try {
+      const response = await apiFetch<DbStampResponse>(`/api/stamps`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ stamp_id: id })
+      })
+      return response
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to increase stamp count'))
+      throw err
+    }
+  }
+
   return {
     isLoading,
     error,
     getStamps,
-    verifyClaimStamp
+    verifyClaimStamp,
+    increaseStampCountToDb
   }
 }

@@ -35,7 +35,7 @@ export default function HomePage() {
   const networkVariables = useNetworkVariables();
   const { fetchUsers, isLoading } = useUserCrud();
   const { userProfile, refreshProfile,isLoading: isRefreshingProfile } = useUserProfile();
-  const { verifyClaimStamp } = useStampCRUD();
+  const { verifyClaimStamp, increaseStampCountToDb } = useStampCRUD();
   const currentAccount = useCurrentAccount();
   const { connectionStatus } = useCurrentWallet();
   const [openStickers, setOpenStickers] = useState<Record<string, boolean>>({});
@@ -127,6 +127,7 @@ export default function HomePage() {
         handleOpenChange(stamp.id, false);
         await refreshProfile(currentAccount?.address ?? "", networkVariables);
         await refreshPassportStamps(networkVariables);
+        await increaseStampCountToDb(stamp.id);
       })
       .execute();
   };
@@ -277,7 +278,7 @@ export default function HomePage() {
                   name={stamp.name}
                   rotation={STICKER_LAYOUT_CONFIG.left[index]?.rotation ?? 0}
                   amountLeft={
-                    stamp.totalCountLimit && stamp.claimCount ? stamp.totalCountLimit - (stamp.claimCount ?? 0) : Infinity
+                    stamp.totalCountLimit && stamp.totalCountLimit != 0 ? stamp.totalCountLimit : Infinity
                   }
                   dropsAmount={
                     stamp.claimedCount ?? 0
@@ -300,7 +301,7 @@ export default function HomePage() {
                   name={stamp.name}
                   rotation={STICKER_LAYOUT_CONFIG.center[index]?.rotation ?? 0}
                   amountLeft={
-                    stamp.totalCountLimit && stamp.claimCount ? stamp.totalCountLimit - (stamp.claimCount ?? 0) : Infinity
+                    stamp.totalCountLimit && stamp.totalCountLimit != 0 ? stamp.totalCountLimit - (stamp.claimedCount ?? 0) : Infinity
                   }
                   dropsAmount={
                     stamp.claimedCount ?? 0
@@ -323,7 +324,7 @@ export default function HomePage() {
                   name={stamp.name}
                   rotation={STICKER_LAYOUT_CONFIG.right[index]?.rotation ?? 0}
                   amountLeft={
-                    stamp.totalCountLimit && stamp.claimCount ? stamp.totalCountLimit - (stamp.claimCount ?? 0) : Infinity
+                    stamp.totalCountLimit && stamp.totalCountLimit != 0 ? stamp.totalCountLimit : Infinity
                   }
                   dropsAmount={
                     stamp.claimedCount ?? 0

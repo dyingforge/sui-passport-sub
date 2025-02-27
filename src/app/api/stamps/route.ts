@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { verifyClaimStamp } from '~/lib/services/stamps';
+import { increaseStampCountToDb, verifyClaimStamp } from '~/lib/services/stamps';
 import type { VerifyClaimStampResponse, VerifyStampParams, DbStampResponse } from '~/types/stamp';
 import { getStampsFromDb } from '~/lib/services/stamps';
 
@@ -45,5 +45,16 @@ export async function GET() {
             { success: false, error: error instanceof Error ? error.message : 'Failed to fetch claim stamps' },
             { status: 500 }
         );
+    }
+}
+
+
+export async function PATCH(request: Request) {
+    try {
+        const { stamp_id } = await request.json();
+        const result = await increaseStampCountToDb(stamp_id as string);
+        return NextResponse.json(result);
+    } catch (error) {
+        return NextResponse.json({ success: false, error: error instanceof Error ? error.message : 'Failed to increase stamp count' }, { status: 500 });
     }
 }

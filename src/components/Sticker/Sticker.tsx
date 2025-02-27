@@ -120,7 +120,7 @@ export const Sticker: FC<StickerProps> = (props) => {
                   {name}
                 </p>
                 <p className="font-inter text-[16px] leading-6 text-[#ABBDCC] sm:text-[20px]">
-                  {amountLeft === Infinity ? "Unlimited" : amountLeft + " left"}
+                  {amountLeft === Infinity ? "Unlimited" : "Total: " + amountLeft}
                 </p>
               </span>
             </div>

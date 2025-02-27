@@ -98,3 +98,14 @@ const signMessage = async (passport_id: string, last_time: number) => {
         throw error;
     }
 }
+
+
+export async function increaseStampCountToDb(id: string) {
+  const query = `
+    UPDATE stamps 
+    SET claim_count = COALESCE(claim_count, 0) + 1 
+    WHERE stamp_id = ? 
+    RETURNING *
+  `;
+  return queryD1<DbStampResponse>(query, [id]);
+}
