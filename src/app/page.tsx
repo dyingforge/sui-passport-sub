@@ -283,7 +283,7 @@ export default function HomePage() {
               stamp!
             </p>
           </div> */}
-          <div className="mt-[37px] flex flex-col-reverse justify-between sm:min-w-[900px] sm:flex-row">
+          {/* <div className="mt-[37px] flex flex-col-reverse justify-between sm:min-w-[900px] sm:flex-row">
             <div className="flex flex-col">
               {stampsLayout.left.map((stamp, index) => (
                 <Sticker
@@ -365,7 +365,7 @@ export default function HomePage() {
                 />
               ))}
             </div>
-          </div>
+          </div> */}
           {/* <h2 className="mt-[185px] max-w-[263px] text-center font-everett text-[24px] leading-[28px] sm:text-[32px] sm:leading-[38px]">
             Top Contributors
           </h2>
