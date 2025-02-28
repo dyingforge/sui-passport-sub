@@ -255,22 +255,25 @@ export default function HomePage() {
               Make your mark on the Sui Community
             </h1>
             <div className="mt-6 flex max-w-[342px] flex-col gap-3 text-center font-everett_light text-[14px] text-[#ABBDCC] sm:max-w-[696px] sm:text-[16px]">
-              <p>
+              {/* <p>
                 The Sui community flourishes because of passionate members like you. Through content and events, your contributions help elevate our Sui Community.
               </p>
               <p>
                 Connect your wallet today and claim your first stamp!
+              </p> */}
+              <p className="text-center font-semibold text-lg sm:text-2xl text-blue-300">
+              There&apos;s been an overwhelming response to Sui Passport, and we&apos;re incredibly thankful for it! We still need to fix some issues, and we&apos;ll make an announcement soon.
               </p>
             </div>
-            {!userProfile?.passport_id && <PassportCreationModal
+            {/* {!userProfile?.passport_id && <PassportCreationModal
               onSubmit={handlePassportCreation}
               isLoading={isMintingPassportWithSponsor || isRefreshingProfile}
-            />}
+            />} */}
           </div>
         </div>
         <div className="relative mt-16 flex w-full flex-col items-center bg-gradient-to-t from-[#02101C] from-95% pl-2 pr-2">
           <h1 className="mt-40 max-w-[358px] text-center font-everett text-[40px] leading-[48px] sm:mt-16 sm:max-w-[696px] sm:text-[68px] sm:leading-[80px]">
-            Get your stamps
+            The Stamps
           </h1>
           {/* <div className="mt-6 flex max-w-[358px] flex-col text-center font-everett_light text-[14px] text-[#ABBDCC] sm:max-w-[580px] sm:text-[16px]">
             <p>
@@ -363,7 +366,7 @@ export default function HomePage() {
               ))}
             </div>
           </div>
-          <h2 className="mt-[185px] max-w-[263px] text-center font-everett text-[24px] leading-[28px] sm:text-[32px] sm:leading-[38px]">
+          {/* <h2 className="mt-[185px] max-w-[263px] text-center font-everett text-[24px] leading-[28px] sm:text-[32px] sm:leading-[38px]">
             Top Contributors
           </h2>
           <div className="mb-[48px] mt-6 w-full sm:mb-[80px]">
@@ -372,7 +375,7 @@ export default function HomePage() {
               onRefresh={handleTableRefresh}
               isLoading={isLoading}
             />
-          </div>
+          </div> */}
         </div>
       </div>
     </main>
