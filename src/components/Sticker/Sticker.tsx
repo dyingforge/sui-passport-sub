@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 "use client";
 
 import Image from "next/image";
@@ -39,6 +40,7 @@ export const Sticker: FC<StickerProps> = (props) => {
     name,
     rotation = 0,
     isClaimed,
+    dropsAmount,
     className,
     isPublicClaim = false,
     onClaim,
@@ -52,9 +54,11 @@ export const Sticker: FC<StickerProps> = (props) => {
   );
   const [code, setCode] = useState(isPublicClaim ? "00000" : "");
 
+
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogTrigger className={className} disabled={isClaimed}>
+      <DialogTrigger className={className} disabled={isClaimed || dropsAmount <= 0}>
         <div
           className={cn("relative flex flex-col items-center justify-center")}
           style={{
@@ -71,7 +75,7 @@ export const Sticker: FC<StickerProps> = (props) => {
               { "grayscale(100%) cursor-default opacity-40": isClaimed },
             )}
             quality={100}
-            disabled={Boolean(isClaimed)}
+            disabled={Boolean(isClaimed || dropsAmount <= 0)}
           />
           <p className="absolute bottom-0 font-everett uppercase text-[#ABBDCC]">
             {name}
@@ -79,6 +83,12 @@ export const Sticker: FC<StickerProps> = (props) => {
           {isClaimed && (
             <div className="absolute z-10 flex h-[29px] w-[78px] items-center justify-center rounded-xl bg-[#33404b] font-inter text-[#6f7f8c]">
               Claimed
+            </div>
+          )}
+
+          {dropsAmount <= 0 && (
+            <div className="absolute z-10 flex h-[29px] w-[78px] items-center justify-center rounded-xl bg-[#33404b] font-inter text-[#6f7f8c]">
+              Saleout
             </div>
           )}
         </div>

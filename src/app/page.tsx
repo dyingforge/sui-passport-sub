@@ -288,7 +288,11 @@ export default function HomePage() {
                     stamp.totalCountLimit && stamp.totalCountLimit != 0 ? stamp.totalCountLimit : Infinity
                   }
                   dropsAmount={
-                    stamp.claimedCount ?? 0
+                    stamp.totalCountLimit === 0 
+                      ? Infinity 
+                      : stamp.totalCountLimit && stamp.claimedCount 
+                        ? stamp.totalCountLimit - stamp.claimedCount 
+                        : 0
                   }
                   isClaimed={stamp.isClaimed ?? false}
                   isPublicClaim={stamp.publicClaim}
@@ -311,7 +315,11 @@ export default function HomePage() {
                     stamp.totalCountLimit && stamp.totalCountLimit != 0 ? stamp.totalCountLimit - (stamp.claimedCount ?? 0) : Infinity
                   }
                   dropsAmount={
-                    stamp.claimedCount ?? 0
+                    stamp.totalCountLimit === 0 
+                      ? Infinity 
+                      : stamp.totalCountLimit && stamp.claimedCount 
+                        ? stamp.totalCountLimit - stamp.claimedCount 
+                        : 0
                   }
                   isClaimed={stamp.isClaimed ?? false}
                   isPublicClaim={stamp.publicClaim}
@@ -334,7 +342,11 @@ export default function HomePage() {
                     stamp.totalCountLimit && stamp.totalCountLimit != 0 ? stamp.totalCountLimit : Infinity
                   }
                   dropsAmount={
-                    stamp.claimedCount ?? 0
+                    stamp.totalCountLimit === 0 
+                      ? Infinity 
+                      : stamp.totalCountLimit && stamp.claimedCount 
+                        ? stamp.totalCountLimit - stamp.claimedCount 
+                        : 0
                   }
                   isClaimed={stamp.isClaimed ?? false}
                   isPublicClaim={stamp.publicClaim}
