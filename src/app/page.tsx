@@ -224,7 +224,7 @@ export default function HomePage() {
             />
             <div className="flex items-center gap-2">
               <p className="font-inter text-[16px] sm:text-[24px]">
-                Sui passport
+                Sui Community Passport
               </p>
               <span className="text-xs font-medium text-red-400 border border-red-400 rounded-full px-2 py-0.5 bg-red-400/10">
                 Test Version
