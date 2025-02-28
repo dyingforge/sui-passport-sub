@@ -24,6 +24,7 @@ export function useStampCRUD() {
   }
   const verifyClaimStamp = async (data: VerifyClaimStampRequest) => {
     try {
+      setIsLoading(true)
       const response = await apiFetch<VerifyClaimStampResponse>(`/api/stamps`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

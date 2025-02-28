@@ -14,6 +14,13 @@ export async function POST(request: Request) {
             );
         }
 
+        if (body.owner_stamps?.some((stamp: string) => stamp === body.stamp_name)) {
+            return NextResponse.json(
+                { success: false, error: 'You have already claimed this stamp' },
+                { status: 400 }
+            );
+        }
+
         const { isValid, signature } = await verifyClaimStamp(body as VerifyStampParams);
 
         const response: VerifyClaimStampResponse = {

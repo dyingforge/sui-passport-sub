@@ -102,11 +102,18 @@ export default function HomePage() {
       claim_code: code,
       passport_id: userProfile?.id.id,
       last_time: Number(userProfile?.last_time),
+      stamp_name: stamp?.name,
+      owner_stamps: userProfile?.stamps?.map((stamp) => stamp.name) ?? [],
     };
     const data = await verifyClaimStamp(requestBody);
 
     if (!data.signature || !data.valid) {
       toast.error("Invalid claim code");
+      return;
+    }
+
+    if (!data.success) {
+      toast.error(data.error);
       return;
     }
     // Convert signature object to array

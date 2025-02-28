@@ -43,12 +43,15 @@ export type VerifyClaimStampRequest = {
     claim_code: string
     passport_id: string
     last_time: number
+    stamp_name: string
+    owner_stamps: string[]
 }
 
 export type VerifyClaimStampResponse = {
     success: boolean;
     valid: boolean;
     signature?: Uint8Array;
+    error?: string;
 }
 
 export const ClaimStampRequest = z.object({
