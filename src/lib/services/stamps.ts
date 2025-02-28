@@ -1,11 +1,15 @@
 import { bcs } from "@mysten/sui/bcs";
 import { queryD1 } from "../dbHelper";
-import type { DbStampResponse, VerifyStampParams } from "~/types/stamp";
+import type { DbStampResponse, StampItem, VerifyStampParams } from "~/types/stamp";
 import { fromHex } from "@mysten/sui/utils";
 import { keccak256 } from "js-sha3";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { z } from 'zod';
 import { cache } from 'react';
+import { graphqlClient, suiClient, type NetworkVariables } from "../contracts";
+import type { UserProfile } from "~/types/userProfile";
+import type { SuiObjectData, SuiObjectResponse } from "@mysten/sui/client";
+import { getCollectionDetail } from "../contracts/graphql";
 
 const verifyStampSchema = z.object({
   stamp_id: z.string(),
@@ -13,6 +17,78 @@ const verifyStampSchema = z.object({
   last_time: z.number(),
   claim_code: z.string()
 });
+
+interface ParsedContent<T = unknown> {
+  type: string;
+  fields: T;
+}
+
+function updateProfileFromPassport(profile: UserProfile, passportFields: Partial<UserProfile>) {
+  type ValidKeys = keyof Pick<UserProfile, 'avatar' | 'collections' | 'email' | 'exhibit' |
+      'github' | 'id' | 'introduction' | 'last_time' | 'name' | 'points' | 'x'>;
+
+  (Object.keys(passportFields) as ValidKeys[]).forEach(field => {
+      if (field in passportFields && field in profile) {
+          (profile[field] as UserProfile[ValidKeys]) = passportFields[field] as UserProfile[ValidKeys];
+      }
+  });
+
+  if (passportFields.id?.id) {
+      profile.passport_id = passportFields.id.id;
+  }
+}
+
+interface StampFields {
+  id: { id: string };
+  image_url: string;
+  name: string;
+  [key: string]: unknown;
+}
+
+function createStampFromFields(fields: StampFields): StampItem | null {
+  try {
+      return {
+          ...fields,
+          id: fields.id.id,
+          imageUrl: fields.image_url,
+          name: fields.name
+      };
+  } catch (error) {
+      console.error('Error creating stamp:', error);
+      return null;
+  }
+}
+
+async function enrichProfileWithCollectionDetails(
+  profile: UserProfile,
+  client: typeof graphqlClient
+): Promise<void> {
+  interface CollectionQueryResult {
+      data?: {
+          owner?: {
+              dynamicFields?: {
+                  nodes?: Array<{
+                      name?: {
+                          json: string;
+                      };
+                  }>;
+              };
+          };
+      };
+  }
+
+  const collectionDetail = await client.query({
+      query: getCollectionDetail,
+      variables: {
+          address: profile.collections.fields.id.id,
+      }
+  }) as CollectionQueryResult;
+
+  profile.collection_detail =
+      collectionDetail.data?.owner?.dynamicFields?.nodes
+          ?.map(node => node.name?.json)
+          ?.filter((item): item is string => Boolean(item)) ?? [];
+}
 
 export const getStampsFromDb = cache(async (): Promise<DbStampResponse[]|undefined> => {
     try {
@@ -71,6 +147,113 @@ export async function verifyClaimStamp(params: VerifyStampParams) {
   }
 
   return { isValid, signature };
+}
+
+function parseObjectData<T>(data: SuiObjectData): ParsedContent<T> | null {
+  if (data.content?.dataType !== "moveObject") return null;
+  return {
+      type: data.content.type,
+      fields: data.content.fields as T,
+  };
+}
+
+export const checkUserStateServer = async (
+  address: string,
+  networkVariables: NetworkVariables
+): Promise<UserProfile | null> => {
+  const profile: UserProfile = {
+      avatar: "",
+      collections: { fields: { id: { id: "" }, size: 0 } },
+      email: "",
+      exhibit: [],
+      github: "",
+      current_user: address,
+      id: { id: "" },
+      introduction: "",
+      last_time: 0,
+      name: "",
+      admincap: "",
+      points: 0,
+      x: "",
+      passport_id: "",
+      stamps: [],
+      collection_detail: [],
+  };
+
+  try {
+      // 使用分页获取所有对象
+      const objects = await fetchAllOwnedObjectsServer(address, networkVariables);
+
+      objects.forEach((obj) => {
+          if (!obj.data) return;
+
+          const parsed = parseObjectData(obj.data);
+          if (!parsed) return;
+
+          const { type, fields } = parsed;
+
+          switch (type) {
+              case `${networkVariables.package}::sui_passport::SuiPassport`:
+                  updateProfileFromPassport(profile, fields as UserProfile);
+                  break;
+              case `${networkVariables.package}::stamp::AdminCap`:
+                  const adminCapId = (fields as { id: { id: string } })?.id?.id;
+                  if (adminCapId) profile.admincap = adminCapId;
+                  break;
+              case `${networkVariables.package}::stamp::Stamp`:
+                  const stamp = createStampFromFields(fields as StampFields);
+                  if (stamp) profile.stamps?.push(stamp);
+                  break;
+          }
+      });
+
+      await enrichProfileWithCollectionDetails(profile, graphqlClient);
+
+      return profile;
+  } catch (error) {
+      console.error('Error in checkUserStateServer:', error);
+      return null;
+  }
+};
+
+async function fetchAllOwnedObjectsServer(
+  address: string,
+  networkVariables: NetworkVariables
+): Promise<SuiObjectResponse[]> {
+  const allObjects: SuiObjectResponse[] = [];
+  let hasNextPage = true;
+  let nextCursor: string | null = null;
+
+  while (hasNextPage) {
+      try {
+          const response = await suiClient.getOwnedObjects({
+              owner: address,
+              options: { showContent: true },
+              filter: {
+                  MatchAny: [
+                      { StructType: `${networkVariables.package}::stamp::AdminCap` },
+                      { StructType: `${networkVariables.package}::sui_passport::SuiPassport` },
+                      { StructType: `${networkVariables.package}::stamp::Stamp` }
+                  ]
+              },
+              cursor: nextCursor,
+          });
+
+          allObjects.push(...response.data);
+          hasNextPage = response.hasNextPage;
+          nextCursor = response.nextCursor ?? null;
+
+          // 添加错误处理和重试逻辑
+          if (!response.data.length && hasNextPage) {
+              await new Promise(resolve => setTimeout(resolve, 1000)); // 添加延迟避免请求过快
+          }
+      } catch (error) {
+          console.error('Error fetching owned objects:', error);
+          break; // 发生错误时中断循环
+      }
+  }
+
+  return allObjects;
 }
 
 const signMessage = async (passport_id: string, last_time: number) => {

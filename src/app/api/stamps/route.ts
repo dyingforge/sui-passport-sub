@@ -1,27 +1,30 @@
 import { NextResponse } from 'next/server';
-import { increaseStampCountToDb, verifyClaimStamp } from '~/lib/services/stamps';
-import type { VerifyClaimStampResponse, VerifyStampParams, DbStampResponse } from '~/types/stamp';
+import { checkUserStateServer, increaseStampCountToDb, verifyClaimStamp } from '~/lib/services/stamps';
+import type { VerifyClaimStampResponse, VerifyStampParams, DbStampResponse, StampItem } from '~/types/stamp';
 import { getStampsFromDb } from '~/lib/services/stamps';
+import type { NetworkVariables } from '~/lib/contracts';
 
 
 export async function POST(request: Request) {
     try {
-        const body = await request.json();
-        if (!body.stamp_id || !body.claim_code) {
+        const {address, networkVariables, stamp_id, claim_code, passport_id, last_time, stamp_name} = await request.json();
+        if (!address || !networkVariables || !stamp_id || !claim_code || !passport_id || !last_time || !stamp_name) {
             return NextResponse.json(
                 { success: false, error: 'Missing required parameters' },
                 { status: 400 }
             );
         }
 
-        if (body.owner_stamps?.some((stamp: string) => stamp === body.stamp_name)) {
+        const profile = await checkUserStateServer(address as string, networkVariables as NetworkVariables);
+
+        if (profile?.stamps?.some((stamp: StampItem) => stamp.name === stamp_name)) {
             return NextResponse.json(
                 { success: false, error: 'You have already claimed this stamp' },
                 { status: 400 }
             );
         }
 
-        const { isValid, signature } = await verifyClaimStamp(body as VerifyStampParams);
+        const { isValid, signature } = await verifyClaimStamp({ stamp_id, claim_code, passport_id, last_time } satisfies VerifyStampParams);
 
         const response: VerifyClaimStampResponse = {
             success: true,

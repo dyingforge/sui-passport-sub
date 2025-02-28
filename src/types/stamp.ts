@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { NetworkVariables } from "~/lib/contracts";
 
 export type StampItem = {
     id: string
@@ -44,7 +45,8 @@ export type VerifyClaimStampRequest = {
     passport_id: string
     last_time: number
     stamp_name: string
-    owner_stamps: string[]
+    address: string
+    networkVariables: NetworkVariables
 }
 
 export type VerifyClaimStampResponse = {
