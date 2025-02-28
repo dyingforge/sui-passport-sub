@@ -8,7 +8,7 @@ interface DbResponse<T> {
 }
 
 export const getUsersFromDb = async () => {
-    const query = `SELECT * FROM users ORDER BY created_at DESC LIMIT 100`;
+    const query = `SELECT * FROM users ORDER BY points DESC LIMIT 100`;
     const users = await queryD1<DbUserResponse[]>(query);
     return users;
 }
