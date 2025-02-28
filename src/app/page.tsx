@@ -262,7 +262,7 @@ export default function HomePage() {
                 Connect your wallet today and claim your first stamp!
               </p> */}
               <p className="text-center font-semibold text-lg sm:text-2xl text-blue-300">
-              There&apos;s been an overwhelming response to Sui Passport, and we&apos;re incredibly thankful for it! We making small adjustments, and we&apos;ll make an announcement soon.
+              There&apos;s been an overwhelming response to Sui Passport, and we&apos;re incredibly thankful for it! We are making a few small adjustments, and we&apos;ll make an announcement soon.
               </p>
             </div>
             {/* {!userProfile?.passport_id && <PassportCreationModal
