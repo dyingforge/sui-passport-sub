@@ -2,8 +2,7 @@ import { NextResponse } from 'next/server';
 import { checkUserStateServer, increaseStampCountToDb, verifyClaimStamp } from '~/lib/services/stamps';
 import type { VerifyClaimStampResponse, VerifyStampParams, DbStampResponse, StampItem } from '~/types/stamp';
 import { getStampsFromDb } from '~/lib/services/stamps';
-import type { NetworkVariables } from '~/lib/contracts';
-
+import { suiClient, graphqlClient, type NetworkVariables } from '../SuiClient';
 
 export async function POST(request: Request) {
     try {
@@ -15,12 +14,11 @@ export async function POST(request: Request) {
             );
         }
 
-        const profile = await checkUserStateServer(address as string, networkVariables as NetworkVariables);
-
-        if (profile?.stamps?.some((stamp: StampItem) => stamp.name === stamp_name)) {
+        const profile = await checkUserStateServer(address as string, networkVariables as NetworkVariables, suiClient, graphqlClient);
+        if (profile?.stamps?.some((stamp: StampItem) => stamp.event === stamp_name)) {
             return NextResponse.json(
                 { success: false, error: 'You have already claimed this stamp' },
-                { status: 400 }
+                { status: 200 }
             );
         }
 

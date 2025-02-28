@@ -6,10 +6,11 @@ import { keccak256 } from "js-sha3";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { z } from 'zod';
 import { cache } from 'react';
-import { graphqlClient, suiClient, type NetworkVariables } from "../contracts";
+import { type NetworkVariables } from "../contracts";
 import type { UserProfile } from "~/types/userProfile";
-import type { SuiObjectData, SuiObjectResponse } from "@mysten/sui/client";
+import type { SuiClient, SuiObjectData, SuiObjectResponse } from "@mysten/sui/client";
 import { getCollectionDetail } from "../contracts/graphql";
+import type { SuiGraphQLClient } from "@mysten/sui/graphql";
 
 const verifyStampSchema = z.object({
   stamp_id: z.string(),
@@ -61,7 +62,7 @@ function createStampFromFields(fields: StampFields): StampItem | null {
 
 async function enrichProfileWithCollectionDetails(
   profile: UserProfile,
-  client: typeof graphqlClient
+  client: SuiGraphQLClient
 ): Promise<void> {
   interface CollectionQueryResult {
       data?: {
@@ -159,7 +160,9 @@ function parseObjectData<T>(data: SuiObjectData): ParsedContent<T> | null {
 
 export const checkUserStateServer = async (
   address: string,
-  networkVariables: NetworkVariables
+  networkVariables: NetworkVariables,
+  suiClient: SuiClient,
+  graphqlClient: SuiGraphQLClient
 ): Promise<UserProfile | null> => {
   const profile: UserProfile = {
       avatar: "",
@@ -182,7 +185,7 @@ export const checkUserStateServer = async (
 
   try {
       // 使用分页获取所有对象
-      const objects = await fetchAllOwnedObjectsServer(address, networkVariables);
+      const objects = await fetchAllOwnedObjectsServer(address, networkVariables, suiClient);
 
       objects.forEach((obj) => {
           if (!obj.data) return;
@@ -218,7 +221,8 @@ export const checkUserStateServer = async (
 
 async function fetchAllOwnedObjectsServer(
   address: string,
-  networkVariables: NetworkVariables
+  networkVariables: NetworkVariables,
+  suiClient: SuiClient
 ): Promise<SuiObjectResponse[]> {
   const allObjects: SuiObjectResponse[] = [];
   let hasNextPage = true;

@@ -35,7 +35,7 @@ export default function HomePage() {
   const networkVariables = useNetworkVariables();
   const { fetchUsers, isLoading } = useUserCrud();
   const { userProfile, refreshProfile,isLoading: isRefreshingProfile } = useUserProfile();
-  const { verifyClaimStamp, increaseStampCountToDb } = useStampCRUD();
+  const { verifyClaimStamp, increaseStampCountToDb,isLoading: isVerifyingClaimStamp } = useStampCRUD();
   const currentAccount = useCurrentAccount();
   const { connectionStatus } = useCurrentWallet();
   const [openStickers, setOpenStickers] = useState<Record<string, boolean>>({});
@@ -85,7 +85,7 @@ export default function HomePage() {
       return;
     }
     const stamps = userProfile?.stamps;
-    if (stamps?.some((stamp) => stamp.name.split("#")[0] === stamp?.name)) {
+    if (stamps?.some((stamp) => stamp.event === stamp?.name)) {
       toast.error(`You have already have this stamp`);
       return;
     }
@@ -103,19 +103,20 @@ export default function HomePage() {
       passport_id: userProfile?.id.id,
       last_time: Number(userProfile?.last_time),
       stamp_name: stamp?.name,
-      owner_stamps: userProfile?.stamps?.map((stamp) => stamp.name) ?? [],
+      address: currentAccount?.address ?? "",
+      networkVariables: networkVariables,
     };
     const data = await verifyClaimStamp(requestBody);
-
+    if (!data.success) {
+      toast.error(data.error);
+      return;
+    }
     if (!data.signature || !data.valid) {
       toast.error("Invalid claim code");
       return;
     }
 
-    if (!data.success) {
-      toast.error(data.error);
-      return;
-    }
+    
     // Convert signature object to array
     const signatureArray = Object.values(data.signature);
     await handleClaimStampTx(
@@ -224,7 +225,7 @@ export default function HomePage() {
             />
             <div className="flex items-center gap-2">
               <p className="font-inter text-[16px] sm:text-[24px]">
-                Sui passport
+                Sui Community Passport
               </p>
               <span className="text-xs font-medium text-red-400 border border-red-400 rounded-full px-2 py-0.5 bg-red-400/10">
                 Test Version
@@ -272,14 +273,6 @@ export default function HomePage() {
           <h1 className="mt-40 max-w-[358px] text-center font-everett text-[40px] leading-[48px] sm:mt-16 sm:max-w-[696px] sm:text-[68px] sm:leading-[80px]">
             Get your stamps
           </h1>
-          {/* <div className="mt-6 flex max-w-[358px] flex-col text-center font-everett_light text-[14px] text-[#ABBDCC] sm:max-w-[580px] sm:text-[16px]">
-            <p>
-              The Sui community flourishes because of passionate members like
-              you. Through content and events, your contributions help elevate
-              our Sui Community. Connect your wallet today and claim your first
-              stamp!
-            </p>
-          </div> */}
           <div className="mt-[37px] flex flex-col-reverse justify-between sm:min-w-[900px] sm:flex-row">
             <div className="flex flex-col">
               {stampsLayout.left.map((stamp, index) => (
@@ -304,7 +297,7 @@ export default function HomePage() {
                   open={openStickers[stamp.id] ?? false}
                   onOpenChange={(open) => handleOpenChange(stamp.id, open)}
                   onClaim={(code) => handleClaimStampClick(code, stamp)}
-                  isLoading={isClaimingStamp}
+                  isLoading={isClaimingStamp || isVerifyingClaimStamp}
                 />
               ))}
             </div>
@@ -331,7 +324,7 @@ export default function HomePage() {
                   open={openStickers[stamp.id] ?? false}
                   onOpenChange={(open) => handleOpenChange(stamp.id, open)}
                   onClaim={(code) => handleClaimStampClick(code, stamp)}
-                  isLoading={isClaimingStamp}
+                  isLoading={isClaimingStamp || isVerifyingClaimStamp}
                 />
               ))}
             </div>
@@ -358,7 +351,7 @@ export default function HomePage() {
                   open={openStickers[stamp.id] ?? false}
                   onOpenChange={(open) => handleOpenChange(stamp.id, open)}
                   onClaim={(code) => handleClaimStampClick(code, stamp)}
-                  isLoading={isClaimingStamp}
+                  isLoading={isClaimingStamp || isVerifyingClaimStamp}
                 />
               ))}
             </div>

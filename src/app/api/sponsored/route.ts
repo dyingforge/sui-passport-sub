@@ -15,8 +15,6 @@ export const POST = async (request: NextRequest) => {
   const { network, txBytes, sender, allowedAddresses }: SponsorTxRequestBody =
     await request.json();
 
-  console.log(network, txBytes, sender, allowedAddresses)
-
   return enokiClient
     .createSponsoredTransaction({
       network,
