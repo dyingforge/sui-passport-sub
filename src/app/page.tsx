@@ -217,11 +217,11 @@ export default function HomePage() {
         <div className="bg-[#02101C] py-6 flex w-full justify-between px-3 sm:pl-[35px] sm:pr-6 sticky top-0 z-20 sm:static">
           <div className="flex items-center gap-3">
             <Image
-              src={"/images/drop.png"}
+              src={"/images/sui-logo.png"}
               alt="drop"
               width={24}
-              height={32}
-              className="h-[20px] w-[16px] sm:h-[32px] sm:w-[24px]"
+              height={24}
+              className="h-[20px] w-[20px] sm:h-[32px] sm:w-[32px]"
             />
             <div className="flex items-center gap-2">
               <p className="font-inter text-[16px] sm:text-[24px]">

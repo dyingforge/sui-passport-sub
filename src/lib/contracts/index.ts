@@ -36,6 +36,8 @@ const mainnetVariables = {
     stampEventRecord: "0xb58b65f1e10d75bfc5fa936ef69df3da8d9712c998b0e30546494272991d2f89",
     stampEventRecordTable:"0xadfe6cc8685af7251c660cebbf1f18b987897932c11041cc9a9833db19e9ce69",
     stampAdminCap: "0xc6959493989d15d66e513d8ada5dc853cdf883d937b1b1164d23e2b3c7cadec9",
+    version: "0.0.1",
+    adminSet: "0x36319fa6753b0c9c833f191a6d17b09b053c4662bdbd7ca164d1a428bd3ebbe7"
 }
 
 const testnetVariables = {
@@ -46,6 +48,8 @@ const testnetVariables = {
     stampEventRecord: "0x2815e9e800d36f3e6e0a5a2c22f39cf259ff0095ab14b85b61568ec669b24068",
     stampEventRecordTable:"0xf9df7047b15be40896fd665f6ef982b3cf91207109e3a6cdbbeae34f93d1a203",
     stampAdminCap: "0x505cbf834135ee90afc42c36727bb1d2746149b46a7668d4eb7c201c001c9c91",
+    version: "0.0.1",
+    adminSet: "0x36319fa6753b0c9c833f191a6d17b09b053c4662bdbd7ca164d1a428bd3ebbe7"
 }
 
 const network = (process.env.NEXT_PUBLIC_NETWORK as Network) || "testnet";

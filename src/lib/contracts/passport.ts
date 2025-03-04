@@ -20,6 +20,7 @@ export const mint_passport = createBetterTxFactory<{
             tx.pure.string(params.x),
             tx.pure.string(params.github),
             tx.pure.string(params.email),
+            tx.object(networkVariables.version),
             tx.object("0x6"),
         ],
     });
