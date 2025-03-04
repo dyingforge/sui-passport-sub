@@ -86,7 +86,7 @@ export const Sticker: FC<StickerProps> = (props) => {
 
           {dropsAmount <= 0 && (
             <div className="absolute z-10 flex h-[29px] w-[78px] items-center justify-center rounded-xl bg-[#33404b] font-inter text-[#6f7f8c]">
-              Saleout
+              Sold Out
             </div>
           )}
         </div>
