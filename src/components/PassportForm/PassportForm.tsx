@@ -56,7 +56,7 @@ export const PassportForm: FC<PassportFormProps> = ({
           </div>
           <div className="mt-4 flex w-[358px] flex-col gap-4 sm:w-[520px]">
             <TextInput
-              labelText="Lable"
+              labelText="Label"
               placeholder="John Smith"
               className="h-[66px] sm:h-[79px]"
               {...methods.register("name")}
