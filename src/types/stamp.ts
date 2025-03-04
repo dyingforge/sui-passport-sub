@@ -46,7 +46,7 @@ export type VerifyClaimStampRequest = {
     last_time: number
     stamp_name: string
     address: string
-    networkVariables: NetworkVariables
+    packageId: string
 }
 
 export type VerifyClaimStampResponse = {

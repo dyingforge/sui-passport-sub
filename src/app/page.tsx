@@ -104,7 +104,7 @@ export default function HomePage() {
       last_time: Number(userProfile?.last_time),
       stamp_name: stamp?.name,
       address: currentAccount?.address ?? "",
-      networkVariables: networkVariables,
+      packageId: networkVariables?.package,
     };
     const data = await verifyClaimStamp(requestBody);
     if (!data.success) {

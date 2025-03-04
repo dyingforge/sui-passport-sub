@@ -160,7 +160,7 @@ function parseObjectData<T>(data: SuiObjectData): ParsedContent<T> | null {
 
 export const checkUserStateServer = async (
   address: string,
-  networkVariables: NetworkVariables,
+  packageId: string,
   suiClient: SuiClient,
   graphqlClient: SuiGraphQLClient
 ): Promise<UserProfile | null> => {
@@ -185,7 +185,7 @@ export const checkUserStateServer = async (
 
   try {
       // 使用分页获取所有对象
-      const objects = await fetchAllOwnedObjectsServer(address, networkVariables, suiClient);
+      const objects = await fetchAllOwnedObjectsServer(address, packageId, suiClient);
 
       objects.forEach((obj) => {
           if (!obj.data) return;
@@ -196,14 +196,14 @@ export const checkUserStateServer = async (
           const { type, fields } = parsed;
 
           switch (type) {
-              case `${networkVariables.package}::sui_passport::SuiPassport`:
+              case `${packageId}::sui_passport::SuiPassport`:
                   updateProfileFromPassport(profile, fields as UserProfile);
                   break;
-              case `${networkVariables.package}::stamp::AdminCap`:
+              case `${packageId}::stamp::AdminCap`:
                   const adminCapId = (fields as { id: { id: string } })?.id?.id;
                   if (adminCapId) profile.admincap = adminCapId;
                   break;
-              case `${networkVariables.package}::stamp::Stamp`:
+              case `${packageId}::stamp::Stamp`:
                   const stamp = createStampFromFields(fields as StampFields);
                   if (stamp) profile.stamps?.push(stamp);
                   break;
@@ -221,7 +221,7 @@ export const checkUserStateServer = async (
 
 async function fetchAllOwnedObjectsServer(
   address: string,
-  networkVariables: NetworkVariables,
+  packageId: string,
   suiClient: SuiClient
 ): Promise<SuiObjectResponse[]> {
   const allObjects: SuiObjectResponse[] = [];
@@ -235,9 +235,9 @@ async function fetchAllOwnedObjectsServer(
               options: { showContent: true },
               filter: {
                   MatchAny: [
-                      { StructType: `${networkVariables.package}::stamp::AdminCap` },
-                      { StructType: `${networkVariables.package}::sui_passport::SuiPassport` },
-                      { StructType: `${networkVariables.package}::stamp::Stamp` }
+                      { StructType: `${packageId}::stamp::AdminCap` },
+                      { StructType: `${packageId}::sui_passport::SuiPassport` },
+                      { StructType: `${packageId}::stamp::Stamp` }
                   ]
               },
               cursor: nextCursor,
