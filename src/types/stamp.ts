@@ -29,8 +29,8 @@ export type DisplayStamp = StampItem & {
     isActive?: boolean
     eventId?: string
     isClaimable?: boolean
-    claimedCount?: number
     isClaimed?: boolean
+    leftStamps: number
 }
 
 export interface DistributedStamps {

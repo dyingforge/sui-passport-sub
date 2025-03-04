@@ -14,6 +14,8 @@ export async function POST(request: Request) {
             );
         }
 
+        //todo check if the stamp is claimable
+
         const profile = await checkUserStateServer(requestBody.address, requestBody.packageId, suiClient, graphqlClient);
         if (profile?.stamps?.some((stamp: StampItem) => stamp.event === requestBody.stamp_name)) {
             return NextResponse.json(

@@ -71,7 +71,7 @@ export function stampsToDisplayStamps(stamps: StampItem[], userProfile: UserProf
             ...stamp,
             isClaimed,
             isClaimable,
-            claimedCount
+            leftStamps: stamp.totalCountLimit === 0 ? Infinity : (stamp.totalCountLimit ?? 0) - (stamp.claimCount ?? 0)
         };
     });
 }
@@ -82,7 +82,7 @@ export function stampsToDisplayStampsWithOutPassport(stamps: StampItem[]): Displ
       ...stamp,
       isClaimed: false,
       isClaimable: false,
-      claimedCount: 0
+      leftStamps: stamp.totalCountLimit === 0 ? Infinity : (stamp.totalCountLimit ?? 0) - (stamp.claimCount ?? 0)
     };
   });
 }

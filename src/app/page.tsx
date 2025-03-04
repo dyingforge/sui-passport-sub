@@ -71,6 +71,7 @@ export default function HomePage() {
     } else if (stamps) {
       setDisplayStamps(stampsToDisplayStampsWithOutPassport(stamps));
     }
+    
   }, [stamps, userProfile]);
 
   useEffect(() => {
@@ -282,16 +283,8 @@ export default function HomePage() {
                   url={stamp.imageUrl ?? ""}
                   name={stamp.name}
                   rotation={STICKER_LAYOUT_CONFIG.left[index]?.rotation ?? 0}
-                  amountLeft={
-                    stamp.totalCountLimit && stamp.totalCountLimit != 0 ? stamp.totalCountLimit : Infinity
-                  }
-                  dropsAmount={
-                    stamp.totalCountLimit === 0 
-                      ? Infinity 
-                      : stamp.totalCountLimit && stamp.claimedCount 
-                        ? stamp.totalCountLimit - stamp.claimedCount 
-                        : 0
-                  }
+                  amountLeft={stamp.leftStamps}
+                  dropsAmount={stamp.leftStamps}
                   isClaimed={stamp.isClaimed ?? false}
                   isPublicClaim={stamp.publicClaim}
                   open={openStickers[stamp.id] ?? false}
@@ -309,16 +302,8 @@ export default function HomePage() {
                   url={stamp.imageUrl ?? ""}
                   name={stamp.name}
                   rotation={STICKER_LAYOUT_CONFIG.center[index]?.rotation ?? 0}
-                  amountLeft={
-                    stamp.totalCountLimit && stamp.totalCountLimit != 0 ? stamp.totalCountLimit - (stamp.claimedCount ?? 0) : Infinity
-                  }
-                  dropsAmount={
-                    stamp.totalCountLimit === 0 
-                      ? Infinity 
-                      : stamp.totalCountLimit && stamp.claimedCount 
-                        ? stamp.totalCountLimit - stamp.claimedCount 
-                        : 0
-                  }
+                  amountLeft={stamp.leftStamps}
+                  dropsAmount={stamp.leftStamps}
                   isClaimed={stamp.isClaimed ?? false}
                   isPublicClaim={stamp.publicClaim}
                   open={openStickers[stamp.id] ?? false}
@@ -336,16 +321,8 @@ export default function HomePage() {
                   url={stamp.imageUrl ?? ""}
                   name={stamp.name}
                   rotation={STICKER_LAYOUT_CONFIG.right[index]?.rotation ?? 0}
-                  amountLeft={
-                    stamp.totalCountLimit && stamp.totalCountLimit != 0 ? stamp.totalCountLimit : Infinity
-                  }
-                  dropsAmount={
-                    stamp.totalCountLimit === 0 
-                      ? Infinity 
-                      : stamp.totalCountLimit && stamp.claimedCount 
-                        ? stamp.totalCountLimit - stamp.claimedCount 
-                        : 0
-                  }
+                  amountLeft={stamp.leftStamps}
+                  dropsAmount={stamp.leftStamps}
                   isClaimed={stamp.isClaimed ?? false}
                   isPublicClaim={stamp.publicClaim}
                   open={openStickers[stamp.id] ?? false}

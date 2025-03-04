@@ -3,7 +3,7 @@
 
 import Image from "next/image";
 import { motion } from "motion/react";
-import { useState, type FC } from "react";
+import { useEffect, useState, type FC } from "react";
 import {
   Dialog,
   DialogClose,
@@ -53,8 +53,6 @@ export const Sticker: FC<StickerProps> = (props) => {
     "default",
   );
   const [code, setCode] = useState(isPublicClaim ? "00000" : "");
-
-
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
