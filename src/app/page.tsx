@@ -43,6 +43,7 @@ export default function HomePage() {
   const { createOrUpdateUser } = useUserCrud();
   const [token, setToken] = useState<string | null>(null);
   const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
+  const [isSuiWallet, setIsSuiWallet] = useState(false);
 
   const { handleSignAndExecuteTransactionWithSponsor: handleClaimStampTx, isLoading: isClaimingStamp } =
     useBetterSignAndExecuteTransactionWithSponsor({
@@ -64,7 +65,9 @@ export default function HomePage() {
   }, [fetchUsers]);
 
   useEffect(() => {
-    if (token) {
+    const isSuiWallet = /Sui-Wallet/i.test(navigator.userAgent);
+    setIsSuiWallet(isSuiWallet);
+    if (token && !isSuiWallet) {
       void verifyCaptcha(token).then((success) => {
         console.log("success", success);
         setIsCaptchaVerified(success);
@@ -245,7 +248,8 @@ export default function HomePage() {
               </span>
             </div>
           </div>
-          {isCaptchaVerified && <ProfileModal />}
+          {/* Show ProfileModal if user is using Sui Wallet or has passed captcha verification */}
+          {(isSuiWallet || isCaptchaVerified) && <ProfileModal />}
         </div>
         <div className="relative flex w-full flex-col items-center rounded-t-xl bg-[#02101C] pl-2 pr-2 ">
           <Image
@@ -356,7 +360,11 @@ export default function HomePage() {
             />
           </div>
         </div>
-        {!token && (
+        {/* Only show Turnstile captcha if:
+          * 1. Not using Sui Wallet (!isSuiWallet) - Sui Wallet users don't need captcha verification
+          * 2. No captcha token exists (!token) - Don't show if already verified
+        */}
+        {!isSuiWallet && !token && (
           <div className="fixed bottom-4 right-4">
             <Turnstile
               siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? ""}
