@@ -230,8 +230,8 @@ export default function HomePage() {
   return (
     <main className="flex min-h-screen flex-col items-center bg-[#02101C] text-white">
       <div className="flex w-full max-w-[375px] flex-col items-center sm:max-w-[1424px]">
-        <div className="bg-[#02101C] py-6 flex w-full justify-between px-3 sm:pl-[35px] sm:pr-6 sticky top-0 z-20 sm:static">
-          <div className="flex items-center gap-3">
+        <div className="bg-[#02101C] py-6 flex w-full justify-between px-2 sm:pl-[35px] sm:pr-6 sticky top-0 z-20 sm:static">
+          <div className="flex flex-shrink-0 items-center gap-3">
             <Image
               src={"/images/sui-logo.png"}
               alt="drop"
@@ -239,13 +239,10 @@ export default function HomePage() {
               height={24}
               className="h-[20px] w-[20px] sm:h-[32px] sm:w-[32px]"
             />
-            <div className="flex items-center gap-2">
-              <p className="font-inter text-[16px] sm:text-[24px]">
+            <div className="relative flex items-center">
+              <p className="font-inter text-sm sm:text-[24px]">
                 2025 Sui Community Passport
               </p>
-              <span className="text-xs font-medium text-red-400 border border-red-400 rounded-full px-2 py-0.5 bg-red-400/10">
-                Test Version
-              </span>
             </div>
           </div>
           {/* Show ProfileModal if user is using Sui Wallet or has passed captcha verification */}

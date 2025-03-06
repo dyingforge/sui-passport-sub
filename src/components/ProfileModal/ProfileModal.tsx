@@ -107,14 +107,13 @@ export const ProfileModal = () => {
                 }, 5000);
               }}
             >
-              Open with
               <Image
                 src={"/images/drop.png"}
                 alt="wallet"
                 width={12}
                 height={16}
               />
-              Sui Wallet
+              <p className="text-xs">Sui Wallet</p>
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-[208px] border-none bg-transparent bg-[url(/images/popup-bg.svg)] bg-contain bg-no-repeat px-[14px] pt-5">

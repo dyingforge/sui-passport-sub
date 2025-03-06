@@ -5,7 +5,7 @@ import { Providers } from "./providers";
 import { Analytics } from "@vercel/analytics/react"
 
 export const metadata: Metadata = {
-  title: "Sui Passport",
+  title: "Sui Community Passport",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
