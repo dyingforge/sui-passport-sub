@@ -2,6 +2,8 @@ import "~/styles/globals.css";
 
 import { type Metadata } from "next";
 import { Providers } from "./providers";
+import { Analytics } from "@vercel/analytics/react"
+
 export const metadata: Metadata = {
   title: "Sui Passport",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
@@ -15,6 +17,7 @@ export default function RootLayout({
       <body>
         <Providers>
           {children}
+          <Analytics />
         </Providers>
       </body>
     </html>

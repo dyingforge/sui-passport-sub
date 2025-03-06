@@ -6,7 +6,6 @@ import { keccak256 } from "js-sha3";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { z } from 'zod';
 import { cache } from 'react';
-import { type NetworkVariables } from "../contracts";
 import type { UserProfile } from "~/types/userProfile";
 import type { SuiClient, SuiObjectData, SuiObjectResponse } from "@mysten/sui/client";
 import { getCollectionDetail } from "../contracts/graphql";
@@ -112,6 +111,14 @@ export const getStampsFromDb = cache(async (): Promise<DbStampResponse[]|undefin
       throw error;
     }
   });
+
+export const getStampFromDbByStampId = cache(async (stampId: string): Promise<DbStampResponse | undefined> => {
+  const query = `
+    SELECT * FROM stamps WHERE stamp_id = ?
+  `;
+  const response = await queryD1<DbStampResponse>(query, [stampId]);
+  return response.data;
+});
 
 export async function verifyClaimStamp(params: VerifyStampParams) {
   const validatedParams = verifyStampSchema.parse(params);

@@ -27,19 +27,22 @@ import { useStampCRUD } from "~/hooks/use-stamp-crud";
 import { type PassportFormSchema } from "~/types/passport";
 import { mint_passport } from "~/lib/contracts/passport";
 import { toast } from "sonner";
+import { Turnstile } from "@marsidev/react-turnstile";
 
 export default function HomePage() {
   const { stamps, refreshPassportStamps } = usePassportsStamps();
   const [contributors, setContributors] = useState<Contributor[]>([]);
   const [displayStamps, setDisplayStamps] = useState<DisplayStamp[]>([]);
   const networkVariables = useNetworkVariables();
-  const { fetchUsers, isLoading } = useUserCrud();
-  const { userProfile, refreshProfile,isLoading: isRefreshingProfile } = useUserProfile();
-  const { verifyClaimStamp, increaseStampCountToDb,isLoading: isVerifyingClaimStamp } = useStampCRUD();
+  const { fetchUsers, isLoading, verifyCaptcha } = useUserCrud();
+  const { userProfile, refreshProfile, isLoading: isRefreshingProfile } = useUserProfile();
+  const { verifyClaimStamp, increaseStampCountToDb, isLoading: isVerifyingClaimStamp } = useStampCRUD();
   const currentAccount = useCurrentAccount();
   const { connectionStatus } = useCurrentWallet();
   const [openStickers, setOpenStickers] = useState<Record<string, boolean>>({});
   const { createOrUpdateUser } = useUserCrud();
+  const [token, setToken] = useState<string | null>(null);
+  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
 
   const { handleSignAndExecuteTransactionWithSponsor: handleClaimStampTx, isLoading: isClaimingStamp } =
     useBetterSignAndExecuteTransactionWithSponsor({
@@ -61,6 +64,14 @@ export default function HomePage() {
   }, [fetchUsers]);
 
   useEffect(() => {
+    if (token) {
+      void verifyCaptcha(token).then((success) => {
+        setIsCaptchaVerified(success);
+      });
+    }
+  }, [token, verifyCaptcha]);
+
+  useEffect(() => {
     void initializeData();
   }, [initializeData]);
 
@@ -71,7 +82,7 @@ export default function HomePage() {
     } else if (stamps) {
       setDisplayStamps(stampsToDisplayStampsWithOutPassport(stamps));
     }
-    
+
   }, [stamps, userProfile]);
 
   useEffect(() => {
@@ -117,7 +128,7 @@ export default function HomePage() {
       return;
     }
 
-    
+
     // Convert signature object to array
     const signatureArray = Object.values(data.signature);
     await handleClaimStampTx(
@@ -175,7 +186,7 @@ export default function HomePage() {
       },
     )
       .onSuccess(async () => {
-        await refreshProfile(currentAccount?.address ?? "", networkVariables);        
+        await refreshProfile(currentAccount?.address ?? "", networkVariables);
         toast.success("Passport minted successfully");
       })
       .onError((error) => {
@@ -233,7 +244,7 @@ export default function HomePage() {
               </span>
             </div>
           </div>
-          <ProfileModal />
+          {isCaptchaVerified && <ProfileModal />}
         </div>
         <div className="relative flex w-full flex-col items-center rounded-t-xl bg-[#02101C] pl-2 pr-2 ">
           <Image
@@ -344,6 +355,20 @@ export default function HomePage() {
             />
           </div>
         </div>
+        {!token && (
+          <div className="fixed bottom-4 right-4">
+            <Turnstile
+              siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? ""}
+              options={{
+                theme: "dark",
+                language: "en",
+              }}
+              onSuccess={(token) => {
+                setToken(token);
+              }}
+            />
+          </div>
+        )}
       </div>
     </main>
   );

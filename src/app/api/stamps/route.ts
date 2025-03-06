@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { checkUserStateServer, increaseStampCountToDb, verifyClaimStamp } from '~/lib/services/stamps';
+import { checkUserStateServer, getStampFromDbByStampId, increaseStampCountToDb, verifyClaimStamp } from '~/lib/services/stamps';
 import type { VerifyClaimStampResponse, VerifyStampParams, DbStampResponse, StampItem, VerifyClaimStampRequest } from '~/types/stamp';
 import { getStampsFromDb } from '~/lib/services/stamps';
 import { suiClient, graphqlClient } from '../SuiClient';
@@ -13,9 +13,23 @@ export async function POST(request: Request) {
                 { status: 400 }
             );
         }
-
         //todo check if the stamp is claimable
-
+        const stamp = await getStampFromDbByStampId(requestBody.stamp_id);
+        const now = Date.now()
+        const startTime = stamp?.claim_code_start_timestamp ? Number(stamp.claim_code_start_timestamp) : null
+        const endTime = stamp?.claim_code_end_timestamp ? Number(stamp.claim_code_end_timestamp) : null
+        if (startTime && endTime && (now < startTime || now > endTime)) {
+            return NextResponse.json(
+                { success: false, error: 'Stamp is not claimable' },
+                { status: 200 }
+            );
+        }
+        if (stamp?.total_count_limit && stamp.claim_count >= stamp.total_count_limit) {
+            return NextResponse.json(
+                { success: false, error: 'Stamp is sold out' },
+                { status: 200 }
+            );
+        }
         const profile = await checkUserStateServer(requestBody.address, requestBody.packageId, suiClient, graphqlClient);
         if (profile?.stamps?.some((stamp: StampItem) => stamp.event === requestBody.stamp_name)) {
             return NextResponse.json(

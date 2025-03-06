@@ -46,9 +46,9 @@ export const ProfileModal = () => {
   // Separate effect for user data synchronization
   useEffect(() => {
     // Only sync if we have all required data
-    if (!currentAccount?.address || 
-        !userProfile?.passport_id || 
-        connectionStatus !== "connected") {
+    if (!currentAccount?.address ||
+      !userProfile?.passport_id ||
+      connectionStatus !== "connected") {
       return;
     }
 
@@ -87,7 +87,7 @@ export const ProfileModal = () => {
 
   useEffect(() => {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    const isSuiWallet = /Sui-Wallet/i.test(navigator.userAgent);    
+    const isSuiWallet = /Sui-Wallet/i.test(navigator.userAgent);
     setIsInSuiWallet(isSuiWallet);
     setIsMobileApp(isMobile && !isSuiWallet);
   }, []);

@@ -3,7 +3,7 @@
 
 import Image from "next/image";
 import { motion } from "motion/react";
-import { useEffect, useState, type FC } from "react";
+import { useState, type FC } from "react";
 import {
   Dialog,
   DialogClose,
@@ -15,7 +15,6 @@ import { Button } from "../ui/button";
 import { TextInput } from "../TextInput/TextInput";
 import { AnimatedImage } from "../AnimatedImage.tsx/AnimatedImage";
 import { cn } from "~/lib/utils";
-
 type StickerProps = {
   stampId: string;
   url: string;
