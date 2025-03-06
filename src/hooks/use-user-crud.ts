@@ -140,6 +140,9 @@ export function useUserCrud(): UseUserCrudReturn {
         try {
             const response = await apiFetch<{ success: boolean }>('/api/verify', {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
                 body: JSON.stringify({ token })
             })
             return response.success;

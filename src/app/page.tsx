@@ -66,6 +66,7 @@ export default function HomePage() {
   useEffect(() => {
     if (token) {
       void verifyCaptcha(token).then((success) => {
+        console.log("success", success);
         setIsCaptchaVerified(success);
       });
     }
