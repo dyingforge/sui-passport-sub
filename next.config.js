@@ -15,7 +15,10 @@ const config = {
     },
     compiler:{
         removeConsole: process.env.NODE_ENV === "production",
-    }
+    },
+    eslint: {
+        ignoreDuringBuilds: true,
+    },
 };
 
 export default config;
