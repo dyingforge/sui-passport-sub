@@ -73,7 +73,7 @@ export function stampsToDisplayStamps(stamps: StampItem[], userProfile: UserProf
             isClaimable,
             leftStamps: stamp.totalCountLimit === 0 ? Infinity : (stamp.totalCountLimit ?? 0) - (stamp.claimCount ?? 0)
         };
-    });
+    }).filter(stamp => stamp.hasClaimCode ?? stamp.publicClaim);
 }
 
 export function stampsToDisplayStampsWithOutPassport(stamps: StampItem[]): DisplayStamp[] {
@@ -84,7 +84,7 @@ export function stampsToDisplayStampsWithOutPassport(stamps: StampItem[]): Displ
       isClaimable: false,
       leftStamps: stamp.totalCountLimit === 0 ? Infinity : (stamp.totalCountLimit ?? 0) - (stamp.claimCount ?? 0)
     };
-  });
+  }).filter(stamp => stamp.hasClaimCode ?? stamp.publicClaim);
 }
 
 export const STICKER_LAYOUT_CONFIG = {

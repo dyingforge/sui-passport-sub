@@ -69,7 +69,6 @@ export default function HomePage() {
     setIsSuiWallet(isSuiWallet);
     if (token && !isSuiWallet) {
       void verifyCaptcha(token).then((success) => {
-        console.log("success", success);
         setIsCaptchaVerified(success);
       });
     }
