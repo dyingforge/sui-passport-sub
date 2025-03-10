@@ -125,11 +125,12 @@ export default function HomePage() {
     const data = await verifyClaimStamp(requestBody);
     if (!data.success) {
       toast.error(data.error);
+      handleOpenChange(stamp.id, false);
       return;
     }
     if (!data.signature || !data.valid) {
       toast.error("Invalid claim code");
-      return;
+      throw new Error("Invalid claim code");
     }
 
 
@@ -147,7 +148,9 @@ export default function HomePage() {
       },
     )
       .onSuccess(async () => {
-        toast.success("Stamp claimed successfully");
+        toast.success("Stamp claimed successfully", {
+          duration: 2500
+        });
         handleOpenChange(stamp.id, false);
         await refreshProfile(currentAccount?.address ?? "", networkVariables);
         await refreshPassportStamps(networkVariables);

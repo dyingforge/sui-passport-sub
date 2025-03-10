@@ -48,13 +48,33 @@ export const Sticker: FC<StickerProps> = (props) => {
     onOpenChange,
   } = props;
 
-  const [status, setStatus] = useState<"pending" | "default" | "success">(
+  const [status, setStatus] = useState<"pending" | "default" | "success" | "error">(
     "default",
   );
   const [code, setCode] = useState(isPublicClaim ? "00000" : "");
 
+  const handleClaim = async (code: string) => {
+    setStatus("pending");
+    try {
+      await onClaim?.(code);
+      setStatus("success");
+    } catch (error) {
+      setStatus("error");
+      setCode("");
+      setTimeout(() => {
+        setStatus("default");
+      }, 2000);
+    }
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(open) => {
+      if (!open) {
+        setStatus("default");
+        setCode(isPublicClaim ? "00000" : "");
+      }
+      onOpenChange?.(open);
+    }}>
       <DialogTrigger className={className} disabled={isClaimed || dropsAmount <= 0}>
         <div
           className={cn("relative flex flex-col items-center justify-center")}
@@ -184,6 +204,7 @@ export const Sticker: FC<StickerProps> = (props) => {
                 <Button
                   variant="secondary"
                   className="h-[42px] w-[102px] sm:h-[52px] sm:w-[116px]"
+                  disabled={isLoading}
                   onClick={() => {
                     setCode(isPublicClaim ? "00000" : "");
                     setStatus("default");
@@ -202,8 +223,7 @@ export const Sticker: FC<StickerProps> = (props) => {
                 className="h-[42px] w-[197px] sm:h-[52px] sm:w-[227px]"
                 disabled={isLoading || !isPublicClaim && (status !== "default" || !code)}
                 onClick={() => {
-                  setStatus("pending");
-                  onClaim?.(code);
+                  void handleClaim(code);
                 }}
               >
                 {isPublicClaim ? "Claim" : "Claim " + name}

@@ -99,7 +99,7 @@ export const PassportForm: FC<PassportFormProps> = ({
                 <p className="ml-4 font-inter text-white">Github</p>
               </div>
               <TextInput
-                placeholder="@jack_on_github"
+                placeholder="jack_on_github"
                 className="h-[43px] w-[242px] sm:h-[56px] sm:w-[384px]"
                 {...methods.register("github")}
               />
