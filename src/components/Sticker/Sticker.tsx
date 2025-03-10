@@ -56,7 +56,7 @@ export const Sticker: FC<StickerProps> = (props) => {
   const handleClaim = async (code: string) => {
     setStatus("pending");
     try {
-      await onClaim?.(code);
+      onClaim?.(code);
       setStatus("success");
     } catch (error) {
       setStatus("error");
@@ -169,6 +169,7 @@ export const Sticker: FC<StickerProps> = (props) => {
                     status === "success" && "border-2 border-[#4DA2FF]",
                   )}
                   onChange={(e) => setCode(e.target.value)}
+                  value={code}
                 />
                 {status === "pending" && (
                   <motion.div
