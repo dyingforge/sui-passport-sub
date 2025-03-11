@@ -59,6 +59,7 @@ export const Sticker: FC<StickerProps> = (props) => {
       onClaim?.(code);
       setStatus("success");
     } catch (error) {
+      console.error(error);
       setStatus("error");
       setCode("");
       setTimeout(() => {

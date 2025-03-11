@@ -1,4 +1,5 @@
 export type StickerData = {
+    id: string,
     url: string
     rotation: number,
     size: number,
@@ -6,4 +7,5 @@ export type StickerData = {
     top: number,
     left?: number,
     right?: number,
+    isActive?: boolean,
 }

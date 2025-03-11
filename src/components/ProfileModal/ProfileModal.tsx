@@ -13,12 +13,15 @@ import {
 } from "../ui/dialog";
 import { StickersLayout } from "./ui/StickersLayout";
 import { useCallback, useEffect, useState } from "react";
-import { useNetworkVariables } from "~/lib/contracts";
+import { network, useNetworkVariables } from "~/lib/contracts";
 import { useUserProfile } from "~/context/user-profile-context";
 import { removeToken } from "~/lib/jwtManager";
 import { ConnectModal, useAccounts, useCurrentAccount, useCurrentWallet, useDisconnectWallet } from '@mysten/dapp-kit'
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { useUserCrud } from "~/hooks/use-user-crud";
+import { show_stamp } from "~/lib/contracts/passport";
+import { useBetterSignAndExecuteTransactionWithSponsor } from "~/hooks/use-better-tx";
+import { toast } from "sonner";
 
 export const ProfileModal = () => {
   const { refreshProfile, userProfile } = useUserProfile()
@@ -32,6 +35,11 @@ export const ProfileModal = () => {
   const [isMobileApp, setIsMobileApp] = useState(false);
   const [isInSuiWallet, setIsInSuiWallet] = useState(false);
   const { createOrUpdateUser } = useUserCrud()
+
+  const { handleSignAndExecuteTransactionWithSponsor: handleShowStampTx, isLoading: isShowingStamp } =
+    useBetterSignAndExecuteTransactionWithSponsor({
+      tx: show_stamp,
+    });
 
   const onConnected = useCallback(async () => {
     if (currentAccount?.address && connectionStatus === "connected") {
@@ -74,6 +82,25 @@ export const ProfileModal = () => {
     userProfile?.points,
     createOrUpdateUser // 现在可以安全地加入依赖数组
   ]);
+
+  const handleStickerClick = async (id: string) => {
+    await handleShowStampTx(
+      process.env.NEXT_PUBLIC_NETWORK as "testnet" | "mainnet",
+      currentAccount?.address ?? "",
+      [currentAccount?.address ?? ""],
+      {
+        passport: userProfile?.passport_id ?? "",
+        stamp: id,
+      },
+    ).onSuccess(() => {
+      void refreshProfile(currentAccount?.address ?? "", networkVariables)
+      setOpen(false)
+      toast.success("Stamp shown successfully")
+    }).onError((error) => {
+      console.error('Error showing stamp:', error)
+      toast.error("Error showing stamp")
+    }).execute();
+  };
 
   const handleDisconnect = useCallback(() => {
     void disconnect()
@@ -216,7 +243,7 @@ export const ProfileModal = () => {
           transition={{ type: "spring" }}
           className="flex w-full flex-col items-center backdrop-blur-[8px] sm:h-screen"
         >
-          <StickersLayout stamps={userProfile?.stamps ?? []} />
+          <StickersLayout stamps={userProfile?.stamps ?? []} collections={userProfile?.collection_detail ?? []} visitor={currentAccount?.address !== userProfile?.current_user} onStickerClick={handleStickerClick} isLoading={isShowingStamp} />
           <Image
             src={userProfile?.avatar || "/images/profile-avatar-default.png"}
             alt="avatar"

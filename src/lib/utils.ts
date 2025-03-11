@@ -23,7 +23,7 @@ export function usersToContributor(users: DbUserResponse[]): Contributor[] {
   }));
 }
 
-export function stampsToStickerData(stamps: StampItem[]): StickerData[] {
+export function stampsToStickerData(stamps: StampItem[],collections: string[]): StickerData[] {
   return stamps.map((stamp, index) => {
     const position = index % 6;
     const stickerConfigs = {
@@ -40,7 +40,9 @@ export function stampsToStickerData(stamps: StampItem[]): StickerData[] {
     return {
       url: stamp.imageUrl ?? "",
       name: stamp.name,
-      ...stickerConfig
+      ...stickerConfig,
+      id: stamp.id,
+      isActive: collections.includes(stamp.id),
     };
   });
 }
