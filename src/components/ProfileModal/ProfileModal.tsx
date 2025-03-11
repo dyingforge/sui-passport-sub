@@ -34,7 +34,6 @@ export const ProfileModal = () => {
   const { clearProfile } = useUserProfile()
   const [isMobileApp, setIsMobileApp] = useState(false);
   const [isInSuiWallet, setIsInSuiWallet] = useState(false);
-  const [verifyChain, setVerifyChain] = useState<boolean>(true);
   const { createOrUpdateUser } = useUserCrud()
 
   const { handleSignAndExecuteTransactionWithSponsor: handleShowStampTx, isLoading: isShowingStamp } =
@@ -43,22 +42,12 @@ export const ProfileModal = () => {
     });
 
   const checkChainAndConnect = useCallback(async () => {
-    const network = process.env.NEXT_PUBLIC_NETWORK as "testnet" | "mainnet"
-    const chainId = `sui:${network}` as const
-    if (!currentAccount?.chains.includes(chainId)) {
-      console.log("currentAccount?.chains", currentAccount?.chains);
-      console.log("chainId", chainId);
-      setVerifyChain(false)
-      return
-    }
-    setVerifyChain(true)
     if (currentAccount?.address && connectionStatus === "connected") {
-      
+
       const address = currentAccount.address
       await refreshProfile(address, networkVariables)
     }
     if (connectionStatus === "disconnected") {
-      setVerifyChain(true)
       await removeToken()
     }
   }, [currentAccount, connectionStatus, networkVariables, refreshProfile])
@@ -100,6 +89,10 @@ export const ProfileModal = () => {
   ]);
 
   const handleStickerClick = async (id: string) => {
+    if (!userProfile?.passport_id) {
+      toast.error("Please create a passport first")
+      return
+    }
     await handleShowStampTx(
       process.env.NEXT_PUBLIC_NETWORK as "testnet" | "mainnet",
       currentAccount?.address ?? "",
@@ -247,23 +240,13 @@ export const ProfileModal = () => {
   return connectionStatus === "connected" && (
     <Dialog>
       <DialogTrigger asChild>
-        {verifyChain ? (
-          <Button
-            variant="secondary"
-            className="h-[34px] w-[140px] leading-4 sm:h-[52px] sm:w-[168px]"
-          >
-            <Image src={"/images/user.png"} alt="user" className="w-4 h-4" width={16} height={16} />
-            <p className="text-white truncate">{currentAccount?.address}</p>
-          </Button>
-        ) : (
-          <Button
-            variant="secondary"
-            className="h-[34px] w-[140px] leading-4 sm:h-[52px] sm:w-[168px]"
-          >
-            <Image src={"/images/user.png"} alt="user" className="w-4 h-4" width={16} height={16} />
-            <p className="text-red-500 text-sm">Switch to mainnet</p>
-          </Button>
-        )}
+        <Button
+          variant="secondary"
+          className="h-[34px] w-[140px] leading-4 sm:h-[52px] sm:w-[168px]"
+        >
+          <Image src={"/images/user.png"} alt="user" className="w-4 h-4" width={16} height={16} />
+          <p className="text-white truncate">{currentAccount?.address}</p>
+        </Button>
       </DialogTrigger>
       <DialogContent className="overflow-y-scroll" >
         <DialogTitle className="sr-only">
