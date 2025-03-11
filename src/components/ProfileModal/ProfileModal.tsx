@@ -34,6 +34,7 @@ export const ProfileModal = () => {
   const { clearProfile } = useUserProfile()
   const [isMobileApp, setIsMobileApp] = useState(false);
   const [isInSuiWallet, setIsInSuiWallet] = useState(false);
+  const [verifyChain, setVerifyChain] = useState<boolean>(true);
   const { createOrUpdateUser } = useUserCrud()
 
   const { handleSignAndExecuteTransactionWithSponsor: handleShowStampTx, isLoading: isShowingStamp } =
@@ -41,15 +42,30 @@ export const ProfileModal = () => {
       tx: show_stamp,
     });
 
-  const onConnected = useCallback(async () => {
+  const checkChainAndConnect = useCallback(async () => {
+    const network = process.env.NEXT_PUBLIC_NETWORK as "testnet" | "mainnet"
+    const chainId = `sui:${network}` as const
+    if (!currentAccount?.chains.includes(chainId)) {
+      console.log("currentAccount?.chains", currentAccount?.chains);
+      console.log("chainId", chainId);
+      setVerifyChain(false)
+      return
+    }
+    setVerifyChain(true)
     if (currentAccount?.address && connectionStatus === "connected") {
+      
       const address = currentAccount.address
       await refreshProfile(address, networkVariables)
     }
     if (connectionStatus === "disconnected") {
+      setVerifyChain(true)
       await removeToken()
     }
-  }, [currentAccount?.address, connectionStatus, networkVariables, refreshProfile])
+  }, [currentAccount, connectionStatus, networkVariables, refreshProfile])
+
+  useEffect(() => {
+    void checkChainAndConnect()
+  }, [checkChainAndConnect])
 
   // Separate effect for user data synchronization
   useEffect(() => {
@@ -109,15 +125,22 @@ export const ProfileModal = () => {
   }, [disconnect, setOpen, clearProfile])
 
   useEffect(() => {
-    void onConnected()
-  }, [onConnected])
-
-  useEffect(() => {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     const isSuiWallet = /Sui-Wallet/i.test(navigator.userAgent);
     setIsInSuiWallet(isSuiWallet);
     setIsMobileApp(isMobile && !isSuiWallet);
   }, []);
+
+  useEffect(() => {
+    const handleWindowFocus = () => {
+      void checkChainAndConnect()
+    }
+
+    window.addEventListener('focus', handleWindowFocus)
+    return () => {
+      window.removeEventListener('focus', handleWindowFocus)
+    }
+  }, [checkChainAndConnect])
 
   if (!accounts.length) {
     if (isMobileApp && !isInSuiWallet) {
@@ -224,13 +247,23 @@ export const ProfileModal = () => {
   return connectionStatus === "connected" && (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          variant="secondary"
-          className="h-[34px] w-[140px] leading-4 sm:h-[52px] sm:w-[168px]"
-        >
-          <Image src={"/images/user.png"} alt="user" className="w-4 h-4" width={16} height={16} />
-          <p className="text-white truncate">{currentAccount?.address}</p>
-        </Button>
+        {verifyChain ? (
+          <Button
+            variant="secondary"
+            className="h-[34px] w-[140px] leading-4 sm:h-[52px] sm:w-[168px]"
+          >
+            <Image src={"/images/user.png"} alt="user" className="w-4 h-4" width={16} height={16} />
+            <p className="text-white truncate">{currentAccount?.address}</p>
+          </Button>
+        ) : (
+          <Button
+            variant="secondary"
+            className="h-[34px] w-[140px] leading-4 sm:h-[52px] sm:w-[168px]"
+          >
+            <Image src={"/images/user.png"} alt="user" className="w-4 h-4" width={16} height={16} />
+            <p className="text-red-500 text-sm">Switch to mainnet</p>
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="overflow-y-scroll" >
         <DialogTitle className="sr-only">

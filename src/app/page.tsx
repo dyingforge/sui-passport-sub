@@ -65,14 +65,13 @@ export default function HomePage() {
   }, [fetchUsers]);
 
   useEffect(() => {
-    // const isSuiWallet = /Sui-Wallet/i.test(navigator.userAgent);
-    // setIsSuiWallet(isSuiWallet);
-    // if (token && !isSuiWallet) {
-    //   void verifyCaptcha(token).then((success) => {
-    //     setIsCaptchaVerified(success);
-    //   });
-    // }
-    setIsCaptchaVerified(true);
+    const isSuiWallet = /Sui-Wallet/i.test(navigator.userAgent);
+    setIsSuiWallet(isSuiWallet);
+    if (token && !isSuiWallet) {
+      void verifyCaptcha(token).then((success) => {
+        setIsCaptchaVerified(success);
+      });
+    }
   }, [token, verifyCaptcha]);
 
   useEffect(() => {
