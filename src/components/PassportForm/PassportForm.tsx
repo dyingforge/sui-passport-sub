@@ -36,8 +36,6 @@ export const PassportForm: FC<PassportFormProps> = ({
       avatar: "",
       avatarFile: undefined,
       introduction: "",
-      x: "",
-      github: "",
       ...defaultValues
     },
   });
@@ -69,7 +67,7 @@ export const PassportForm: FC<PassportFormProps> = ({
               {...methods.register("introduction")}
               onChange={(e) => setIntro(e.target.value)}
             />
-            <div className="flex items-center justify-between">
+            {/* <div className="flex items-center justify-between">
               <div className="flex items-center justify-between">
                 <Image
                   src={"/images/x.png"}
@@ -87,8 +85,8 @@ export const PassportForm: FC<PassportFormProps> = ({
                 className="h-[43px] w-[242px] text-white sm:h-[56px] sm:w-[384px]"
                 {...methods.register("x")}
               />
-            </div>
-            <div className="flex items-center justify-between">
+            </div> */}
+            {/* <div className="flex items-center justify-between">
               <div className="flex items-center justify-between">
                 <Image
                   src={"/images/github.png"}
@@ -103,8 +101,8 @@ export const PassportForm: FC<PassportFormProps> = ({
                 className="h-[43px] w-[242px] sm:h-[56px] sm:w-[384px]"
                 {...methods.register("github")}
               />
-            </div>
-          </div>
+            </div>*/}
+          </div> 
           <div className="mb-[25px] mt-[48px] flex justify-end gap-4">
             <DialogClose asChild>
               <Button

@@ -32,8 +32,6 @@ export const PassportCreationModal = ({
     introduction: "",
     avatar: "",
     avatarFile: undefined,
-    x: "",
-    github: "",
   });
 
   const handleSubmit = async (data: PassportFormSchema) => {

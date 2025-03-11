@@ -187,8 +187,8 @@ export default function HomePage() {
         name: values.name,
         avatar: values.avatar ?? "",
         introduction: values.introduction ?? "",
-        x: values.x ?? "",
-        github: values.github ?? "",
+        x: "",
+        github: "",
         email: "",
       },
     )
