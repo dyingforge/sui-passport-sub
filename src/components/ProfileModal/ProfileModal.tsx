@@ -109,7 +109,7 @@ export const ProfileModal = () => {
       console.error('Error showing stamp:', error)
       toast.error("Error showing stamp")
     }).execute();
-  };
+  };  
 
   const handleDisconnect = useCallback(() => {
     void disconnect()
