@@ -124,17 +124,6 @@ export const ProfileModal = () => {
     setIsMobileApp(isMobile && !isSuiWallet);
   }, []);
 
-  useEffect(() => {
-    const handleWindowFocus = () => {
-      void checkChainAndConnect()
-    }
-
-    window.addEventListener('focus', handleWindowFocus)
-    return () => {
-      window.removeEventListener('focus', handleWindowFocus)
-    }
-  }, [checkChainAndConnect])
-
   if (!accounts.length) {
     if (isMobileApp && !isInSuiWallet) {
       return (
