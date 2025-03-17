@@ -27,19 +27,23 @@ import { useStampCRUD } from "~/hooks/use-stamp-crud";
 import { type PassportFormSchema } from "~/types/passport";
 import { mint_passport } from "~/lib/contracts/passport";
 import { toast } from "sonner";
+import { Turnstile } from "@marsidev/react-turnstile";
 
 export default function HomePage() {
   const { stamps, refreshPassportStamps } = usePassportsStamps();
   const [contributors, setContributors] = useState<Contributor[]>([]);
   const [displayStamps, setDisplayStamps] = useState<DisplayStamp[]>([]);
   const networkVariables = useNetworkVariables();
-  const { fetchUsers, isLoading } = useUserCrud();
-  const { userProfile, refreshProfile,isLoading: isRefreshingProfile } = useUserProfile();
-  const { verifyClaimStamp, increaseStampCountToDb } = useStampCRUD();
+  const { fetchUsers, isLoading, verifyCaptcha } = useUserCrud();
+  const { userProfile, refreshProfile, isLoading: isRefreshingProfile } = useUserProfile();
+  const { verifyClaimStamp, increaseStampCountToDb, isLoading: isVerifyingClaimStamp } = useStampCRUD();
   const currentAccount = useCurrentAccount();
   const { connectionStatus } = useCurrentWallet();
   const [openStickers, setOpenStickers] = useState<Record<string, boolean>>({});
   const { createOrUpdateUser } = useUserCrud();
+  const [token, setToken] = useState<string | null>(null);
+  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
+  const [isSuiWallet, setIsSuiWallet] = useState(false);
 
   const { handleSignAndExecuteTransactionWithSponsor: handleClaimStampTx, isLoading: isClaimingStamp } =
     useBetterSignAndExecuteTransactionWithSponsor({
@@ -61,6 +65,16 @@ export default function HomePage() {
   }, [fetchUsers]);
 
   useEffect(() => {
+    const isSuiWallet = /Sui-Wallet/i.test(navigator.userAgent);
+    setIsSuiWallet(isSuiWallet);
+    if (token && !isSuiWallet) {
+      void verifyCaptcha(token).then((success) => {
+        setIsCaptchaVerified(success);
+      });
+    }
+  }, [token, verifyCaptcha]);
+
+  useEffect(() => {
     void initializeData();
   }, [initializeData]);
 
@@ -71,6 +85,7 @@ export default function HomePage() {
     } else if (stamps) {
       setDisplayStamps(stampsToDisplayStampsWithOutPassport(stamps));
     }
+
   }, [stamps, userProfile]);
 
   useEffect(() => {
@@ -85,7 +100,7 @@ export default function HomePage() {
       return;
     }
     const stamps = userProfile?.stamps;
-    if (stamps?.some((stamp) => stamp.name.split("#")[0] === stamp?.name)) {
+    if (stamps?.some((stamp) => stamp.event === stamp?.name)) {
       toast.error(`You have already have this stamp`);
       return;
     }
@@ -103,19 +118,21 @@ export default function HomePage() {
       passport_id: userProfile?.id.id,
       last_time: Number(userProfile?.last_time),
       stamp_name: stamp?.name,
-      owner_stamps: userProfile?.stamps?.map((stamp) => stamp.name) ?? [],
+      address: currentAccount?.address ?? "",
+      packageId: networkVariables?.package,
     };
     const data = await verifyClaimStamp(requestBody);
-
-    if (!data.signature || !data.valid) {
-      toast.error("Invalid claim code");
-      return;
-    }
-
     if (!data.success) {
       toast.error(data.error);
+      handleOpenChange(stamp.id, false);
       return;
     }
+    if (!data.signature || !data.valid) {
+      toast.error("Invalid claim code");
+      throw new Error("Invalid claim code");
+    }
+
+
     // Convert signature object to array
     const signatureArray = Object.values(data.signature);
     await handleClaimStampTx(
@@ -130,7 +147,9 @@ export default function HomePage() {
       },
     )
       .onSuccess(async () => {
-        toast.success("Stamp claimed successfully");
+        toast.success("Stamp claimed successfully", {
+          duration: 2500
+        });
         handleOpenChange(stamp.id, false);
         await refreshProfile(currentAccount?.address ?? "", networkVariables);
         await refreshPassportStamps(networkVariables);
@@ -167,13 +186,13 @@ export default function HomePage() {
         name: values.name,
         avatar: values.avatar ?? "",
         introduction: values.introduction ?? "",
-        x: values.x ?? "",
-        github: values.github ?? "",
+        x: "",
+        github: "",
         email: "",
       },
     )
       .onSuccess(async () => {
-        await refreshProfile(currentAccount?.address ?? "", networkVariables);        
+        await refreshProfile(currentAccount?.address ?? "", networkVariables);
         toast.success("Passport minted successfully");
       })
       .onError((error) => {
@@ -213,25 +232,23 @@ export default function HomePage() {
   return (
     <main className="flex min-h-screen flex-col items-center bg-[#02101C] text-white">
       <div className="flex w-full max-w-[375px] flex-col items-center sm:max-w-[1424px]">
-        <div className="bg-[#02101C] py-6 flex w-full justify-between px-3 sm:pl-[35px] sm:pr-6 sticky top-0 z-20 sm:static">
-          <div className="flex items-center gap-3">
+        <div className="bg-[#02101C] py-6 flex w-full justify-between px-2 sm:pl-[35px] sm:pr-6 sticky top-0 z-20 sm:static">
+          <div className="flex flex-shrink-0 items-center gap-3">
             <Image
-              src={"/images/drop.png"}
+              src={"/images/sui-logo.png"}
               alt="drop"
               width={24}
-              height={32}
-              className="h-[20px] w-[16px] sm:h-[32px] sm:w-[24px]"
+              height={24}
+              className="h-[20px] w-[20px] sm:h-[32px] sm:w-[32px]"
             />
-            <div className="flex items-center gap-2">
-              <p className="font-inter text-[16px] sm:text-[24px]">
-                Sui Community Passport
+            <div className="relative flex items-center">
+              <p className="font-inter text-sm sm:text-[24px]">
+                2025 Sui Community Passport
               </p>
-              <span className="text-xs font-medium text-red-400 border border-red-400 rounded-full px-2 py-0.5 bg-red-400/10">
-                Test Version
-              </span>
             </div>
           </div>
-          <ProfileModal />
+          {/* Show ProfileModal if user is using Sui Wallet or has passed captcha verification */}
+          {(isSuiWallet || isCaptchaVerified) && <ProfileModal />}
         </div>
         <div className="relative flex w-full flex-col items-center rounded-t-xl bg-[#02101C] pl-2 pr-2 ">
           <Image
@@ -255,35 +272,24 @@ export default function HomePage() {
               Make your mark on the Sui Community
             </h1>
             <div className="mt-6 flex max-w-[342px] flex-col gap-3 text-center font-everett_light text-[14px] text-[#ABBDCC] sm:max-w-[696px] sm:text-[16px]">
-              {/* <p>
+              <p>
                 The Sui community flourishes because of passionate members like you. Through content and events, your contributions help elevate our Sui Community.
               </p>
               <p>
                 Connect your wallet today and claim your first stamp!
-              </p> */}
-              <p className="text-center font-semibold text-lg sm:text-2xl text-blue-300">
-              There&apos;s been an overwhelming response to Sui Passport, and we&apos;re incredibly thankful for it! We are making a few small adjustments, and we&apos;ll make an announcement soon.
               </p>
             </div>
-            {/* {!userProfile?.passport_id && <PassportCreationModal
+            {!userProfile?.passport_id && <PassportCreationModal
               onSubmit={handlePassportCreation}
               isLoading={isMintingPassportWithSponsor || isRefreshingProfile}
-            />} */}
+            />}
           </div>
         </div>
         <div className="relative mt-16 flex w-full flex-col items-center bg-gradient-to-t from-[#02101C] from-95% pl-2 pr-2">
-          {/* <h1 className="mt-40 max-w-[358px] text-center font-everett text-[40px] leading-[48px] sm:mt-16 sm:max-w-[696px] sm:text-[68px] sm:leading-[80px]">
-            The Stamps
-          </h1> */}
-          {/* <div className="mt-6 flex max-w-[358px] flex-col text-center font-everett_light text-[14px] text-[#ABBDCC] sm:max-w-[580px] sm:text-[16px]">
-            <p>
-              The Sui community flourishes because of passionate members like
-              you. Through content and events, your contributions help elevate
-              our Sui Community. Connect your wallet today and claim your first
-              stamp!
-            </p>
-          </div> */}
-          {/* <div className="mt-[37px] flex flex-col-reverse justify-between sm:min-w-[900px] sm:flex-row">
+          <h1 className="mt-40 max-w-[358px] text-center font-everett text-[40px] leading-[48px] sm:mt-16 sm:max-w-[696px] sm:text-[68px] sm:leading-[80px]">
+            Get your stamps
+          </h1>
+          <div className="mt-[37px] flex flex-col-reverse justify-between sm:min-w-[900px] sm:flex-row">
             <div className="flex flex-col">
               {stampsLayout.left.map((stamp, index) => (
                 <Sticker
@@ -292,22 +298,14 @@ export default function HomePage() {
                   url={stamp.imageUrl ?? ""}
                   name={stamp.name}
                   rotation={STICKER_LAYOUT_CONFIG.left[index]?.rotation ?? 0}
-                  amountLeft={
-                    stamp.totalCountLimit && stamp.totalCountLimit != 0 ? stamp.totalCountLimit : Infinity
-                  }
-                  dropsAmount={
-                    stamp.totalCountLimit === 0 
-                      ? Infinity 
-                      : stamp.totalCountLimit && stamp.claimedCount 
-                        ? stamp.totalCountLimit - stamp.claimedCount 
-                        : 0
-                  }
+                  amountLeft={stamp.leftStamps}
+                  dropsAmount={stamp.leftStamps}
                   isClaimed={stamp.isClaimed ?? false}
                   isPublicClaim={stamp.publicClaim}
                   open={openStickers[stamp.id] ?? false}
                   onOpenChange={(open) => handleOpenChange(stamp.id, open)}
                   onClaim={(code) => handleClaimStampClick(code, stamp)}
-                  isLoading={isClaimingStamp}
+                  isLoading={isClaimingStamp || isVerifyingClaimStamp}
                 />
               ))}
             </div>
@@ -319,22 +317,14 @@ export default function HomePage() {
                   url={stamp.imageUrl ?? ""}
                   name={stamp.name}
                   rotation={STICKER_LAYOUT_CONFIG.center[index]?.rotation ?? 0}
-                  amountLeft={
-                    stamp.totalCountLimit && stamp.totalCountLimit != 0 ? stamp.totalCountLimit - (stamp.claimedCount ?? 0) : Infinity
-                  }
-                  dropsAmount={
-                    stamp.totalCountLimit === 0 
-                      ? Infinity 
-                      : stamp.totalCountLimit && stamp.claimedCount 
-                        ? stamp.totalCountLimit - stamp.claimedCount 
-                        : 0
-                  }
+                  amountLeft={stamp.leftStamps}
+                  dropsAmount={stamp.leftStamps}
                   isClaimed={stamp.isClaimed ?? false}
                   isPublicClaim={stamp.publicClaim}
                   open={openStickers[stamp.id] ?? false}
                   onOpenChange={(open) => handleOpenChange(stamp.id, open)}
                   onClaim={(code) => handleClaimStampClick(code, stamp)}
-                  isLoading={isClaimingStamp}
+                  isLoading={isClaimingStamp || isVerifyingClaimStamp}
                 />
               ))}
             </div>
@@ -346,27 +336,19 @@ export default function HomePage() {
                   url={stamp.imageUrl ?? ""}
                   name={stamp.name}
                   rotation={STICKER_LAYOUT_CONFIG.right[index]?.rotation ?? 0}
-                  amountLeft={
-                    stamp.totalCountLimit && stamp.totalCountLimit != 0 ? stamp.totalCountLimit : Infinity
-                  }
-                  dropsAmount={
-                    stamp.totalCountLimit === 0 
-                      ? Infinity 
-                      : stamp.totalCountLimit && stamp.claimedCount 
-                        ? stamp.totalCountLimit - stamp.claimedCount 
-                        : 0
-                  }
+                  amountLeft={stamp.leftStamps}
+                  dropsAmount={stamp.leftStamps}
                   isClaimed={stamp.isClaimed ?? false}
                   isPublicClaim={stamp.publicClaim}
                   open={openStickers[stamp.id] ?? false}
                   onOpenChange={(open) => handleOpenChange(stamp.id, open)}
                   onClaim={(code) => handleClaimStampClick(code, stamp)}
-                  isLoading={isClaimingStamp}
+                  isLoading={isClaimingStamp || isVerifyingClaimStamp}
                 />
               ))}
             </div>
-          </div> */}
-          {/* <h2 className="mt-[185px] max-w-[263px] text-center font-everett text-[24px] leading-[28px] sm:text-[32px] sm:leading-[38px]">
+          </div>
+          <h2 className="mt-[185px] max-w-[263px] text-center font-everett text-[24px] leading-[28px] sm:text-[32px] sm:leading-[38px]">
             Top Contributors
           </h2>
           <div className="mb-[48px] mt-6 w-full sm:mb-[80px]">
@@ -375,8 +357,26 @@ export default function HomePage() {
               onRefresh={handleTableRefresh}
               isLoading={isLoading}
             />
-          </div> */}
+          </div>
         </div>
+        {/* Only show Turnstile captcha if:
+          * 1. Not using Sui Wallet (!isSuiWallet) - Sui Wallet users don't need captcha verification
+          * 2. No captcha token exists (!token) - Don't show if already verified
+        */}
+        {!isSuiWallet && !token && (
+          <div className="fixed bottom-4 right-4">
+            <Turnstile
+              siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? ""}
+              options={{
+                theme: "dark",
+                language: "en",
+              }}
+              onSuccess={(token) => {
+                setToken(token);
+              }}
+            />
+          </div>
+        )}
       </div>
     </main>
   );

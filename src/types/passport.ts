@@ -21,12 +21,10 @@ export interface PassportItem {
 }
 
 export const passportFormSchema = z.object({
-    name: z.string().min(2, "Name must be at least 2 characters"),
+    name: z.string().min(2, "Name must be at least 2 characters").max(30, "Name must be less than 30 characters"),
     avatar: z.string().optional().or(z.literal('')),
     avatarFile: z.instanceof(File).optional(),
-    introduction: z.string().optional(),
-    x: z.string().optional().or(z.literal('')),
-    github: z.string().optional().or(z.literal('')),
+    introduction: z.string().max(100, "Introduction must be less than 100 characters").optional(),
 });
 
 export type PassportFormSchema = z.infer<typeof passportFormSchema>;

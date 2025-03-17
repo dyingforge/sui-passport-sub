@@ -21,6 +21,7 @@ interface UseUserCrudReturn {
     fetchUsers: () => Promise<DbUserResponse[] | undefined>;
     fetchUserByAddress: (address: string) => Promise<DbResponse<DbUserResponse> | null>;
     createOrUpdateUser: (user: CreateUserParams) => Promise<DbResponse<DbUserResponse> | null>;
+    verifyCaptcha: (token: string) => Promise<boolean>;
 }
 
 export function useUserCrud(): UseUserCrudReturn {
@@ -135,6 +136,22 @@ export function useUserCrud(): UseUserCrudReturn {
         }
     }, []);
 
+    const verifyCaptcha = useCallback(async (token: string): Promise<boolean> => {
+        try {
+            const response = await apiFetch<{ success: boolean }>('/api/verify', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ token })
+            })
+            return response.success;
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Failed to verify captcha');
+            return false;
+        }
+    }, []);
+
     return {
         isLoading,
         error,
@@ -142,5 +159,6 @@ export function useUserCrud(): UseUserCrudReturn {
         fetchUsers,
         fetchUserByAddress,
         createOrUpdateUser,
+        verifyCaptcha,
     };
 }

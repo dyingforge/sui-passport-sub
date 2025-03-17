@@ -58,18 +58,18 @@ export const getColumns = (
       }
     },
   },
-  {
-    accessorKey: "name",
-    header: "Name",
-    size: 190,
-    cell: ({ cell }) => {
-      return (
-        <p className="max-w-[80px] truncate text-[14px]">
-          {cell.getValue() as string}
-        </p>
-      );
-    },
-  },
+  // {
+  //   accessorKey: "name",
+  //   header: "Name",
+  //   size: 190,
+  //   cell: ({ cell }) => {
+  //     return (
+  //       <p className="max-w-[80px] truncate text-[14px]">
+  //         {cell.getValue() as string}
+  //       </p>
+  //     );
+  //   },
+  // },
   {
     accessorKey: "address",
     header: "Address",

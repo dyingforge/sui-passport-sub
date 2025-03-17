@@ -19,6 +19,9 @@ import { removeToken } from "~/lib/jwtManager";
 import { ConnectModal, useAccounts, useCurrentAccount, useCurrentWallet, useDisconnectWallet } from '@mysten/dapp-kit'
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { useUserCrud } from "~/hooks/use-user-crud";
+import { show_stamp } from "~/lib/contracts/passport";
+import { useBetterSignAndExecuteTransactionWithSponsor } from "~/hooks/use-better-tx";
+import { toast } from "sonner";
 
 export const ProfileModal = () => {
   const { refreshProfile, userProfile } = useUserProfile()
@@ -33,22 +36,32 @@ export const ProfileModal = () => {
   const [isInSuiWallet, setIsInSuiWallet] = useState(false);
   const { createOrUpdateUser } = useUserCrud()
 
-  const onConnected = useCallback(async () => {
+  const { handleSignAndExecuteTransactionWithSponsor: handleShowStampTx, isLoading: isShowingStamp } =
+    useBetterSignAndExecuteTransactionWithSponsor({
+      tx: show_stamp,
+    });
+
+  const checkChainAndConnect = useCallback(async () => {
     if (currentAccount?.address && connectionStatus === "connected") {
+
       const address = currentAccount.address
       await refreshProfile(address, networkVariables)
     }
     if (connectionStatus === "disconnected") {
       await removeToken()
     }
-  }, [currentAccount?.address, connectionStatus, networkVariables, refreshProfile])
+  }, [currentAccount, connectionStatus, networkVariables, refreshProfile])
+
+  useEffect(() => {
+    void checkChainAndConnect()
+  }, [checkChainAndConnect])
 
   // Separate effect for user data synchronization
   useEffect(() => {
     // Only sync if we have all required data
-    if (!currentAccount?.address || 
-        !userProfile?.passport_id || 
-        connectionStatus !== "connected") {
+    if (!currentAccount?.address ||
+      !userProfile?.passport_id ||
+      connectionStatus !== "connected") {
       return;
     }
 
@@ -75,6 +88,29 @@ export const ProfileModal = () => {
     createOrUpdateUser // 现在可以安全地加入依赖数组
   ]);
 
+  const handleStickerClick = async (id: string) => {
+    if (!userProfile?.passport_id) {
+      toast.error("Please create a passport first")
+      return
+    }
+    await handleShowStampTx(
+      process.env.NEXT_PUBLIC_NETWORK as "testnet" | "mainnet",
+      currentAccount?.address ?? "",
+      [currentAccount?.address ?? ""],
+      {
+        passport: userProfile?.passport_id ?? "",
+        stamp: id,
+      },
+    ).onSuccess(() => {
+      void refreshProfile(currentAccount?.address ?? "", networkVariables)
+      setOpen(false)
+      toast.success("Stamp shown successfully")
+    }).onError((error) => {
+      console.error('Error showing stamp:', error)
+      toast.error("Error showing stamp")
+    }).execute();
+  };  
+
   const handleDisconnect = useCallback(() => {
     void disconnect()
     setOpen(false)
@@ -82,12 +118,8 @@ export const ProfileModal = () => {
   }, [disconnect, setOpen, clearProfile])
 
   useEffect(() => {
-    void onConnected()
-  }, [onConnected])
-
-  useEffect(() => {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    const isSuiWallet = /Sui-Wallet/i.test(navigator.userAgent);    
+    const isSuiWallet = /Sui-Wallet/i.test(navigator.userAgent);
     setIsInSuiWallet(isSuiWallet);
     setIsMobileApp(isMobile && !isSuiWallet);
   }, []);
@@ -107,14 +139,13 @@ export const ProfileModal = () => {
                 }, 5000);
               }}
             >
-              Open with
               <Image
                 src={"/images/drop.png"}
                 alt="wallet"
                 width={12}
                 height={16}
               />
-              Sui Wallet
+              <p className="text-xs">Sui Wallet</p>
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-[208px] border-none bg-transparent bg-[url(/images/popup-bg.svg)] bg-contain bg-no-repeat px-[14px] pt-5">
@@ -217,7 +248,7 @@ export const ProfileModal = () => {
           transition={{ type: "spring" }}
           className="flex w-full flex-col items-center backdrop-blur-[8px] sm:h-screen"
         >
-          <StickersLayout stamps={userProfile?.stamps ?? []} />
+          <StickersLayout stamps={userProfile?.stamps ?? []} collections={userProfile?.collection_detail ?? []} visitor={currentAccount?.address !== userProfile?.current_user} onStickerClick={handleStickerClick} isLoading={isShowingStamp} />
           <Image
             src={userProfile?.avatar || "/images/profile-avatar-default.png"}
             alt="avatar"

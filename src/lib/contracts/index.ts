@@ -29,23 +29,27 @@ function createBetterTxFactory<T extends Record<string, unknown>>(
 type Network = "mainnet" | "testnet"
 
 const mainnetVariables = {
-    package: "0x5210d4ce766f63de862d1e095d0608791d58c9ec33c97a518049d4375754cea8",
-    suiPassportRecord: "0x293d3fe7714a3c119dbf0f99d4774ce9245e7f5b78f469b738bae3b1093c61a5",
-    stampDisplay: "0xc5b25e9e4ed7f8a6ab2b0fc45a406dc39ea580fa98dee7e60929b530024b85b7",
-    passportDisplay: "0xb53c4b93bc7b22be6ee9f036da19e042288eecccb32008122e451db23893b97e",
-    stampEventRecord: "0xb58b65f1e10d75bfc5fa936ef69df3da8d9712c998b0e30546494272991d2f89",
-    stampEventRecordTable:"0xadfe6cc8685af7251c660cebbf1f18b987897932c11041cc9a9833db19e9ce69",
-    stampAdminCap: "0xc6959493989d15d66e513d8ada5dc853cdf883d937b1b1164d23e2b3c7cadec9",
+    package: "0x352919f09a96e8bca46cd2a9015c5651aed4aa3ca270f8c09c96ef670c8ede59",
+    suiPassportRecord: "0xf7bea21283a25287debc250a426a03f68cf9abbf03752094e9072e637058572b",
+    stampDisplay: "0x567bb7c25135da029bab6f0871722cc8d9cdf25a0018f57ecee79903a80e11df",
+    passportDisplay: "0x57bbe20853c188df34cc9233a5698e311bc646ea5d5d813b89e6c910bcf7216b",
+    stampEventRecord: "0x242efa83af97ea52787cddf9daa284a890851110567b1e8aea255d22137561fb",
+    stampEventRecordTable:"0xc6ab6b8ae7b6c6ff0415cc3f62068a8eece7da36f6f0b43522f8a6918a8e4877",
+    stampAdminCap: "0x229ac4d4b244c3a4cd2426cfe0d059ffd27b9fc72418b927e89697e247528930",
+    version: "0x4a4317676aa05a8e673dad0b2cc2fbf855b7170b5259340e2b76121bccbe9363",
+    adminSet: "0x6f4c4be85ae2d97cb75481f32fc3e4c1480c422b22c661b3ccf0d5e73725c1c9"
 }
 
 const testnetVariables = {
-    package: "0x9a752869a4dff84c7c7814ec51b5f218dce9a23d739874305f57228ca3feb65b",
-    suiPassportRecord: "0x36319fa6753b0c9c833f191a6d17b09b053c4662bdbd7ca164d1a428bd3ebbe7",
-    stampDisplay: "0xdf32c6afe5fa32f604746a53813f14c1c73982b163f72fec42fcebbabba5e91c",
-    passportDisplay: "0x9acd069be290f1002e3252466d66cb6d287369e112fd1b3abd89d4ffe2fb360e",
-    stampEventRecord: "0x2815e9e800d36f3e6e0a5a2c22f39cf259ff0095ab14b85b61568ec669b24068",
-    stampEventRecordTable:"0xf9df7047b15be40896fd665f6ef982b3cf91207109e3a6cdbbeae34f93d1a203",
-    stampAdminCap: "0x505cbf834135ee90afc42c36727bb1d2746149b46a7668d4eb7c201c001c9c91",
+    package: "0xf2ac2d3278ae3cf559663900c5fb0119e83cf8ed897adb63a94523520ab11c13",
+    suiPassportRecord: "0x9ca4d2804a0711b4d6986aea9c1fe100b20e0dad73b48871624f5e44e8c3c9ef",
+    stampDisplay: "0x46d866b486206d26f41a6108b64d7e9e8b4d61ee0b5c9bece1dd92adb07ecd2a",
+    passportDisplay: "0xef55028c9ca6925068edafe97739f33dcda97dfc3b40c861df33391b8d46d7e7",
+    stampEventRecord: "0x31c4b24ab0f3cc4bac76509c5b227b6ce6da0fb661fbe5c3a059a799eab7a498",
+    stampEventRecordTable:"0x282bed4593b99549a927915f70ed970a74b9a47711e09aefeda73a5a9d61113b",
+    stampAdminCap: "0x8deb1e81c2b7cceafec4a75e0574c7a882cbaf31fadc39675e76b467db9754c2",
+    version: "0xb70ea751ce1f0dae1a2f8da9729c6dbbd6cb47b8f6fb7c44ad025246a6b47da9",
+    adminSet: "0x07d43d3aea955e5ea8c1f7e43312ec93ba68d24fe9a5412260b9d9de7db287ef"
 }
 
 const network = (process.env.NEXT_PUBLIC_NETWORK as Network) || "testnet";

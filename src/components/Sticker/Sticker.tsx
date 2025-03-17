@@ -15,7 +15,6 @@ import { Button } from "../ui/button";
 import { TextInput } from "../TextInput/TextInput";
 import { AnimatedImage } from "../AnimatedImage.tsx/AnimatedImage";
 import { cn } from "~/lib/utils";
-
 type StickerProps = {
   stampId: string;
   url: string;
@@ -49,15 +48,34 @@ export const Sticker: FC<StickerProps> = (props) => {
     onOpenChange,
   } = props;
 
-  const [status, setStatus] = useState<"pending" | "default" | "success">(
+  const [status, setStatus] = useState<"pending" | "default" | "success" | "error">(
     "default",
   );
   const [code, setCode] = useState(isPublicClaim ? "00000" : "");
 
-
+  const handleClaim = async (code: string) => {
+    setStatus("pending");
+    try {
+      onClaim?.(code);
+      setStatus("success");
+    } catch (error) {
+      console.error(error);
+      setStatus("error");
+      setCode("");
+      setTimeout(() => {
+        setStatus("default");
+      }, 2000);
+    }
+  };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(open) => {
+      if (!open) {
+        setStatus("default");
+        setCode(isPublicClaim ? "00000" : "");
+      }
+      onOpenChange?.(open);
+    }}>
       <DialogTrigger className={className} disabled={isClaimed || dropsAmount <= 0}>
         <div
           className={cn("relative flex flex-col items-center justify-center")}
@@ -88,7 +106,7 @@ export const Sticker: FC<StickerProps> = (props) => {
 
           {dropsAmount <= 0 && (
             <div className="absolute z-10 flex h-[29px] w-[78px] items-center justify-center rounded-xl bg-[#33404b] font-inter text-[#6f7f8c]">
-              Saleout
+              Sold Out
             </div>
           )}
         </div>
@@ -152,6 +170,7 @@ export const Sticker: FC<StickerProps> = (props) => {
                     status === "success" && "border-2 border-[#4DA2FF]",
                   )}
                   onChange={(e) => setCode(e.target.value)}
+                  value={code}
                 />
                 {status === "pending" && (
                   <motion.div
@@ -187,6 +206,7 @@ export const Sticker: FC<StickerProps> = (props) => {
                 <Button
                   variant="secondary"
                   className="h-[42px] w-[102px] sm:h-[52px] sm:w-[116px]"
+                  disabled={isLoading}
                   onClick={() => {
                     setCode(isPublicClaim ? "00000" : "");
                     setStatus("default");
@@ -205,8 +225,7 @@ export const Sticker: FC<StickerProps> = (props) => {
                 className="h-[42px] w-[197px] sm:h-[52px] sm:w-[227px]"
                 disabled={isLoading || !isPublicClaim && (status !== "default" || !code)}
                 onClick={() => {
-                  setStatus("pending");
-                  onClaim?.(code);
+                  void handleClaim(code);
                 }}
               >
                 {isPublicClaim ? "Claim" : "Claim " + name}

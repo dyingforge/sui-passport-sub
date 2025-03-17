@@ -20,6 +20,25 @@ export const mint_passport = createBetterTxFactory<{
             tx.pure.string(params.x),
             tx.pure.string(params.github),
             tx.pure.string(params.email),
+            tx.object(networkVariables.version),
+            tx.object("0x6"),
+        ],
+    });
+    return tx;
+});
+
+export const show_stamp = createBetterTxFactory<{
+    passport: string;
+    stamp: string;
+}>((tx, networkVariables, params) => {
+    tx.moveCall({
+        package: networkVariables.package,
+        module: "sui_passport",
+        function: "show_stamp",
+        arguments: [
+            tx.object(params.passport),
+            tx.object(params.stamp),
+            tx.object(networkVariables.version),
             tx.object("0x6"),
         ],
     });

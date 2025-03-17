@@ -32,8 +32,6 @@ export const PassportCreationModal = ({
     introduction: "",
     avatar: "",
     avatarFile: undefined,
-    x: "",
-    github: "",
   });
 
   const handleSubmit = async (data: PassportFormSchema) => {
@@ -52,13 +50,13 @@ export const PassportCreationModal = ({
           htmlFor="id"
           className="font-inter text-[16px] font-light leading-[25px] sm:text-[20px]"
         >
-          Claim your name for Sui Passport
+          Label for your Sui Community Passport
         </Label>
         <Input
           className="h-[38px] font-everett text-[32px] text-white sm:h-[58px] sm:text-[48px]"
           type="text"
           id="id"
-          placeholder="Your Name"
+          placeholder="Label"
           value={formData.name}
           onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
         />

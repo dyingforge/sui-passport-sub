@@ -11,7 +11,7 @@ import { useNetworkVariables } from "~/lib/contracts";
 import { useUserProfile } from "~/context/user-profile-context";
 import { isValidSuiAddress } from "@mysten/sui/utils";
 import { type UserProfile } from "~/types/userProfile";
-
+import { useCurrentAccount } from "@mysten/dapp-kit";
 interface UserProfileModalProps {
   address: string;
   onClose: () => void;
@@ -24,6 +24,7 @@ export const UserProfileModal: FC<UserProfileModalProps> = ({
   const { getPageUserProfile } = useUserProfile();
   const networkVariables = useNetworkVariables();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const currentAccount = useCurrentAccount();
 
   useEffect(() => {
     if (!isValidSuiAddress(address)) {
@@ -52,7 +53,7 @@ export const UserProfileModal: FC<UserProfileModalProps> = ({
           transition={{ type: "spring" }}
           className="flex w-full flex-col items-center backdrop-blur-[8px] sm:h-screen"
         >
-          <StickersLayout stamps={userProfile?.stamps ?? []} />
+          <StickersLayout stamps={userProfile?.stamps ?? []} collections={userProfile?.collection_detail ?? []} visitor={currentAccount?.address !== address} />
           <Image
             src={userProfile?.avatar || "/images/profile-avatar-default.png"}
             alt="avatar"

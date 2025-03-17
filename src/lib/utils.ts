@@ -23,7 +23,7 @@ export function usersToContributor(users: DbUserResponse[]): Contributor[] {
   }));
 }
 
-export function stampsToStickerData(stamps: StampItem[]): StickerData[] {
+export function stampsToStickerData(stamps: StampItem[],collections: string[]): StickerData[] {
   return stamps.map((stamp, index) => {
     const position = index % 6;
     const stickerConfigs = {
@@ -40,7 +40,9 @@ export function stampsToStickerData(stamps: StampItem[]): StickerData[] {
     return {
       url: stamp.imageUrl ?? "",
       name: stamp.name,
-      ...stickerConfig
+      ...stickerConfig,
+      id: stamp.id,
+      isActive: collections.includes(stamp.id),
     };
   });
 }
@@ -71,9 +73,9 @@ export function stampsToDisplayStamps(stamps: StampItem[], userProfile: UserProf
             ...stamp,
             isClaimed,
             isClaimable,
-            claimedCount
+            leftStamps: stamp.totalCountLimit === 0 ? Infinity : (stamp.totalCountLimit ?? 0) - (stamp.claimCount ?? 0)
         };
-    });
+    }).filter(stamp => stamp.hasClaimCode ?? stamp.publicClaim);
 }
 
 export function stampsToDisplayStampsWithOutPassport(stamps: StampItem[]): DisplayStamp[] {
@@ -82,9 +84,9 @@ export function stampsToDisplayStampsWithOutPassport(stamps: StampItem[]): Displ
       ...stamp,
       isClaimed: false,
       isClaimable: false,
-      claimedCount: 0
+      leftStamps: stamp.totalCountLimit === 0 ? Infinity : (stamp.totalCountLimit ?? 0) - (stamp.claimCount ?? 0)
     };
-  });
+  }).filter(stamp => stamp.hasClaimCode ?? stamp.publicClaim);
 }
 
 export const STICKER_LAYOUT_CONFIG = {
