@@ -13,7 +13,7 @@ import {
 } from "../ui/dialog";
 import { StickersLayout } from "./ui/StickersLayout";
 import { useCallback, useEffect, useState } from "react";
-import { network, useNetworkVariables } from "~/lib/contracts";
+import { useNetworkVariables } from "~/lib/contracts";
 import { useUserProfile } from "~/context/user-profile-context";
 import { removeToken } from "~/lib/jwtManager";
 import { ConnectModal, useAccounts, useCurrentAccount, useCurrentWallet, useDisconnectWallet } from '@mysten/dapp-kit'
