@@ -286,7 +286,7 @@ export default function HomePage() {
                 <span className="font-everett text-lg text-[#4DA2FF]">Coming Soon</span>
               </div>
               <p className="font-everett_light text-sm text-[#ABBDCC]">
-                The 2025 Sui Community Passport program will officially launch soon. Stay tuned!
+                The 2025 Sui Community Passport program will launch soon. Stay tuned!
               </p>
               <div className="mt-2 flex items-center gap-2">
                 <div className="h-2 w-2 animate-pulse rounded-full bg-[#4DA2FF]"></div>
