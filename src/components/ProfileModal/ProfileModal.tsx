@@ -71,6 +71,7 @@ export const ProfileModal = () => {
       stamp_count: userProfile.stamps?.length ?? 0,
       name: userProfile.name,
       points: Number(userProfile.points),
+      packageId: networkVariables.package,
     };
 
     const syncTimeout = setTimeout(() => {
@@ -85,6 +86,7 @@ export const ProfileModal = () => {
     userProfile?.stamps?.length,
     userProfile?.name,
     userProfile?.points,
+    networkVariables.package,
     createOrUpdateUser // 现在可以安全地加入依赖数组
   ]);
 

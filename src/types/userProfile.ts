@@ -29,6 +29,7 @@ export type DbUserResponse = {
 export const createUserParams = z.object({
     address: z.string(),
     points: z.number(),
+    packageId: z.string(),
     stamp_count: z.number(),
     name: z.string()
 })
