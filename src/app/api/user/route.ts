@@ -3,8 +3,7 @@ import { revalidateTag, unstable_cache } from 'next/cache';
 import { getUsersFromDb, createOrUpdateUser } from "~/lib/services/user";
 import { createUserParams } from "~/types/userProfile";
 import { checkUserStateServer } from "~/lib/services/stamps";
-import { graphqlClient } from "~/lib/contracts";
-import { suiClient } from "~/lib/contracts";
+import { suiClient, graphqlClient } from '../SuiClient';
 
 const getCachedUsers = unstable_cache(
     async () => getUsersFromDb(),
