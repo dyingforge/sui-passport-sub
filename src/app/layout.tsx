@@ -3,6 +3,7 @@ import "~/styles/globals.css";
 import { type Metadata } from "next";
 import { Providers } from "./providers";
 import { Analytics } from "@vercel/analytics/react"
+import Footer from "~/components/Footer";
 
 export const metadata: Metadata = {
   title: "Sui Community Passport",
@@ -17,6 +18,7 @@ export default function RootLayout({
       <body>
         <Providers>
           {children}
+          <Footer />
           <Analytics />
         </Providers>
       </body>

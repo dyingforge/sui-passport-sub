@@ -28,6 +28,7 @@ import { type PassportFormSchema } from "~/types/passport";
 import { mint_passport } from "~/lib/contracts/passport";
 import { toast } from "sonner";
 import { Turnstile } from "@marsidev/react-turnstile";
+import Footer from "~/components/Footer";
 
 export default function HomePage() {
   const { stamps, refreshPassportStamps } = usePassportsStamps();

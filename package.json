@@ -46,6 +46,7 @@
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.54.2",
     "react-images-uploading": "^3.1.7",
+    "react-markdown": "^10.1.0",
     "react-middle-ellipsis": "^1.2.2",
     "react-responsive": "^10.0.0",
     "react-use-gesture": "^9.1.3",
