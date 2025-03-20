@@ -48,18 +48,6 @@ export const getMobileColumns = (): ColumnDef<Contributor>[] => [
     },
   },
   {
-    accessorKey: "name",
-    header: "Name",
-    size: 50,
-    cell: ({ cell }) => {
-      return (
-        <p className="max-w-[80px] truncate text-[14px]">
-          {cell.getValue() as string}
-        </p>
-      );
-    },
-  },
-  {
     accessorKey: "address",
     header: "Address",
     size: 70,

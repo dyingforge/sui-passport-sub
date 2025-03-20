@@ -3,11 +3,11 @@ import Link from 'next/link';
 
 export default function Footer() {
     return (
-        <footer className="w-full bg-[#02101C] border-t border-[#1C3850] pt-28 pb-6 mt-auto">
+        <footer className="w-full bg-[#02101C] border-t border-[#1C3850] pt-12 md:pt-28 pb-6 mt-auto">
             <div className="container mx-auto px-4 max-w-[1424px]">
-                <div className="flex flex-col md:flex-row md:justify-end gap-12 md:gap-24">
+                <div className="flex flex-col md:flex-row md:justify-end gap-8 md:gap-24">
                     {/* Social Media Column */}
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-3 md:gap-4">
                         <h3 className="font-everett text-xl text-white">Connect With Us</h3>
                         <div className="flex gap-6">
                             <a href="https://x.com/SuiFamOfficial" 
@@ -38,7 +38,7 @@ export default function Footer() {
                     </div>
 
                     {/* Documentation Column */}
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-3 md:gap-4">
                         <h3 className="font-everett text-xl text-white">Resources</h3>
                         <div className="flex flex-col gap-3">
                             <Link href="/terms" 
