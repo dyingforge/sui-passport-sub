@@ -40,7 +40,7 @@ export async function POST(request: Request) {
                 { status: 404 }
             );
         }
-        if(profile.points !== validatedUser.points) {
+        if(Number(profile.points) !== Number(validatedUser.points)) {
             return NextResponse.json(
                 { error: "User points not match" },
                 { status: 400 }

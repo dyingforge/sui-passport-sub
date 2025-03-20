@@ -73,7 +73,7 @@ export default function HomePage() {
         setIsCaptchaVerified(success);
       });
     }
-    //setIsCaptchaVerified(true);
+    setIsCaptchaVerified(true);
   }, [token, verifyCaptcha]);
 
   useEffect(() => {
@@ -195,6 +195,7 @@ export default function HomePage() {
     )
       .onSuccess(async () => {
         await refreshProfile(currentAccount?.address ?? "", networkVariables);
+        void handleTableRefresh()
         toast.success("Passport minted successfully");
       })
       .onError((error) => {
