@@ -1,4 +1,4 @@
-import { FaTwitter, FaTelegram, FaDiscord, FaGithub } from 'react-icons/fa';
+import { FaXTwitter, FaTelegram, FaDiscord, FaGithub, FaTwitter } from 'react-icons/fa6';
 import Link from 'next/link';
 
 export default function Footer() {
@@ -14,7 +14,7 @@ export default function Footer() {
                                target="_blank" 
                                rel="noopener noreferrer" 
                                className="text-[#ABBDCC] hover:text-[#4DA2FF] transition-colors">
-                                <FaTwitter size={24} />
+                                <FaXTwitter size={24} />
                             </a>
                             {/* <a href="https://t.me/suinetwork" 
                                target="_blank" 
