@@ -73,7 +73,7 @@ export default function HomePage() {
         setIsCaptchaVerified(success);
       });
     }
-    setIsCaptchaVerified(true);
+    //setIsCaptchaVerified(true);
   }, [token, verifyCaptcha]);
 
   useEffect(() => {
