@@ -73,6 +73,7 @@ export default function HomePage() {
         setIsCaptchaVerified(success);
       });
     }
+    //setIsCaptchaVerified(true);
   }, [token, verifyCaptcha]);
 
   useEffect(() => {
@@ -250,7 +251,7 @@ export default function HomePage() {
             </div>
           </div>
           {/* Show ProfileModal if user is using Sui Wallet or has passed captcha verification */}
-          {/* {(isSuiWallet || isCaptchaVerified) && <ProfileModal />} */}
+          {(isSuiWallet || isCaptchaVerified) && <ProfileModal />}
         </div>
         <div className="relative flex w-full flex-col items-center rounded-t-xl bg-[#02101C] pl-2 pr-2 ">
           <Image
@@ -282,7 +283,7 @@ export default function HomePage() {
               </p>
             </div>
             {/* Coming Soon */}
-            <div className="mt-8 flex flex-col items-center gap-4 rounded-xl border border-[#1C3850] bg-[#0B1926] p-6 text-center">
+            {/* <div className="mt-8 flex flex-col items-center gap-4 rounded-xl border border-[#1C3850] bg-[#0B1926] p-6 text-center">
               <div className="flex items-center gap-2">
                 <span className="font-everett text-lg text-[#4DA2FF]">Coming Soon</span>
               </div>
@@ -293,14 +294,14 @@ export default function HomePage() {
                 <div className="h-2 w-2 animate-pulse rounded-full bg-[#4DA2FF]"></div>
                 <span className="font-everett_light text-sm text-[#4DA2FF]">Preparing for launch...</span>
               </div>
-            </div>
-            {/* {!userProfile?.passport_id && <PassportCreationModal
+            </div> */}
+            {!userProfile?.passport_id && <PassportCreationModal
               onSubmit={handlePassportCreation}
               isLoading={isMintingPassportWithSponsor || isRefreshingProfile}
-            />} */}
+            />}
           </div>
         </div>
-        {/* <div className="relative mt-16 flex w-full flex-col items-center bg-gradient-to-t from-[#02101C] from-95% pl-2 pr-2">
+        <div className="relative mt-16 flex w-full flex-col items-center bg-gradient-to-t from-[#02101C] from-95% pl-2 pr-2">
           <h1 className="mt-40 max-w-[358px] text-center font-everett text-[40px] leading-[48px] sm:mt-16 sm:max-w-[696px] sm:text-[68px] sm:leading-[80px]">
             Get your stamps
           </h1>
@@ -373,7 +374,7 @@ export default function HomePage() {
               isLoading={isLoading}
             />
           </div>
-        </div> */}
+        </div>
         {/* Only show Turnstile captcha if:
           * 1. Not using Sui Wallet (!isSuiWallet) - Sui Wallet users don't need captcha verification
           * 2. No captcha token exists (!token) - Don't show if already verified
