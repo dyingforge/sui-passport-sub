@@ -14,6 +14,15 @@ const getCachedUsers = unstable_cache(
 export async function GET() {
     try {
         const users = await getCachedUsers();
+        if(users.data?.length === 0) {
+            const users = await getUsersFromDb();
+            return new NextResponse(JSON.stringify(users), {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=59',
+                },
+            });
+        }
         return new NextResponse(JSON.stringify(users), {
             headers: {
                 'Content-Type': 'application/json',
