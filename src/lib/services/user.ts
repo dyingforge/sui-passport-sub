@@ -7,11 +7,26 @@ interface DbResponse<T> {
     results: T[];
 }
 
-export const getUsersFromDb = async () => {
-    const query = `SELECT * FROM users ORDER BY points DESC LIMIT 100`;
-    const users = await queryD1<DbUserResponse[]>(query);
-    return users;
-}
+let cachedUsers: DbUserResponse[] | undefined;
+let usersCacheTimestamp = 0;
+
+export const getUsersFromDb = async (): Promise<DbUserResponse[] | undefined> => {
+  const now = Date.now();
+  const ttl = 30 * 1000; // 30 秒缓存
+
+  if (cachedUsers && now - usersCacheTimestamp < ttl) {
+    return cachedUsers;
+  }
+
+  const query = `SELECT * FROM users ORDER BY points DESC LIMIT 100`;
+  const users = await queryD1<DbUserResponse[]>(query);
+
+  cachedUsers = users.data;
+  usersCacheTimestamp = now;
+
+  return users.data;
+};
+
 
 export const getUserByAddress = async (address: string) => {
     const query = `SELECT * FROM users WHERE address = ?`;

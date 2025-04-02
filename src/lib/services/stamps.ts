@@ -90,9 +90,19 @@ async function enrichProfileWithCollectionDetails(
           ?.filter((item): item is string => Boolean(item)) ?? [];
 }
 
-export const getStampsFromDb = cache(async (): Promise<DbStampResponse[]|undefined> => {
-    try {
-      const query = `
+let cacheData: DbStampResponse[] | undefined;
+let cacheTimestamp = 0;
+
+export async function getStampsFromDb(): Promise<DbStampResponse[] | undefined> {
+  const now = Date.now();
+  const cacheTTL = 60 * 1000; // 缓存 60 秒
+
+  if (cacheData && (now - cacheTimestamp) < cacheTTL) {
+    return cacheData;
+  }
+
+  try {
+    const query = `
       SELECT 
         stamp_id, 
         claim_code_start_timestamp, 
@@ -104,13 +114,16 @@ export const getStampsFromDb = cache(async (): Promise<DbStampResponse[]|undefin
         CASE WHEN claim_code IS NULL THEN 0 ELSE 1 END as has_claim_code
       FROM stamps`;
       
-      const response = await queryD1<DbStampResponse[]>(query);    
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching claim stamps:', error);
-      throw error;
-    }
-  });
+    const response = await queryD1<DbStampResponse[]>(query);
+    cacheData = response.data;
+    cacheTimestamp = now;
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching claim stamps:', error);
+    throw error;
+  }
+}
+
 
 export const getStampFromDbByStampId = cache(async (stampId: string): Promise<DbStampResponse | undefined> => {
   const query = `
