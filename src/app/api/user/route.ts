@@ -14,7 +14,7 @@ const getCachedUsers = unstable_cache(
 export async function GET() {
     try {
         const users = await getCachedUsers();
-        if(users.data?.length === 0) {
+        if(users?.length === 0) {
             const users = await getUsersFromDb();
             return new NextResponse(JSON.stringify(users), {
                 headers: {
