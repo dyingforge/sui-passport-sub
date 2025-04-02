@@ -6,7 +6,7 @@ import { LRUCache } from 'lru-cache'
 
 // 速率限制配置
 const RATE_LIMIT_WINDOW = 60 // 时间窗口（秒）
-const RATE_LIMIT_MAX_REQUESTS = 100 // 最大请求次数
+const RATE_LIMIT_MAX_REQUESTS = 500 // 最大请求次数
 
 // 创建 LRU 缓存实例
 const rateLimit = new LRUCache<string, number>({
