@@ -8,21 +8,12 @@ import { suiClient, graphqlClient } from '../SuiClient';
 const getCachedUsers = unstable_cache(
     async () => getUsersFromDb(),
     ['users-list'],  // cache tag
-    { revalidate: 3600 }  // 1 hour
+    { revalidate: 3600   }  // 1 hour
 );
 
 export async function GET() {
     try {
         const users = await getCachedUsers();
-        if(users?.length === 0) {
-            const users = await getUsersFromDb();
-            return new NextResponse(JSON.stringify(users), {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=59',
-                },
-            });
-        }
         return new NextResponse(JSON.stringify(users), {
             headers: {
                 'Content-Type': 'application/json',

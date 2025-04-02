@@ -3,22 +3,6 @@ import { checkUserStateServer, getStampFromDbByStampId, increaseStampCountToDb, 
 import type { VerifyClaimStampResponse, VerifyStampParams, DbStampResponse, StampItem, VerifyClaimStampRequest } from '~/types/stamp';
 import { getStampsFromDb } from '~/lib/services/stamps';
 import { suiClient, graphqlClient } from '../SuiClient';
-import { unstable_cache } from 'next/cache';
-
-const getCachedStamps = unstable_cache(
-    async () => {
-        try {
-            const stamps: DbStampResponse[] | undefined = await getStampsFromDb();
-            return stamps ?? [];
-        } catch (error) {
-            console.error('Cache error:', error);
-            return [];
-        }
-    },
-    ['stamps-list'],
-    { revalidate: 3600 } // 1 hour
-);
-
 
 export async function POST(request: Request) {
     try {
@@ -77,17 +61,12 @@ export async function POST(request: Request) {
 
 export async function GET() {
     try {
-        const stamps = await getCachedStamps();
-        return NextResponse.json(stamps, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
-            },
-        });
+        const result: DbStampResponse[] | undefined = await getStampsFromDb();
+        return NextResponse.json(result);
     } catch (error) {
-        console.error('Error fetching stamps:', error);
+        console.error('Error fetching claim stamps:', error);
         return NextResponse.json(
-            { success: false, error: error instanceof Error ? error.message : 'Failed to fetch stamps' },
+            { success: false, error: error instanceof Error ? error.message : 'Failed to fetch claim stamps' },
             { status: 500 }
         );
     }

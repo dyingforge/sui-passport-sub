@@ -1,17 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { apiFetch } from '~/lib/apiClient';
 import { useCallback, useState } from 'react';
-import { type CreateUserParams, type DbUserResponse } from '~/types/userProfile';   
+import { type CreateUserParams, type DbUserResponse } from '~/types/userProfile';
 
 
 interface DbResponse<T> {
     success: boolean;
-    data?: {
-        success: boolean;
-        meta:unknown;
-        results: T[];
-    };
-    error?: string;
+    meta: unknown;
+    results: T[];
 }
 
 interface UseUserCrudReturn {
@@ -36,12 +32,14 @@ export function useUserCrud(): UseUserCrudReturn {
             const response = await apiFetch<DbResponse<DbUserResponse>>('/api/user', {
                 method: 'GET'
             })
-            console.log("fetchUsers data", response)
+            console.log("fetchUsers data", response);
             if (!response.success) {
-                throw new Error(response.error);
+                throw new Error("Failed to fetch users");
             }
-            setUsers(response.data?.results ?? []);
-            return response.data?.results ?? [];
+            if (response.results) {
+                setUsers(response.results);
+            }
+            return response.results;
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to fetch users');
         } finally {
@@ -58,7 +56,7 @@ export function useUserCrud(): UseUserCrudReturn {
             })
             console.log("fetchUserByAddress data", response);
             if (!response.success) {
-                setError(response.error ?? 'Failed to fetch user');
+                setError("Failed to fetch user");
                 return response;
             }
             return response;
@@ -124,7 +122,7 @@ export function useUserCrud(): UseUserCrudReturn {
                 body: JSON.stringify(user)
             })
             if (!response.success) {
-                setError(response.error ?? 'Failed to create user');
+                setError("Failed to create user");
                 return response;
             }
             return response;

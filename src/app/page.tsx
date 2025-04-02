@@ -59,6 +59,7 @@ export default function HomePage() {
 
   const initializeData = useCallback(async () => {
     const users = await fetchUsers();
+    console.log('users', users);
     if (users) {
       setContributors(usersToContributor(users));
     }
