@@ -8,7 +8,7 @@ import { suiClient, graphqlClient } from '../SuiClient';
 const getCachedUsers = unstable_cache(
     async () => getUsersFromDb(),
     ['users-list'],  // cache tag
-    { revalidate: 30 }  // 30 seconds
+    { revalidate: 3600 }  // 1 hour
 );
 
 export async function GET() {
