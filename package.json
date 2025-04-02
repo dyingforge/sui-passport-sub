@@ -30,6 +30,7 @@
     "@t3-oss/env-nextjs": "^0.10.1",
     "@tanstack/react-table": "^8.20.6",
     "@types/react-avatar-editor": "^13.0.3",
+    "@upstash/redis": "^1.34.6",
     "@vercel/analytics": "^1.5.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

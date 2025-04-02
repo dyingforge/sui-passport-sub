@@ -10,6 +10,7 @@ import type { UserProfile } from "~/types/userProfile";
 import type { SuiClient, SuiObjectData, SuiObjectResponse } from "@mysten/sui/client";
 import { getCollectionDetail } from "../contracts/graphql";
 import type { SuiGraphQLClient } from "@mysten/sui/graphql";
+import { redis } from "../kv-cache";
 
 const verifyStampSchema = z.object({
   stamp_id: z.string(),
@@ -90,38 +91,34 @@ async function enrichProfileWithCollectionDetails(
           ?.filter((item): item is string => Boolean(item)) ?? [];
 }
 
-let cacheData: DbStampResponse[] | undefined;
-let cacheTimestamp = 0;
-
 export async function getStampsFromDb(): Promise<DbStampResponse[] | undefined> {
-  const now = Date.now();
-  const cacheTTL = 3600 * 1000; // 1 hour
+  const cacheKey = 'stamps';
+  const cached = await redis.get<DbStampResponse[]>(cacheKey);
 
-  if (cacheData && (now - cacheTimestamp) < cacheTTL) {
-    return cacheData;
+  if (cached) {
+    console.log('[Upstash Redis HIT]');
+    return cached;
   }
 
-  try {
-    const query = `
-      SELECT 
-        stamp_id, 
-        claim_code_start_timestamp, 
-        claim_code_end_timestamp,
-        total_count_limit,
-        user_count_limit,
-        claim_count,
-        public_claim,
-        CASE WHEN claim_code IS NULL THEN 0 ELSE 1 END as has_claim_code
-      FROM stamps`;
-      
-    const response = await queryD1<DbStampResponse[]>(query);
-    cacheData = response.data;
-    cacheTimestamp = now;
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching claim stamps:', error);
-    throw error;
-  }
+  console.log('[Redis MISS] Querying D1...');
+  const query = `
+    SELECT 
+      stamp_id, 
+      claim_code_start_timestamp, 
+      claim_code_end_timestamp,
+      total_count_limit,
+      user_count_limit,
+      claim_count,
+      public_claim,
+      CASE WHEN claim_code IS NULL THEN 0 ELSE 1 END as has_claim_code
+    FROM stamps`;
+
+  const response = await queryD1<DbStampResponse[]>(query);
+
+  // 设置缓存，有效期 1 小时（3600 秒）
+  await redis.set(cacheKey, response.data, { ex: 3600 });
+
+  return response.data;
 }
 
 

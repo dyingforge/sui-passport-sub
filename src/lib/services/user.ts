@@ -1,5 +1,6 @@
 import { queryD1 } from "../dbHelper";
 import { createUserParams, type CreateUserParams, type DbUserResponse } from "~/types/userProfile";
+import { redis } from "../kv-cache";
 
 interface DbResponse<T> {
     success: boolean;
@@ -7,24 +8,23 @@ interface DbResponse<T> {
     results: T[];
 }
 
-let cachedUsers: DbUserResponse[] | undefined;
-let usersCacheTimestamp = 0;
 
 export const getUsersFromDb = async (): Promise<DbUserResponse[] | undefined> => {
-  const now = Date.now();
-  const ttl = 3600 * 1000; // 1 hour
-
-  if (cachedUsers && now - usersCacheTimestamp < ttl) {
-    return cachedUsers;
+  const cacheKey = 'top_users';
+  const cached = await redis.get<DbUserResponse[]>(cacheKey);
+  if (cached) {
+    console.log('[Redis HIT] top_users');
+    return cached;
   }
+
+  console.log('[Redis MISS] Querying D1...');
 
   const query = `SELECT * FROM users ORDER BY points DESC LIMIT 100`;
   const users = await queryD1<DbUserResponse[]>(query);
 
-  cachedUsers = users.data;
-  usersCacheTimestamp = now;
+  await redis.set(cacheKey, JSON.stringify(users.data));
 
-  return users.data;
+  return users.data
 };
 
 
