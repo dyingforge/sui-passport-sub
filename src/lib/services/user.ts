@@ -12,7 +12,7 @@ let usersCacheTimestamp = 0;
 
 export const getUsersFromDb = async (): Promise<DbUserResponse[] | undefined> => {
   const now = Date.now();
-  const ttl = 30 * 1000; // 30 秒缓存
+  const ttl = 3600 * 1000; // 1 hour
 
   if (cachedUsers && now - usersCacheTimestamp < ttl) {
     return cachedUsers;

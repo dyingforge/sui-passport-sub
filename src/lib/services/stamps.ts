@@ -95,7 +95,7 @@ let cacheTimestamp = 0;
 
 export async function getStampsFromDb(): Promise<DbStampResponse[] | undefined> {
   const now = Date.now();
-  const cacheTTL = 60 * 1000; // 缓存 60 秒
+  const cacheTTL = 3600 * 1000; // 1 hour
 
   if (cacheData && (now - cacheTimestamp) < cacheTTL) {
     return cacheData;
