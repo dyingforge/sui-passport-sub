@@ -5,10 +5,18 @@ import { getStampsFromDb } from '~/lib/services/stamps';
 import { suiClient, graphqlClient } from '../SuiClient';
 import { unstable_cache } from 'next/cache';
 
-const getCachedStams = unstable_cache(
-    async () => getStampsFromDb(),
-    ['stamps-list'],  // cache tag
-    { revalidate: 30 }  // 30 seconds
+const getCachedStamps = unstable_cache(
+    async () => {
+        try {
+            const stamps: DbStampResponse[] | undefined = await getStampsFromDb();
+            return stamps ?? [];
+        } catch (error) {
+            console.error('Cache error:', error);
+            return [];
+        }
+    },
+    ['stamps-list'],
+    { revalidate: 3600 } // 1 hour
 );
 
 
@@ -69,26 +77,17 @@ export async function POST(request: Request) {
 
 export async function GET() {
     try {
-        const stamps: DbStampResponse[] | undefined = await getCachedStams();
-        if(stamps?.length === 0) {
-            const stamps = await getStampsFromDb();
-            return new NextResponse(JSON.stringify(stamps), {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=59',
-                },
-            });
-        }
-        return new NextResponse(JSON.stringify(stamps), {
+        const stamps = await getCachedStamps();
+        return NextResponse.json(stamps, {
             headers: {
                 'Content-Type': 'application/json',
-                'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=59',
+                'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
             },
         });
     } catch (error) {
-        console.error('Error fetching claim stamps:', error);
+        console.error('Error fetching stamps:', error);
         return NextResponse.json(
-            { success: false, error: error instanceof Error ? error.message : 'Failed to fetch claim stamps' },
+            { success: false, error: error instanceof Error ? error.message : 'Failed to fetch stamps' },
             { status: 500 }
         );
     }
