@@ -43,14 +43,14 @@ export const ProfileModal = () => {
 
   const checkChainAndConnect = useCallback(async () => {
     if (currentAccount?.address && connectionStatus === "connected") {
-
       const address = currentAccount.address
       await refreshProfile(address, networkVariables)
     }
-    if (connectionStatus === "disconnected") {
+    if (connectionStatus === "disconnected") {          
+      clearProfile()
       await removeToken()
     }
-  }, [currentAccount, connectionStatus, networkVariables, refreshProfile])
+  }, [currentAccount, connectionStatus, networkVariables, refreshProfile, clearProfile])
 
   useEffect(() => {
     void checkChainAndConnect()
