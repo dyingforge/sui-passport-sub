@@ -198,8 +198,8 @@ export default function HomePage() {
         void handleTableRefresh()
         toast.success("Passport minted successfully");
       })
-      .onError((error) => {
-        toast.error(`Error minting passport: ${error.message}`);
+      .onError(() => {
+        toast.error(`Error minting passport: Too many requests, please try again later`);
       })
       .execute();
   };
