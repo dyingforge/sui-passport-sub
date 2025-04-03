@@ -8,10 +8,13 @@ import ImageUploading, {
 import { Button } from "../ui/button";
 import { useFormContext } from "react-hook-form";
 import type { PassportFormSchema } from "~/types/passport";
+import { toast } from "sonner";
 
 interface AvatarUploadProps {
   onAvatarChange: (avatar: ImageType | null) => void;
 }
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 export const AvatarUpload: FC<AvatarUploadProps> = ({ onAvatarChange }) => {
   const { setValue, watch } = useFormContext<PassportFormSchema>();
@@ -19,6 +22,10 @@ export const AvatarUpload: FC<AvatarUploadProps> = ({ onAvatarChange }) => {
 
   const onChange = (imageList: ImageListType) => {
     if (imageList?.[0]) {
+      if (imageList[0].file && imageList[0].file.size > MAX_FILE_SIZE) {
+        toast.error("Image size should not exceed 5MB");
+        return;
+      }
       setValue("avatar", imageList[0].dataURL);
       setValue("avatarFile", imageList[0].file);
       onAvatarChange(imageList[0]);
