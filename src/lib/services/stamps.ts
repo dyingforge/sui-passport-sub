@@ -24,6 +24,12 @@ interface ParsedContent<T = unknown> {
   fields: T;
 }
 
+interface DbResponse<T> {
+  success: boolean;
+  meta: unknown;
+  results: T[];
+}
+
 function updateProfileFromPassport(profile: UserProfile, passportFields: Partial<UserProfile>) {
   type ValidKeys = keyof Pick<UserProfile, 'avatar' | 'collections' | 'email' | 'exhibit' |
       'github' | 'id' | 'introduction' | 'last_time' | 'name' | 'points' | 'x'>;
@@ -126,8 +132,8 @@ export const getStampFromDbByStampId = cache(async (stampId: string): Promise<Db
   const query = `
     SELECT * FROM stamps WHERE stamp_id = ?
   `;
-  const response = await queryD1<DbStampResponse>(query, [stampId]);
-  return response.data;
+  const response = await queryD1<DbResponse<DbStampResponse>>(query, [stampId]);
+  return response.data?.results[0];
 });
 
 export async function verifyClaimStamp(params: VerifyStampParams) {
