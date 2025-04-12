@@ -20,7 +20,7 @@ import type { VerifyClaimStampRequest, DisplayStamp } from "~/types/stamp";
 import { useUserProfile } from "~/context/user-profile-context";
 import { useCurrentAccount, useCurrentWallet } from "@mysten/dapp-kit";
 import {
-  useBetterSignAndExecuteTransactionWithSponsor,
+  useBetterSignAndExecuteTransaction,
 } from "~/hooks/use-better-tx";
 import { claim_stamp } from "~/lib/contracts/claim";
 import { useStampCRUD } from "~/hooks/use-stamp-crud";
@@ -45,15 +45,19 @@ export default function HomePage() {
   const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
   const [isSuiWallet, setIsSuiWallet] = useState(false);
 
-  const { handleSignAndExecuteTransactionWithSponsor: handleClaimStampTx, isLoading: isClaimingStamp } =
-    useBetterSignAndExecuteTransactionWithSponsor({
+  const { handleSignAndExecuteTransaction: handleClaimStampTx, isLoading: isClaimingStamp } =
+  useBetterSignAndExecuteTransaction({
       tx: claim_stamp,
     });
 
-  const {
-    handleSignAndExecuteTransactionWithSponsor,
-    isLoading: isMintingPassportWithSponsor,
-  } = useBetterSignAndExecuteTransactionWithSponsor({
+  // const {
+  //   handleSignAndExecuteTransactionWithSponsor,
+  //   isLoading: isMintingPassportWithSponsor,
+  // } = useBetterSignAndExecuteTransactionWithSponsor({
+  //   tx: mint_passport,
+  // });
+
+  const {handleSignAndExecuteTransaction: handleMintPassportTx, isLoading: isMintingPassportWithSponsor} = useBetterSignAndExecuteTransaction({
     tx: mint_passport,
   });
 
@@ -68,12 +72,12 @@ export default function HomePage() {
   useEffect(() => {
     const isSuiWallet = /Sui-Wallet/i.test(navigator.userAgent);
     setIsSuiWallet(isSuiWallet);
-    if (token && !isSuiWallet) {
-      void verifyCaptcha(token).then((success) => {
-        setIsCaptchaVerified(success);
-      });
-    }
-    //setIsCaptchaVerified(true);
+    // if (token && !isSuiWallet) {
+    //   void verifyCaptcha(token).then((success) => {
+    //     setIsCaptchaVerified(success);
+    //   });
+    // }
+    setIsCaptchaVerified(true);
   }, [token, verifyCaptcha]);
 
   useEffect(() => {
@@ -138,9 +142,6 @@ export default function HomePage() {
     // Convert signature object to array
     const signatureArray = Object.values(data.signature);
     await handleClaimStampTx(
-      process.env.NEXT_PUBLIC_NETWORK as "testnet" | "mainnet",
-      currentAccount?.address ?? "",
-      [currentAccount?.address ?? ""],
       {
         event: stamp?.id ?? "",
         passport: userProfile?.id.id ?? "",
@@ -180,10 +181,7 @@ export default function HomePage() {
         throw error; // Re-throw to interrupt the method
       }
     }
-    await handleSignAndExecuteTransactionWithSponsor(
-      process.env.NEXT_PUBLIC_NETWORK as "testnet" | "mainnet",
-      currentAccount?.address ?? "",
-      [currentAccount?.address ?? ""],
+    await handleMintPassportTx(
       {
         name: values.name,
         avatar: values.avatar ?? "",

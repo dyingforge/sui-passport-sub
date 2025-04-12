@@ -20,7 +20,7 @@ import { ConnectModal, useAccounts, useCurrentAccount, useCurrentWallet, useDisc
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { useUserCrud } from "~/hooks/use-user-crud";
 import { show_stamp } from "~/lib/contracts/passport";
-import { useBetterSignAndExecuteTransactionWithSponsor } from "~/hooks/use-better-tx";
+import { useBetterSignAndExecuteTransaction } from "~/hooks/use-better-tx";
 import { toast } from "sonner";
 
 export const ProfileModal = () => {
@@ -36,8 +36,8 @@ export const ProfileModal = () => {
   const [isInSuiWallet, setIsInSuiWallet] = useState(false);
   const { createOrUpdateUser } = useUserCrud()
 
-  const { handleSignAndExecuteTransactionWithSponsor: handleShowStampTx, isLoading: isShowingStamp } =
-    useBetterSignAndExecuteTransactionWithSponsor({
+  const { handleSignAndExecuteTransaction: handleShowStampTx, isLoading: isShowingStamp } =
+    useBetterSignAndExecuteTransaction({
       tx: show_stamp,
     });
 
@@ -96,9 +96,6 @@ export const ProfileModal = () => {
       return
     }
     await handleShowStampTx(
-      process.env.NEXT_PUBLIC_NETWORK as "testnet" | "mainnet",
-      currentAccount?.address ?? "",
-      [currentAccount?.address ?? ""],
       {
         passport: userProfile?.passport_id ?? "",
         stamp: id,
