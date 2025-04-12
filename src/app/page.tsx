@@ -72,12 +72,12 @@ export default function HomePage() {
   useEffect(() => {
     const isSuiWallet = /Sui-Wallet/i.test(navigator.userAgent);
     setIsSuiWallet(isSuiWallet);
-    // if (token && !isSuiWallet) {
-    //   void verifyCaptcha(token).then((success) => {
-    //     setIsCaptchaVerified(success);
-    //   });
-    // }
-    setIsCaptchaVerified(true);
+    if (token && !isSuiWallet) {
+      void verifyCaptcha(token).then((success) => {
+        setIsCaptchaVerified(success);
+      });
+    }
+    //setIsCaptchaVerified(true);
   }, [token, verifyCaptcha]);
 
   useEffect(() => {
