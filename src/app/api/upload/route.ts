@@ -16,12 +16,14 @@ const ALLOWED_FILE_TYPES = new Set([
 ]);
 
 const S3 = new S3Client({
-  region: 'auto',
-  endpoint: process.env.CLOUDFLARE_R2_ENDPOINT,
+  region: 'us-east-1',
+  endpoint: process.env.NAMI_ENDPOINT,
   credentials: {
-    accessKeyId: process.env.CLOUDFLARE_R2_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY!,
+    accessKeyId: process.env.NAMI_ACCESS_KEY!,
+    secretAccessKey: process.env.NAMI_SECRET_ACCESS_KEY!,
   },
+  forcePathStyle: true,
+  logger: console,
 });
 
 export async function POST(request: Request) {
@@ -60,21 +62,25 @@ export async function POST(request: Request) {
     // modify: directly use arrayBuffer() without converting to Buffer
     const arrayBuffer = await file.arrayBuffer();
     const uint8Array = new Uint8Array(arrayBuffer);
+    
+    const command = new PutObjectCommand({
+      Bucket: 'walrus-suipassport',
+      Key: fileName,
+      Body: uint8Array,
+      ContentType: file.type,
+    });
 
     // upload to r2
-    await S3.send(
-      new PutObjectCommand({
-        Bucket: process.env.CLOUDFLARE_R2_BUCKET!,
-        Key: fileName,
-        Body: uint8Array,
-        ContentType: file.type,
-      })
-    );
+    await S3.send(command);
 
-    // build public access url
-    const fileUrl = `${process.env.CLOUDFLARE_R2_PUBLIC_URL}/${fileName}`;
+    // build public access url using Nami Cloud format
+    const publicUrl = `https://walrus-suipassport.storage.nami.cloud/${fileName}`;
 
-    return NextResponse.json({ url: fileUrl });
+    console.log(publicUrl);
+
+    return NextResponse.json({ 
+      url: publicUrl
+    });
   } catch (error) {
     console.error('Upload error:', error);
     return NextResponse.json(

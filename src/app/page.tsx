@@ -72,12 +72,14 @@ export default function HomePage() {
   useEffect(() => {
     const isSuiWallet = /Sui-Wallet/i.test(navigator.userAgent);
     setIsSuiWallet(isSuiWallet);
-    if (token && !isSuiWallet) {
+    if (process.env.NODE_ENV === 'production' && token && !isSuiWallet) {
       void verifyCaptcha(token).then((success) => {
         setIsCaptchaVerified(success);
       });
     }
-    //setIsCaptchaVerified(true);
+    if(process.env.NODE_ENV === 'development') {
+      setIsCaptchaVerified(true);
+    }
   }, [token, verifyCaptcha]);
 
   useEffect(() => {
@@ -177,29 +179,30 @@ export default function HomePage() {
         const data = await response.json();
         values.avatar = data.url;
       } catch (error) {
+        console.log(error);
         toast.error("Error uploading avatar");
         throw error; // Re-throw to interrupt the method
       }
     }
-    await handleMintPassportTx(
-      {
-        name: values.name,
-        avatar: values.avatar ?? "",
-        introduction: values.introduction ?? "",
-        x: "",
-        github: "",
-        email: "",
-      },
-    )
-      .onSuccess(async () => {
-        await refreshProfile(currentAccount?.address ?? "", networkVariables);
-        void handleTableRefresh()
-        toast.success("Passport minted successfully");
-      })
-      .onError(() => {
-        toast.error(`Error minting passport: Too many requests, please try again later`);
-      })
-      .execute();
+    // await handleMintPassportTx(
+    //   {
+    //     name: values.name,
+    //     avatar: values.avatar ?? "",
+    //     introduction: values.introduction ?? "",
+    //     x: "",
+    //     github: "",
+    //     email: "",
+    //   },
+    // )
+    //   .onSuccess(async () => {
+    //     await refreshProfile(currentAccount?.address ?? "", networkVariables);
+    //     void handleTableRefresh()
+    //     toast.success("Passport minted successfully");
+    //   })
+    //   .onError(() => {
+    //     toast.error(`Error minting passport: Too many requests, please try again later`);
+    //   })
+    //   .execute();
   };
 
   const handleOpenChange = (stampId: string, isOpen: boolean) => {
