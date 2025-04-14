@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
-import { checkUserStateServer, getStampFromDbByStampId, increaseStampCountToDb, verifyClaimStamp } from '~/lib/services/stamps';
-import type { VerifyClaimStampResponse, VerifyStampParams, DbStampResponse, StampItem, VerifyClaimStampRequest } from '~/types/stamp';
-import { getStampsFromDb } from '~/lib/services/stamps';
+import type { VerifyClaimStampResponse, VerifyStampParams, StampItem, VerifyClaimStampRequest } from '~/types/stamp';
 import { suiClient, graphqlClient } from '../SuiClient';
+import { passportService, stampService } from '~/lib/db';
 
 export async function POST(request: Request) {
     try {
@@ -14,8 +13,8 @@ export async function POST(request: Request) {
             );
         }
         //todo check if the stamp is claimable
-        const stamp = await getStampFromDbByStampId(requestBody.stamp_id);
-        const now = Date.now()
+        const stamp = await stampService.getById(requestBody.stamp_id);
+        const now = Math.floor(Date.now() / 1000); // 转换为秒级时间戳
         const startTime = stamp?.claim_code_start_timestamp ? Number(stamp.claim_code_start_timestamp) : null
         const endTime = stamp?.claim_code_end_timestamp ? Number(stamp.claim_code_end_timestamp) : null
         if (startTime && endTime && (now < startTime || now > endTime)) {
@@ -24,13 +23,13 @@ export async function POST(request: Request) {
                 { status: 200 }
             );
         }
-        if (stamp?.total_count_limit && stamp.claim_count >= stamp.total_count_limit) {
+        if (stamp?.total_count_limit && stamp.claim_count && stamp.claim_count >= stamp.total_count_limit) {
             return NextResponse.json(
                 { success: false, error: 'Stamp is sold out' },
                 { status: 200 }
             );
         }
-        const profile = await checkUserStateServer(requestBody.address, requestBody.packageId, suiClient, graphqlClient);
+        const profile = await passportService.checkUserState(requestBody.address, requestBody.packageId, suiClient, graphqlClient);
         if (profile?.stamps?.some((stamp: StampItem) => stamp.event === requestBody.stamp_name)) {
             return NextResponse.json(
                 { success: false, error: 'You have already claimed this stamp' },
@@ -38,12 +37,12 @@ export async function POST(request: Request) {
             );
         }
 
-        const { isValid, signature } = await verifyClaimStamp({ stamp_id: requestBody.stamp_id, claim_code: requestBody.claim_code, passport_id: requestBody.passport_id, last_time: requestBody.last_time } satisfies VerifyStampParams);
+        const { isValid, signature } = await stampService.verify({ stamp_id: requestBody.stamp_id, claim_code: requestBody.claim_code, passport_id: requestBody.passport_id, last_time: requestBody.last_time } satisfies VerifyStampParams);
 
         const response: VerifyClaimStampResponse = {
             success: true,
             valid: isValid,
-            signature
+            signature: signature ?? undefined
         };
 
         return NextResponse.json(response);
@@ -61,7 +60,7 @@ export async function POST(request: Request) {
 
 export async function GET() {
     try {
-        const result: DbStampResponse[] | undefined = await getStampsFromDb();
+        const result = await stampService.getAll();
         return NextResponse.json(result);
     } catch (error) {
         console.error('Error fetching claim stamps:', error);
@@ -76,7 +75,7 @@ export async function GET() {
 export async function PATCH(request: Request) {
     try {
         const { stamp_id } = await request.json();
-        const result = await increaseStampCountToDb(stamp_id as string);
+        const result = await stampService.increaseCount(stamp_id as string);
         return NextResponse.json(result);
     } catch (error) {
         return NextResponse.json({ success: false, error: error instanceof Error ? error.message : 'Failed to increase stamp count' }, { status: 500 });

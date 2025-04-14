@@ -14,7 +14,7 @@ interface AvatarUploadProps {
   onAvatarChange: (avatar: ImageType | null) => void;
 }
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
 export const AvatarUpload: FC<AvatarUploadProps> = ({ onAvatarChange }) => {
   const { setValue, watch } = useFormContext<PassportFormSchema>();

@@ -7,7 +7,7 @@ function generateUUID() {
 }
 
 // add file size limit and allowed file types
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 const ALLOWED_FILE_TYPES = new Set([
   'image/jpeg',
   'image/png',
@@ -23,7 +23,6 @@ const S3 = new S3Client({
     secretAccessKey: process.env.NAMI_SECRET_ACCESS_KEY!,
   },
   forcePathStyle: true,
-  logger: console,
 });
 
 export async function POST(request: Request) {

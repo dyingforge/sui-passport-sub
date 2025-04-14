@@ -11,10 +11,10 @@ export function useStampCRUD() {
   const getStamps = async () => {
     try {
       setIsLoading(true)
-      const response = await apiFetch<{ results: DbStampResponse[] }>(`/api/stamps`,{
+      const response = await apiFetch<DbStampResponse[]>(`/api/stamps`,{
         method: 'GET'
       })
-      return response.results as DbStampResponse[]
+      return response
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to fetch claim stamps'))
       throw err

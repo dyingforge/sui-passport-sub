@@ -34,7 +34,7 @@ export default function HomePage() {
   const [contributors, setContributors] = useState<Contributor[]>([]);
   const [displayStamps, setDisplayStamps] = useState<DisplayStamp[]>([]);
   const networkVariables = useNetworkVariables();
-  const { fetchUsers, isLoading, verifyCaptcha } = useUserCrud();
+  const { fetchUsers, isLoading: isLoadingUsers, verifyCaptcha } = useUserCrud();
   const { userProfile, refreshProfile, isLoading: isRefreshingProfile } = useUserProfile();
   const { verifyClaimStamp, increaseStampCountToDb, isLoading: isVerifyingClaimStamp } = useStampCRUD();
   const currentAccount = useCurrentAccount();
@@ -44,6 +44,7 @@ export default function HomePage() {
   const [token, setToken] = useState<string | null>(null);
   const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
   const [isSuiWallet, setIsSuiWallet] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { handleSignAndExecuteTransaction: handleClaimStampTx, isLoading: isClaimingStamp } =
   useBetterSignAndExecuteTransaction({
@@ -63,7 +64,6 @@ export default function HomePage() {
 
   const initializeData = useCallback(async () => {
     const users = await fetchUsers();
-    console.log('users', users);
     if (users) {
       setContributors(usersToContributor(users));
     }
@@ -164,6 +164,7 @@ export default function HomePage() {
   };
 
   const handlePassportCreation = async (values: PassportFormSchema) => {
+    setIsLoading(true);
     const formData = new FormData();
     if (values.avatarFile) {
       if (!(values.avatarFile instanceof Blob)) {
@@ -184,25 +185,27 @@ export default function HomePage() {
         throw error; // Re-throw to interrupt the method
       }
     }
-    // await handleMintPassportTx(
-    //   {
-    //     name: values.name,
-    //     avatar: values.avatar ?? "",
-    //     introduction: values.introduction ?? "",
-    //     x: "",
-    //     github: "",
-    //     email: "",
-    //   },
-    // )
-    //   .onSuccess(async () => {
-    //     await refreshProfile(currentAccount?.address ?? "", networkVariables);
-    //     void handleTableRefresh()
-    //     toast.success("Passport minted successfully");
-    //   })
-    //   .onError(() => {
-    //     toast.error(`Error minting passport: Too many requests, please try again later`);
-    //   })
-    //   .execute();
+    console.log('values', values);
+    await handleMintPassportTx(
+      {
+        name: values.name,
+        avatar: values.avatar ?? "",
+        introduction: values.introduction ?? "",
+        x: "",
+        github: "",
+        email: "",
+      },
+    )
+      .onSuccess(async () => {
+        await refreshProfile(currentAccount?.address ?? "", networkVariables);
+        void handleTableRefresh()
+        toast.success("Passport minted successfully");
+      })
+      .onError(() => {
+        toast.error(`Error minting passport: Too many requests, please try again later`);
+      })
+      .execute();
+    setIsLoading(false);
   };
 
   const handleOpenChange = (stampId: string, isOpen: boolean) => {
@@ -299,7 +302,7 @@ export default function HomePage() {
             </div> */}
             {!userProfile?.passport_id && <PassportCreationModal
               onSubmit={handlePassportCreation}
-              isLoading={isMintingPassportWithSponsor || isRefreshingProfile}
+              isLoading={isMintingPassportWithSponsor || isRefreshingProfile || isLoading}
             />}
           </div>
         </div>
@@ -373,7 +376,7 @@ export default function HomePage() {
             <ContributorsTable
               data={contributors}
               onRefresh={handleTableRefresh}
-              isLoading={isLoading}
+              isLoading={isLoadingUsers}
             />
           </div>
         </div>

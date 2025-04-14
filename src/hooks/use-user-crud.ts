@@ -29,17 +29,15 @@ export function useUserCrud(): UseUserCrudReturn {
         try {
             setIsLoading(true);
             setError(null);
-            const response = await apiFetch<DbResponse<DbUserResponse>>('/api/user', {
+            const response = await apiFetch<DbUserResponse[]>('/api/user', {
                 method: 'GET'
             })
             console.log("fetchUsers data", response);
-            if (!response.success) {
+            if (!response) {
                 throw new Error("Failed to fetch users");
             }
-            if (response.results) {
-                setUsers(response.results);
-            }
-            return response.results;
+            setUsers(response);
+            return response;
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to fetch users');
         } finally {
