@@ -185,7 +185,6 @@ export default function HomePage() {
         throw error; // Re-throw to interrupt the method
       }
     }
-    console.log('values', values);
     await handleMintPassportTx(
       {
         name: values.name,
