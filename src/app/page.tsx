@@ -33,6 +33,7 @@ export default function HomePage() {
   const { stamps, refreshPassportStamps } = usePassportsStamps();
   const [contributors, setContributors] = useState<Contributor[]>([]);
   const [displayStamps, setDisplayStamps] = useState<DisplayStamp[]>([]);
+  const [uploadedAvatarUrl, setUploadedAvatarUrl] = useState<string>("");
   const networkVariables = useNetworkVariables();
   const { fetchUsers, isLoading: isLoadingUsers, verifyCaptcha } = useUserCrud();
   const { userProfile, refreshProfile, isLoading: isRefreshingProfile } = useUserProfile();
@@ -165,30 +166,35 @@ export default function HomePage() {
 
   const handlePassportCreation = async (values: PassportFormSchema) => {
     setIsLoading(true);
-    const formData = new FormData();
+    let avatarUrl = uploadedAvatarUrl;
+    
+    // If we have a new file, upload it and get the URL
     if (values.avatarFile) {
       if (!(values.avatarFile instanceof Blob)) {
         throw new Error("Avatar file must be a valid image file");
       }
       try {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        const formData = new FormData();
         formData.append("file", values.avatarFile);
         const response = await fetch("/api/upload", {
           method: "POST",
           body: formData,
         });
-        const data = await response.json();
-        values.avatar = data.url;
+        const data = (await response.json()) as { url: string };
+        avatarUrl = data.url;
+        setUploadedAvatarUrl(data.url);
       } catch (error) {
         console.log(error);
         toast.error("Error uploading avatar");
-        throw error; // Re-throw to interrupt the method
+        setIsLoading(false);
+        throw error;
       }
     }
+
     await handleMintPassportTx(
       {
         name: values.name,
-        avatar: values.avatar ?? "",
+        avatar: avatarUrl,
         introduction: values.introduction ?? "",
         x: "",
         github: "",
@@ -199,9 +205,11 @@ export default function HomePage() {
         await refreshProfile(currentAccount?.address ?? "", networkVariables);
         void handleTableRefresh()
         toast.success("Passport minted successfully");
+        // Clear the stored URL after successful mint
+        setUploadedAvatarUrl("");
       })
-      .onError(() => {
-        toast.error(`Error minting passport: Too many requests, please try again later`);
+      .onError((error) => {
+        toast.error(`Error minting passport: ${error}`);
       })
       .execute();
     setIsLoading(false);
