@@ -56,13 +56,13 @@ export function useBetterSignAndExecuteTransaction<TArgs extends unknown[] = unk
                         if (waitForTx) {
                             await suiClient.waitForTransaction({ digest: result.digest })
                         }
-                        await successCallback?.(result)
+                        await successCallback?.(result as SuiSignAndExecuteTransactionOutput | undefined)
                     },
                     onError: (error) => {
-                        errorCallback?.(error)
+                        errorCallback?.(error as Error)
                     },
                     onSettled: async (result) => {
-                        await settledCallback?.(result)
+                        await settledCallback?.(result as SuiSignAndExecuteTransactionOutput | undefined)
                         setIsLoading(false)
                     }
                 })

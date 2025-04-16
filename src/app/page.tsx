@@ -98,7 +98,7 @@ export default function HomePage() {
   }, [stamps, userProfile]);
 
   useEffect(() => {
-    if (networkVariables) {
+    if (connectionStatus === "connected" && networkVariables) {
       void refreshPassportStamps(networkVariables);
     }
   }, [networkVariables, refreshPassportStamps, connectionStatus]);
