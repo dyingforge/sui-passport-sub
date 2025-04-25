@@ -3,7 +3,6 @@ import Image from "next/image";
 import { ContributorsTable } from "~/components/ContributorsTable/ContributorsTable";
 import { PassportCreationModal } from "~/components/PassportCreationModal/PassportCreationModal";
 import { ProfileModal } from "~/components/ProfileModal/ProfileModal";
-import { Sticker } from "~/components/Sticker/Sticker";
 import { usePassportsStamps } from "~/context/passports-stamps-context";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNetworkVariables } from "~/lib/contracts";
@@ -27,8 +26,6 @@ import { type PassportFormSchema } from "~/types/passport";
 import { mint_passport } from "~/lib/contracts/passport";
 import { toast } from "sonner";
 import { Turnstile } from "@marsidev/react-turnstile";
-import { NeonGradientCard } from "~/components/magicui/neon-gradient-card";
-import { Button } from "~/components/ui/button";
 import { StampGroup } from "~/components/StampGroup/StampGroup";
 import { RainbowButton } from "~/components/magicui/rainbow-button";
 
@@ -55,12 +52,6 @@ const pulseKeyframes = `
   }
 }
 `;
-
-const styleSheet = document.createElement("style");
-styleSheet.textContent = pulseKeyframes;
-if (typeof document !== 'undefined') {
-  document.head.appendChild(styleSheet);
-}
 
 export default function HomePage() {
   const { stamps, refreshPassportStamps } = usePassportsStamps();
@@ -134,6 +125,16 @@ export default function HomePage() {
       void refreshPassportStamps(networkVariables);
     }
   }, [networkVariables, refreshPassportStamps, connectionStatus]);
+
+  useEffect(() => {
+    const styleSheet = document.createElement("style");
+    styleSheet.textContent = pulseKeyframes;
+    document.head.appendChild(styleSheet);
+    
+    return () => {
+      document.head.removeChild(styleSheet);
+    };
+  }, []);
 
   const handleClaimStampClick = async (code: string, stamp: DisplayStamp) => {
     console.log("handleClaimStampClick", code, stamp);
