@@ -66,7 +66,7 @@ export const StampGroup: FC<StampGroupProps> = ({
         </div>
 
         {/* Middle Event Card */}
-        <div 
+        {/* <div 
           className="relative isolate w-full max-w-[350px] aspect-[3/4] sm:h-[470px] flex flex-col items-center justify-center bg-[url('/images/qmark_bg.png')] bg-cover bg-center bg-no-repeat rounded-xl cursor-pointer transform transition-transform duration-300 hover:scale-105"
           onClick={handleEventCardClick}
         >
@@ -76,7 +76,7 @@ export const StampGroup: FC<StampGroupProps> = ({
           </div>
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-500/5 to-purple-500/10 rounded-xl"></div>
           <Image src="/images/qmark.png" alt="qmark" sizes="100%" fill className="object-contain p-10" />
-        </div>
+        </div> */}
 
         {/* Right Stamp */}
         <div className="relative isolate w-full max-w-[350px] aspect-[3/4] sm:h-[470px]">

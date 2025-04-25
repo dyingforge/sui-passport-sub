@@ -315,7 +315,7 @@ export default function HomePage() {
                 >
                   <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                 </svg>
-                <span className="text-base sm:text-lg font-medium">Follow @SuiFamOfficial</span>
+                <span className="font-inter text-base sm:text-lg font-medium">Follow @SuiFamOfficial</span>
               </div>
             </RainbowButton>
             <div className="hidden sm:block">
@@ -359,7 +359,7 @@ export default function HomePage() {
           </div>
         </div>
         <div className="relative mt-16 flex w-full flex-col items-center bg-gradient-to-t from-[#02101C] from-95% overflow-hidden">
-          <h1 className="mt-40 max-w-[358px] text-center font-everett text-[40px] leading-[48px] sm:my-20 
+          <h1 className="mt-40 max-w-[358px] text-center font-everett text-[40px] leading-[48px] sm:my-10 
           sm:max-w-[696px] sm:text-[68px] sm:leading-[80px]">
             Get your stamps
           </h1>
