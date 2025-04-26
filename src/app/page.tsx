@@ -291,9 +291,12 @@ export default function HomePage() {
                 height={24}
                 className="h-[24px] w-[24px] sm:h-[32px] sm:w-[32px]"
               />
-              <p className="font-inter text-base sm:text-[24px] text-white">
+              <p className="font-inter text-sm sm:text-[24px] text-white">
                 2025 Sui Community Passport
               </p>
+            </div>
+            <div className="block sm:hidden">
+              <ProfileModal />
             </div>
           </div>
           
@@ -315,7 +318,7 @@ export default function HomePage() {
               </div>
             </RainbowButton>
             <div className="hidden sm:block">
-              {(isSuiWallet || isCaptchaVerified) && <ProfileModal />}
+              <ProfileModal />
             </div>
           </div>
         </div>
