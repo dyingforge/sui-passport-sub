@@ -36,8 +36,6 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ showMobilePopover = 
   const { connectionStatus } = useCurrentWallet()
   const [open, setOpen] = useState(false)
   const { clearProfile } = useUserProfile()
-  const [isMobileApp, setIsMobileApp] = useState(false);
-  const [isInSuiWallet, setIsInSuiWallet] = useState(false);
   const { createOrUpdateUser } = useUserCrud()
 
   const { handleSignAndExecuteTransaction: handleShowStampTx, isLoading: isShowingStamp } =
@@ -120,15 +118,8 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ showMobilePopover = 
     clearProfile()
   }, [disconnect, setOpen, clearProfile])
 
-  useEffect(() => {
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    const isSuiWallet = /Slush/i.test(navigator.userAgent);
-    console.log('User Agent:', navigator.userAgent);
-    console.log('isMobile:', isMobile);
-    console.log('isSuiWallet:', isSuiWallet);
-    setIsInSuiWallet(isSuiWallet);
-    setIsMobileApp(isMobile);
-  }, []);
+  console.log("ProfileModal - showMobilePopover:", showMobilePopover);
+  console.log("ProfileModal - accounts.length:", accounts.length);
 
   if (!accounts.length) {
     return (
@@ -147,14 +138,15 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ showMobilePopover = 
     );
   }
 
-  if (isMobileApp && !isInSuiWallet && showMobilePopover) {
+  if (showMobilePopover) {
+    console.log("ProfileModal - Rendering Popover");
     return (
       <Popover open={true}>
         <PopoverTrigger>
           <Button
             className="h-[34px] leading-4 sm:h-[52px]"
             onClick={() => {
-              window.location.href = "suiwallet://";
+              window.location.href = "slush://";
               setTimeout(() => {
                 window.location.href =
                   "https://apps.apple.com/us/app/sui-wallet-mobile/id6476572140";

@@ -11,7 +11,6 @@ import { useUserCrud } from "~/hooks/use-user-crud";
 import {
   usersToContributor,
   stampsToDisplayStamps,
-  distributeStamps,
   stampsToDisplayStampsWithOutPassport,
 } from "~/lib/utils";
 import type { VerifyClaimStampRequest, DisplayStamp } from "~/types/stamp";
@@ -68,6 +67,7 @@ export default function HomePage() {
   const { createOrUpdateUser } = useUserCrud();
   const [token, setToken] = useState<string | null>(null);
   const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
+  const [showMobilePopover, setShowMobilePopover] = useState(false);
   const [isSuiWallet, setIsSuiWallet] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -89,22 +89,30 @@ export default function HomePage() {
 
   const initializeData = useCallback(async () => {
     const users = await fetchUsers();
+    void refreshPassportStamps(networkVariables);
     if (users) {
       setContributors(usersToContributor(users));
     }
-  }, [fetchUsers]);
+  }, [fetchUsers, networkVariables, refreshPassportStamps]);
 
   useEffect(() => {
     const isSuiWallet = /Slush/i.test(navigator.userAgent);
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    setShowMobilePopover(!isSuiWallet && isMobile);
     setIsSuiWallet(isSuiWallet);
-    if (process.env.NODE_ENV === 'production' && token && !isSuiWallet) {
-      void verifyCaptcha(token).then((success) => {
-        setIsCaptchaVerified(success);
-      });
-    }
-    if (process.env.NODE_ENV === 'development') {
+    
+    if (process.env.NODE_ENV === 'production') {
+      if (token && !isSuiWallet) {
+        void verifyCaptcha(token).then((success) => {
+          setIsCaptchaVerified(success);
+        });
+      }
+    } else {
       setIsCaptchaVerified(true);
     }
+    
+    console.log("showMobilePopover", !isSuiWallet && isMobile);
+    console.log("isSuiWallet", isSuiWallet);
   }, [token, verifyCaptcha]);
 
   useEffect(() => {
@@ -273,11 +281,6 @@ export default function HomePage() {
     [initializeData, userProfile, currentAccount, createOrUpdateUser, networkVariables],
   );
 
-  const stampsLayout = useMemo(
-    () => distributeStamps(displayStamps),
-    [displayStamps],
-  );
-
   return (
     <main className="flex min-h-screen flex-col items-center bg-[#02101C] text-white">
       <div className="flex w-full flex-col items-center sm:max-w-[1424px]">
@@ -296,7 +299,7 @@ export default function HomePage() {
               </p>
             </div>
             <div className="block sm:hidden">
-              <ProfileModal showMobilePopover={true} />
+              <ProfileModal showMobilePopover={showMobilePopover} />
             </div>
           </div>
           
@@ -318,7 +321,7 @@ export default function HomePage() {
               </div>
             </RainbowButton>
             <div className="hidden sm:block">
-              <ProfileModal showMobilePopover={false} />
+             {isCaptchaVerified && <ProfileModal showMobilePopover={false} />}
             </div>
           </div>
         </div>
@@ -357,8 +360,8 @@ export default function HomePage() {
             />}
           </div>
         </div>
-        <div className="relative mt-16 flex w-full flex-col items-center bg-gradient-to-t from-[#02101C] from-95% overflow-hidden">
-          <h1 className="mt-40 max-w-[358px] text-center font-everett text-[40px] leading-[48px] sm:my-10 
+        <div className="relative flex w-full flex-col items-center bg-gradient-to-t from-[#02101C] from-95% overflow-hidden">
+          <h1 className="mt-10 max-w-[358px] text-center font-everett text-[40px] leading-[48px] sm:my-10 
           sm:max-w-[696px] sm:text-[68px] sm:leading-[80px]">
             Get your stamps
           </h1>
@@ -370,7 +373,7 @@ export default function HomePage() {
             openStickers={openStickers}
             onOpenChange={handleOpenChange}
           />
-          <h2 className="mt-[185px] max-w-[263px] text-center font-everett text-[24px] leading-[28px] sm:text-[32px] sm:leading-[38px]">
+          <h2 className="mt-20 max-w-[263px] text-center font-everett text-[24px] leading-[28px] sm:text-[32px] sm:leading-[38px]">
             Top Contributors
           </h2>
           <div className="mb-[48px] mt-6 w-full sm:mb-[80px]">

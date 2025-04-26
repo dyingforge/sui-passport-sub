@@ -37,9 +37,9 @@ export const StampGroup: FC<StampGroupProps> = ({
 
   return (
     <>
-      <div className="mt-[37px] flex flex-col items-center justify-center w-full sm:flex-row gap-8 px-4 sm:px-0">
+      <div className="flex flex-col items-center justify-center w-full sm:flex-row gap-8 px-4 sm:px-0">
         {/* Left Stamp */}
-        <div className="relative isolate w-full max-w-[350px] aspect-[3/4] sm:h-[470px]">
+        <div className="relative isolate w-full max-w-[350px]">
           {leftStamp && (
             <div className="w-full h-full flex items-center justify-center">
               <Sticker
@@ -75,9 +75,8 @@ export const StampGroup: FC<StampGroupProps> = ({
         </div> */}
 
         {/* Right Stamp */}
-        <div className="relative isolate w-full max-w-[350px] aspect-[3/4] sm:h-[470px]">
+        <div className="relative isolate w-full max-w-[350px]">
           {rightStamp && (
-            <div className="w-full h-full flex items-center justify-center">
               <Sticker
                 stampId={rightStamp.id}
                 url={rightStamp.imageUrl ?? ""}
@@ -93,7 +92,6 @@ export const StampGroup: FC<StampGroupProps> = ({
                 isLoading={isLoading}
                 className="w-full h-full"
               />
-            </div>
           )}
         </div>
       </div>
