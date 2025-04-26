@@ -122,7 +122,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ showMobilePopover = 
 
   useEffect(() => {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    const isSuiWallet = /Slush-Wallet/i.test(navigator.userAgent);
+    const isSuiWallet = /Slush/i.test(navigator.userAgent);
     console.log('User Agent:', navigator.userAgent);
     console.log('isMobile:', isMobile);
     console.log('isSuiWallet:', isSuiWallet);

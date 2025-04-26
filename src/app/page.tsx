@@ -95,7 +95,7 @@ export default function HomePage() {
   }, [fetchUsers]);
 
   useEffect(() => {
-    const isSuiWallet = /Slush-Wallet/i.test(navigator.userAgent);
+    const isSuiWallet = /Slush/i.test(navigator.userAgent);
     setIsSuiWallet(isSuiWallet);
     if (process.env.NODE_ENV === 'production' && token && !isSuiWallet) {
       void verifyCaptcha(token).then((success) => {
