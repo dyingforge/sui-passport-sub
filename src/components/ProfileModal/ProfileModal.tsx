@@ -118,9 +118,12 @@ export const ProfileModal = () => {
 
   useEffect(() => {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    const isSuiWallet = /Sui-Wallet/i.test(navigator.userAgent);
+    const isSuiWallet = /Slush-Wallet/i.test(navigator.userAgent);
+    console.log('User Agent:', navigator.userAgent);
+    console.log('isMobile:', isMobile);
+    console.log('isSuiWallet:', isSuiWallet);
     setIsInSuiWallet(isSuiWallet);
-    setIsMobileApp(isMobile && !isSuiWallet);
+    setIsMobileApp(isMobile);
   }, []);
 
   if (!accounts.length) {

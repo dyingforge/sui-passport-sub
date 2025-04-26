@@ -95,7 +95,7 @@ export default function HomePage() {
   }, [fetchUsers]);
 
   useEffect(() => {
-    const isSuiWallet = /Sui-Wallet/i.test(navigator.userAgent);
+    const isSuiWallet = /Slush-Wallet/i.test(navigator.userAgent);
     setIsSuiWallet(isSuiWallet);
     if (process.env.NODE_ENV === 'production' && token && !isSuiWallet) {
       void verifyCaptcha(token).then((success) => {
@@ -291,7 +291,7 @@ export default function HomePage() {
                 height={24}
                 className="h-[24px] w-[24px] sm:h-[32px] sm:w-[32px]"
               />
-              <p className="font-inter text-sm sm:text-[24px] text-white">
+              <p className="font-inter text-[12px] sm:text-[24px] text-white">
                 2025 Sui Community Passport
               </p>
             </div>
