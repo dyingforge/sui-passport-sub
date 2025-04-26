@@ -295,10 +295,6 @@ export default function HomePage() {
                 2025 Sui Community Passport
               </p>
             </div>
-            {/* Show ProfileModal if user is using Sui Wallet or has passed captcha verification */}
-            <div className="block sm:hidden">
-              {(isSuiWallet || isCaptchaVerified) && <ProfileModal />}
-            </div>
           </div>
           
           <div className="flex items-center justify-between w-full sm:w-auto gap-4">

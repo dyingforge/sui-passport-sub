@@ -40,7 +40,7 @@ export const StampGroup: FC<StampGroupProps> = ({
       <div className="mt-[37px] flex flex-col items-center justify-center w-full sm:flex-row gap-8 px-4 sm:px-0">
         {/* Left Stamp */}
         <div className="relative isolate w-full max-w-[350px] aspect-[3/4] sm:h-[470px]">
-          {leftStamp ? (
+          {leftStamp && (
             <div className="w-full h-full flex items-center justify-center">
               <Sticker
                 stampId={leftStamp.id}
@@ -57,10 +57,6 @@ export const StampGroup: FC<StampGroupProps> = ({
                 isLoading={isLoading}
                 className="w-full h-full"
               />
-            </div>
-          ) : (
-            <div className="flex h-full w-full items-center justify-center bg-[#0A1B2B] rounded-xl">
-              <div className="text-[#4DA2FF] text-xl">Coming Soon</div>
             </div>
           )}
         </div>
@@ -80,7 +76,7 @@ export const StampGroup: FC<StampGroupProps> = ({
 
         {/* Right Stamp */}
         <div className="relative isolate w-full max-w-[350px] aspect-[3/4] sm:h-[470px]">
-          {rightStamp ? (
+          {rightStamp && (
             <div className="w-full h-full flex items-center justify-center">
               <Sticker
                 stampId={rightStamp.id}
@@ -97,10 +93,6 @@ export const StampGroup: FC<StampGroupProps> = ({
                 isLoading={isLoading}
                 className="w-full h-full"
               />
-            </div>
-          ) : (
-            <div className="flex h-full w-full items-center justify-center bg-[#0A1B2B] rounded-xl">
-              <div className="text-[#4DA2FF] text-xl">Coming Soon</div>
             </div>
           )}
         </div>
@@ -125,9 +117,9 @@ export const StampGroup: FC<StampGroupProps> = ({
               <div className="absolute inset-0 bg-purple-500 opacity-30 blur-[100px] rounded-full animate-[pulse_4s_ease-in-out_infinite]"></div>
               <div className="absolute inset-0 bg-fuchsia-500 opacity-20 blur-[80px] rounded-full transform scale-90 animate-[pulse_4s_ease-in-out_infinite_1s]"></div>
             </div>
-            
+
             <div className="text-2xl sm:text-[32px] font-bold text-white mb-6 sm:mb-8 text-center">Next Stamp Drop?</div>
-            <div 
+            <div
               className="flex items-center gap-3 text-[#4DA2FF] hover:text-[#3A8FFF] cursor-pointer transition-all duration-300 hover:scale-105"
               onClick={handleTwitterClick}
             >
