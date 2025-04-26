@@ -23,7 +23,11 @@ import { show_stamp } from "~/lib/contracts/passport";
 import { useBetterSignAndExecuteTransaction } from "~/hooks/use-better-tx";
 import { toast } from "sonner";
 
-export const ProfileModal = () => {
+interface ProfileModalProps {
+  showMobilePopover?: boolean;
+}
+
+export const ProfileModal: React.FC<ProfileModalProps> = ({ showMobilePopover = true }) => {
   const { refreshProfile, userProfile } = useUserProfile()
   const networkVariables = useNetworkVariables()
   const { mutate: disconnect } = useDisconnectWallet()
@@ -143,7 +147,7 @@ export const ProfileModal = () => {
     );
   }
 
-  if (isMobileApp && !isInSuiWallet) {
+  if (isMobileApp && !isInSuiWallet && showMobilePopover) {
     return (
       <Popover open={true}>
         <PopoverTrigger>

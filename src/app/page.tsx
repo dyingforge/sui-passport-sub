@@ -291,12 +291,12 @@ export default function HomePage() {
                 height={24}
                 className="h-[24px] w-[24px] sm:h-[32px] sm:w-[32px]"
               />
-              <p className="font-inter text-[12px] sm:text-[24px] text-white">
+              <p className="font-inter text-[14px] sm:text-[24px] text-white">
                 2025 Sui Community Passport
               </p>
             </div>
             <div className="block sm:hidden">
-              <ProfileModal />
+              <ProfileModal showMobilePopover={true} />
             </div>
           </div>
           
@@ -318,7 +318,7 @@ export default function HomePage() {
               </div>
             </RainbowButton>
             <div className="hidden sm:block">
-              <ProfileModal />
+              <ProfileModal showMobilePopover={false} />
             </div>
           </div>
         </div>
