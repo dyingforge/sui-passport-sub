@@ -100,7 +100,7 @@ export default function HomePage() {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     setShowMobilePopover(!isSuiWallet && isMobile);
     setIsSuiWallet(isSuiWallet);
-    
+
     if (process.env.NODE_ENV === 'production') {
       if (token && !isSuiWallet) {
         void verifyCaptcha(token).then((success) => {
@@ -110,7 +110,7 @@ export default function HomePage() {
     } else {
       setIsCaptchaVerified(true);
     }
-    
+
     console.log("showMobilePopover", !isSuiWallet && isMobile);
     console.log("isSuiWallet", isSuiWallet);
   }, [token, verifyCaptcha]);
@@ -138,7 +138,7 @@ export default function HomePage() {
     const styleSheet = document.createElement("style");
     styleSheet.textContent = pulseKeyframes;
     document.head.appendChild(styleSheet);
-    
+
     return () => {
       document.head.removeChild(styleSheet);
     };
@@ -295,18 +295,18 @@ export default function HomePage() {
                 className="h-[24px] w-[24px] sm:h-[32px] sm:w-[32px]"
               />
               <p className="font-inter text-[14px] sm:text-[24px] text-white">
-                2025 Sui Community Passport
+                Sui Community Passport
               </p>
             </div>
             <div className="block sm:hidden">
               <ProfileModal showMobilePopover={showMobilePopover} />
             </div>
           </div>
-          
+
           <div className="flex items-center justify-between w-full sm:w-auto gap-4">
-            <RainbowButton 
+            <RainbowButton
               onClick={() => window.open("https://x.com/SuiFamOfficial", "_blank")}
-              className="w-full sm:w-auto"
+              className="hidden sm:block w-full sm:w-auto"
             >
               <div className="flex items-center justify-center gap-2">
                 <svg
@@ -321,7 +321,7 @@ export default function HomePage() {
               </div>
             </RainbowButton>
             <div className="hidden sm:block">
-             {isCaptchaVerified && <ProfileModal showMobilePopover={false} />}
+              {isCaptchaVerified && <ProfileModal showMobilePopover={false} />}
             </div>
           </div>
         </div>
@@ -346,7 +346,7 @@ export default function HomePage() {
             <h1 className="mt-8 max-w-[304px] text-center font-everett text-[40px] leading-[48px] sm:mt-16 sm:max-w-[696px] sm:text-[68px] sm:leading-[80px]">
               Make your mark on the Sui Community
             </h1>
-            <div className="mt-6 flex max-w-[342px] flex-col gap-3 text-center font-everett_light text-[14px] text-[#ABBDCC] sm:max-w-[696px] sm:text-[16px]">
+            <div className="mt-6 flex max-w-[342px] flex-col gap-3 text-center font-everett_light text-[14px] text-[#ABBDCC] sm:max-w-[696px] sm:text-[16px] p-2">
               <p>
                 The Sui community flourishes because of passionate members like you. Through content and events, your contributions help elevate our Sui Community.
               </p>
@@ -354,12 +354,30 @@ export default function HomePage() {
                 Connect your wallet today and claim your first stamp!
               </p>
             </div>
+            <div>
+            </div>
             {!userProfile?.passport_id && <PassportCreationModal
               onSubmit={handlePassportCreation}
               isLoading={isMintingPassportWithSponsor || isRefreshingProfile || isLoading}
             />}
           </div>
         </div>
+        <RainbowButton
+          onClick={() => window.open("https://x.com/SuiFamOfficial", "_blank")}
+          className="block sm:hidden w-[85%] mt-6 sm:w-auto"
+        >
+          <div className="flex items-center justify-center gap-2">
+            <svg
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              className="fill-current sm:w-6 sm:h-6"
+            >
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+            </svg>
+            <span className="font-inter text-base sm:text-lg font-medium">Follow @SuiFamOfficial</span>
+          </div>
+        </RainbowButton>
         <div className="relative flex w-full flex-col items-center bg-gradient-to-t from-[#02101C] from-95% overflow-hidden">
           <h1 className="mt-10 max-w-[358px] text-center font-everett text-[40px] leading-[48px] sm:my-10 
           sm:max-w-[696px] sm:text-[68px] sm:leading-[80px]">
