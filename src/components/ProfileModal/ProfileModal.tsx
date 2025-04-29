@@ -167,7 +167,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ showMobilePopover = 
             <div className="flex items-start gap-2">
               <div className="flex flex-col items-center gap-1.5 font-inter">
                 <Image
-                  src={"/images/sui-wallet.svg"}
+                  src={"/images/slush.png"}
                   alt="wallet-icon"
                   width={28}
                   height={28}
@@ -183,7 +183,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ showMobilePopover = 
               />
               <div className="flex flex-col items-center gap-1.5 font-inter">
                 <Image
-                  src={"/images/sui-apps.svg"}
+                  src={"/images/slush_app.png"}
                   alt="apps-icon"
                   width={28}
                   height={28}
@@ -208,15 +208,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ showMobilePopover = 
               </div>
             </div>
             <div className="font-inter text-[10px] text-white">
-              Install the Sui Wallet app on your phone, then{" "}
-              <a
-                target="blank"
-                className="underline"
-                href="https://drive.google.com/file/d/1EN95PHf9BzNyPQKjbVskuZA65wYYIUpt/view?usp=sharing"
-              >
-                watch video
-              </a>{" "}
-              on using Passport
+            Install the Slush Wallet app on your phone, go to the App section, and enter the URL suipassport.app.
             </div>
           </div>
         </PopoverContent>
