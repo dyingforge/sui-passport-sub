@@ -53,7 +53,7 @@ export const AnimatedImage: FC<Props> = (props) => {
         rotateZ,
       }}
     >
-      <Image {...props} />
+      <img {...props} alt={props.alt ?? ""} />
     </animated.div>
   );
 };
