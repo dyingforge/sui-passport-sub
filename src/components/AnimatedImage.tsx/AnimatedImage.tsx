@@ -9,7 +9,7 @@ const calcX = (y: number, ly: number) =>
   -(y - ly - window.innerHeight / 2) / 20;
 const calcY = (x: number, lx: number) => (x - lx - window.innerWidth / 2) / 20;
 
-type Props = ComponentProps<typeof Image> & {disabled?: boolean};
+type Props = ComponentProps<'img'> & {disabled?: boolean};
 
 export const AnimatedImage: FC<Props> = (props) => {
   const {disabled} = props;
