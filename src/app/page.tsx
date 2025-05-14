@@ -406,7 +406,7 @@ export default function HomePage() {
           * 1. Not using Sui Wallet (!isSuiWallet) - Sui Wallet users don't need captcha verification
           * 2. No captcha token exists (!token) - Don't show if already verified
         */}
-        {!isSuiWallet && !token && (
+        {!isSuiWallet && !token && process.env.NODE_ENV === 'production' && (
           <div className="fixed bottom-4 right-4">
             <Turnstile
               siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? ""}

@@ -63,7 +63,7 @@ export async function POST(request: Request) {
     const uint8Array = new Uint8Array(arrayBuffer);
     
     const command = new PutObjectCommand({
-      Bucket: process.env.CLOUDFLARE_R2_BUCKET_NAME!,
+      Bucket: process.env.CLOUDFLARE_R2_BUCKET!,
       Key: fileName,
       Body: uint8Array,
       ContentType: file.type,
@@ -73,7 +73,7 @@ export async function POST(request: Request) {
     await S3.send(command);
 
     // 直接使用 R2 endpoint 构建访问 URL
-    const publicUrl = `${process.env.CLOUDFLARE_R2_ENDPOINT}/${process.env.CLOUDFLARE_R2_BUCKET_NAME}/${fileName}`;
+    const publicUrl = `${process.env.CLOUDFLARE_R2_PUBLIC_URL}/${fileName}`;
 
     console.log(publicUrl);
 
