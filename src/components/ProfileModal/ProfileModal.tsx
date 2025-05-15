@@ -118,8 +118,8 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ showMobilePopover = 
     clearProfile()
   }, [disconnect, setOpen, clearProfile])
 
-  console.log("ProfileModal - showMobilePopover:", showMobilePopover);
-  console.log("ProfileModal - accounts.length:", accounts.length);
+  // console.log("ProfileModal - showMobilePopover:", showMobilePopover);
+  // console.log("ProfileModal - accounts.length:", accounts.length);
 
   if (!accounts.length) {
     return (
