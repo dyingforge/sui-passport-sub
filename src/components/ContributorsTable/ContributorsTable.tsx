@@ -92,7 +92,14 @@ export function ContributorsTable<TData, TValue>({
   return (
     <>
       <div className="flex flex-col items-center">
-        <div className="relative flex w-[358px] justify-center sm:w-[1000px]">
+        <div className="w-full max-w-[1000px] px-4 mb-2">
+          <p className="text-center text-sm text-gray-600">
+            To keep things fair, anyone with duplicate stamps or found gaming the system will be removed from the leaderboard. 
+            <br />
+            Your stamps will still appear on your profile, but it won’t count toward leaderboard rankings.
+          </p>
+        </div>
+         <div className="relative flex items-center w-[358px] sm:w-[1000px] justify-center">
           <div className="relative flex items-center">
             {!filterValue && (
               <Image
