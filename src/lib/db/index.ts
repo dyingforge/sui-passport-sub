@@ -139,8 +139,20 @@ export const userService = {
     }
 
     console.log('[Redis MISS] Querying database...');
+    
+    // 黑名单地址列表
+    const blacklistedAddresses: string[] = [
+      // 在这里添加需要过滤的地址
+      // 例如：
+      // "0x123...",
+      // "0x456..."
+      "0x083849a384ec156a6c0b2325ac5a82ae04772606bf49abc7e824c82924d34833"
+    ];
+
+    // 获取更多用户以确保过滤后仍有100个
     const result = await db.select()
       .from(users)
+      .where(sql`${users.address} NOT IN (${sql.join(blacklistedAddresses)})`)
       .orderBy(sql`points DESC`)
       .limit(100);
 
