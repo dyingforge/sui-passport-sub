@@ -142,22 +142,22 @@ export const userService = {
     
     // 黑名单地址列表
     const blacklistedAddresses: string[] = [
-      // 在这里添加需要过滤的地址
-      // 例如：
-      // "0x123...",
-      // "0x456..."
-      "0x083849a384ec156a6c0b2325ac5a82ae04772606bf49abc7e824c82924d34833"
+      "0x083849a384ec156a6c0b2325ac5a82ae04772606bf49abc7e824c82924d34833",
+      "0x1e716f3151093040c903cb7b1f0b085b2d308e86c3ac08883526c70b6bde9154",
+      "0xac693bcf27f14e371b4145fcff65d926c47dbfeeda7fce9d88183fb51e034fc0"
     ];
 
     // 获取更多用户以确保过滤后仍有100个
     const result = await db.select()
       .from(users)
-      .where(sql`${users.address} NOT IN (${sql.join(blacklistedAddresses)})`)
       .orderBy(sql`points DESC`)
-      .limit(100);
+      .limit(100 + blacklistedAddresses.length);
 
-    await redis.set(cacheKey, JSON.stringify(result), { ex: CACHE_TTL, nx: true });
-    return result;
+    // 在应用层过滤黑名单地址
+    const filteredResult = result.filter(user => !blacklistedAddresses.includes(user.address)).slice(0, 100);
+
+    await redis.set(cacheKey, JSON.stringify(filteredResult), { ex: CACHE_TTL, nx: true });
+    return filteredResult;
   },
 
   // 根据地址获取用户
