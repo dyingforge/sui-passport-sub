@@ -93,11 +93,11 @@ export function ContributorsTable<TData, TValue>({
     <>
       <div className="flex flex-col items-center">
         <div className="w-full max-w-[1000px] px-4 mb-2">
-          <p className="text-center text-xs sm:text-sm text-gray-400 leading-relaxed sm:leading-normal mb-4">
+          <p className="text-center font-everett_light text-[14px] text-[#ABBDCC] mb-4 sm:text-[16px]">
             To keep things fair, anyone with duplicate stamps or found gaming the system will be removed from the leaderboard.
             <br className="hidden sm:block" />
           <span className="block sm:inline mt-2 sm:mt-0">
-            Your stamps will still appear on your profile, but it won’t count toward leaderboard rankings
+            Your stamps will still appear on your profile, but it won’t count toward leaderboard rankings.
          </span>
          </p>
         </div>
