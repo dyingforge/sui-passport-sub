@@ -170,7 +170,7 @@ export default function HomePage() {
       last_time: Number(userProfile?.last_time),
       stamp_name: stamp?.name,
       address: currentAccount?.address ?? "",
-      packageId: networkVariables?.package,
+      packageId: networkVariables?.originPackage,
     };
     const data = await verifyClaimStamp(requestBody);
     if (!data.success) {
@@ -272,7 +272,7 @@ export default function HomePage() {
           stamp_count: userProfile.stamps?.length ?? 0,
           name: userProfile.name,
           points: Number(userProfile.points),
-          packageId: networkVariables.package,
+          packageId: networkVariables.originPackage,
         })
       }
 
