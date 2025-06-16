@@ -76,7 +76,7 @@ export const Sticker: FC<StickerProps> = (props) => {
       }
       onOpenChange?.(open);
     }}>
-      <DialogTrigger className={className} disabled={isClaimed || dropsAmount <= 0}>
+      <DialogTrigger className={className} disabled={false}>
         <div
           className={cn("relative flex flex-col items-center justify-center")}
           style={{
